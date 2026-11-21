@@ -1531,6 +1531,7 @@
 
       refreshIcons();
       renderAllTex(main);
+      notifyTelemetryActivityChange();
     }
 
     // =========================================================================
@@ -3863,6 +3864,7 @@
       }
 
       runLabEngine(concept);
+      notifyTelemetryActivityChange();
     }
 
     // Mathematical Helpers (100% finite-safe)
@@ -5406,6 +5408,7 @@
 
       // Ensure existing logged-in user syncs to Google Sheet on every browser refresh / load
       if (state.authUser && state.authUser.email) {
+        startTelemetryHeartbeat();
         syncStudentToSheet({
           name: state.authUser.name,
           email: state.authUser.email,
@@ -5441,12 +5444,16 @@
       updateAuthUI();
       closeAuthModal();
 
+      // Start periodic telemetry heartbeat
+      startTelemetryHeartbeat();
+
       // Serverless background sync to Google Sheet (always runs)
       await syncStudentToSheet({
         name: state.authUser.name,
         email: state.authUser.email,
         authMethod,
         activity: 'Student Logged In (' + authMethod + ')',
+        eventType: 'login',
         token: session.access_token
       });
 
@@ -5457,24 +5464,264 @@
       }
     }
 
-    async function syncStudentToSheet({ name, email, authMethod, activity, eventType, token }) {
-      try {
-        const headers = { 'Content-Type': 'application/json' };
-        if (token) headers['Authorization'] = `Bearer ${token}`;
+    // =========================================================================
+    // LIVE STUDENT LEARNING TELEMETRY & PRESENCE MODULE
+    // =========================================================================
+    let lastInteractionAt = Date.now();
+    let lastThrottledInteraction = 0;
+    let lastTelemetrySendTime = 0;
+    let lastActivitySent = '';
+    let telemetryHeartbeatInterval = null;
+    let telemetryDebounceTimer = null;
 
-        const act = activity || eventType || 'Browser Refresh / Page Visit';
+    function handleUserInteraction() {
+      const now = Date.now();
+      if (now - lastThrottledInteraction > 3000) {
+        lastThrottledInteraction = now;
+        lastInteractionAt = now;
+      }
+    }
+
+    // Attach passive throttled interaction listeners for 3-minute idle detection
+    if (typeof window !== 'undefined') {
+      ['pointerdown', 'keydown', 'scroll', 'touchstart'].forEach(evt => {
+        window.addEventListener(evt, handleUserInteraction, { passive: true });
+      });
+    }
+
+    function getStudentPresenceStatus() {
+      if (typeof document !== 'undefined' && document.visibilityState !== 'visible') {
+        return 'Idle';
+      }
+      const idleThreshold = 3 * 60 * 1000; // 3 minutes = 180,000 ms
+      if (Date.now() - lastInteractionAt < idleThreshold) {
+        return 'Learning';
+      }
+      return 'Idle';
+    }
+
+    function getCurrentLearningActivity() {
+      if (!state) return 'Home · Syllabus Roadmap';
+      if (state.view === 'syllabus') {
+        return 'Home · Syllabus Roadmap';
+      }
+      if (state.view === 'studio') {
+        const ch = (CHAPTERS || []).find(c => c.id === state.chapterId);
+        if (ch) {
+          const label = ch.co ? `${ch.co} ${ch.shortTitle || ch.title}` : (ch.shortTitle || ch.title);
+          return `Formula Studio · ${label}`;
+        }
+        return `Formula Studio · ${state.chapterId || 'CO1'}`;
+      }
+      if (state.view === 'flashcards') {
+        if (!state.fcCoFilter || state.fcCoFilter === 'all') {
+          return '150 Flashcards · All COs';
+        }
+        const ch = (CHAPTERS || []).find(c => c.id === state.fcCoFilter);
+        return `150 Flashcards · ${ch ? ch.co : state.fcCoFilter.toUpperCase()}`;
+      }
+      if (state.view === 'labs') {
+        const lab = (LAB_CONCEPTS || []).find(x => x.id === state.activeLabId);
+        if (lab) {
+          const num = lab.id.replace(/^L0*/, '#');
+          return `Live Labs · ${num} ${lab.title}`;
+        }
+        return 'Live Labs · Concept Explorer';
+      }
+      if (state.view === 'tables') {
+        const tbl = (MASTER_TABLES || []).find(t => t.id === state.activeTableId);
+        if (tbl) {
+          const cleanTitle = tbl.title.replace(/^\d+\.\s*/, '');
+          return `Master Tables · ${cleanTitle}`;
+        }
+        return 'Master Tables · All Reference Tables';
+      }
+      if (state.view === 'test') {
+        if (state.testView === 'exam' && state.activeTest) {
+          return state.activeTest.isEndSem ? 'Test Studio · 50M Exam Simulator' : `Test Studio · CBT Exam (${state.testConfig?.count || 10} Qs)`;
+        }
+        if (state.testView === 'scorecard') {
+          return 'Test Studio · Exam Scorecard';
+        }
+        return state.testTab === 'endsem' ? 'Test Studio · 50M Exam' : `Test Studio · Practice (${state.testConfig?.mode || 'practice'})`;
+      }
+      return 'Home · Syllabus Roadmap';
+    }
+
+    async function sendStudentTelemetry(opts = {}) {
+      if (!state || !state.authUser || !state.authUser.email) {
+        if (!opts.email) return;
+      }
+
+      const email = opts.email || state.authUser.email;
+      const name = opts.name || (state.authUser && state.authUser.name) || email.split('@')[0];
+      const authMethod = opts.authMethod || (state.authUser && state.authUser.provider) || 'Google';
+      const event = opts.event || 'heartbeat';
+      const currentActivity = opts.activity || getCurrentLearningActivity();
+      const status = opts.status || getStudentPresenceStatus();
+      const activeMinutesDelta = (typeof opts.activeMinutesDelta === 'number')
+        ? opts.activeMinutesDelta
+        : (status === 'Learning' && event === 'heartbeat' ? 1 : 0);
+
+      const now = Date.now();
+      if (opts.debounce) {
+        if (now - lastTelemetrySendTime < 10000 && currentActivity === lastActivitySent) {
+          return;
+        }
+      }
+
+      lastTelemetrySendTime = now;
+      lastActivitySent = currentActivity;
+
+      try {
+        const payload = {
+          event,
+          name,
+          email,
+          authMethod,
+          status,
+          activity: currentActivity,
+          activeMinutesDelta
+        };
+
+        const headers = { 'Content-Type': 'application/json' };
+        if (opts.token) headers['Authorization'] = `Bearer ${opts.token}`;
+
         const res = await fetch('/api/log-student', {
           method: 'POST',
           headers,
-          body: JSON.stringify({
-            name,
-            email,
-            authMethod,
-            activity: act
-          })
+          body: JSON.stringify(payload),
+          keepalive: true
         });
-        const data = await res.json();
-        return data;
+        return await res.json();
+      } catch (err) {
+        console.debug('Telemetry sync note:', err);
+      }
+    }
+
+    function notifyTelemetryActivityChange() {
+      if (!state || !state.authUser || !state.authUser.email) return;
+
+      const currentActivity = getCurrentLearningActivity();
+      if (currentActivity === lastActivitySent) return;
+
+      if (telemetryDebounceTimer) {
+        clearTimeout(telemetryDebounceTimer);
+        telemetryDebounceTimer = null;
+      }
+
+      const now = Date.now();
+      const timeSinceLast = now - lastTelemetrySendTime;
+
+      if (timeSinceLast >= 10000) {
+        sendStudentTelemetry({ event: 'heartbeat', activity: currentActivity, debounce: true });
+      } else {
+        telemetryDebounceTimer = setTimeout(() => {
+          sendStudentTelemetry({ event: 'heartbeat', activity: getCurrentLearningActivity(), debounce: true });
+        }, 10000 - timeSinceLast);
+      }
+    }
+
+    function startTelemetryHeartbeat() {
+      if (telemetryHeartbeatInterval) {
+        clearInterval(telemetryHeartbeatInterval);
+        telemetryHeartbeatInterval = null;
+      }
+
+      // Initial heartbeat ping after session starts
+      setTimeout(() => {
+        if (state?.authUser?.email) {
+          sendStudentTelemetry({ event: 'heartbeat', debounce: false });
+        }
+      }, 1000);
+
+      // Periodic 60-second telemetry heartbeat (Quota safe)
+      telemetryHeartbeatInterval = setInterval(() => {
+        if (!state || !state.authUser || !state.authUser.email) return;
+
+        if (document.visibilityState === 'visible') {
+          const status = getStudentPresenceStatus();
+          const activeDelta = (status === 'Learning') ? 1 : 0;
+          sendStudentTelemetry({
+            event: 'heartbeat',
+            status,
+            activity: getCurrentLearningActivity(),
+            activeMinutesDelta: activeDelta
+          });
+        }
+      }, 60000);
+    }
+
+    function sendOfflineBeacon(email, name, authMethod) {
+      const targetEmail = email || state?.authUser?.email;
+      if (!targetEmail) return;
+
+      const targetName = name || (state?.authUser && state.authUser.name) || targetEmail.split('@')[0];
+      const targetAuth = authMethod || (state?.authUser && state.authUser.provider) || 'Google';
+
+      const payload = JSON.stringify({
+        event: 'offline',
+        email: targetEmail,
+        name: targetName,
+        authMethod: targetAuth,
+        status: 'Offline',
+        activity: 'Offline',
+        activeMinutesDelta: 0
+      });
+
+      if (typeof navigator !== 'undefined' && typeof navigator.sendBeacon === 'function') {
+        const blob = new Blob([payload], { type: 'application/json' });
+        navigator.sendBeacon('/api/log-student', blob);
+      } else {
+        try {
+          fetch('/api/log-student', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: payload,
+            keepalive: true
+          });
+        } catch (e) {}
+      }
+    }
+
+    // Unload & visibility listeners
+    if (typeof window !== 'undefined') {
+      window.addEventListener('pagehide', () => sendOfflineBeacon());
+      window.addEventListener('beforeunload', () => sendOfflineBeacon());
+    }
+
+    if (typeof document !== 'undefined') {
+      document.addEventListener('visibilitychange', () => {
+        if (!state || !state.authUser || !state.authUser.email) return;
+
+        if (document.visibilityState === 'hidden') {
+          sendStudentTelemetry({
+            event: 'heartbeat',
+            status: 'Idle',
+            activity: getCurrentLearningActivity(),
+            activeMinutesDelta: 0
+          });
+        } else {
+          handleUserInteraction();
+          notifyTelemetryActivityChange();
+        }
+      });
+    }
+
+    async function syncStudentToSheet({ name, email, authMethod, activity, eventType, token, activeMinutesDelta, status }) {
+      try {
+        const act = activity || eventType || getCurrentLearningActivity();
+        const ev = eventType || (act.toLowerCase().includes('logged in') ? 'login' : 'heartbeat');
+        return await sendStudentTelemetry({
+          event: ev,
+          name: name || state?.authUser?.name,
+          email: email || state?.authUser?.email,
+          authMethod: authMethod || state?.authUser?.provider,
+          status: status || getStudentPresenceStatus(),
+          activity: act,
+          activeMinutesDelta: activeMinutesDelta || 0,
+          token
+        });
       } catch (err) {
         console.warn('Student sync request error:', err);
       }
@@ -5805,6 +6052,13 @@
       const signOutBtn = document.getElementById('profileSignOutBtn');
       if (signOutBtn) {
         signOutBtn.onclick = async () => {
+          if (state.authUser && state.authUser.email) {
+            sendOfflineBeacon(state.authUser.email, state.authUser.name, state.authUser.provider);
+          }
+          if (telemetryHeartbeatInterval) {
+            clearInterval(telemetryHeartbeatInterval);
+            telemetryHeartbeatInterval = null;
+          }
           if (supabaseClient) {
             try { await supabaseClient.auth.signOut(); } catch (e) {}
           }

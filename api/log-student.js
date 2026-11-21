@@ -12,7 +12,37 @@ export default async function handler(req, res) {
     return res.status(405).json({ error: 'Method not allowed. Use POST.' });
   }
 
-  const { name, email, authMethod, eventType, activity, device } = req.body || {};
+  // Parse body safely (supports fetch JSON, string, and navigator.sendBeacon payloads)
+  let body = req.body;
+  if (typeof body === 'string') {
+    try {
+      body = JSON.parse(body);
+    } catch (e) {
+      try {
+        const params = new URLSearchParams(body);
+        body = Object.fromEntries(params.entries());
+      } catch (e2) {}
+    }
+  } else if (Buffer.isBuffer(body)) {
+    try {
+      body = JSON.parse(body.toString('utf8'));
+    } catch (e) {}
+  }
+  body = body || {};
+
+  const {
+    event,
+    eventType,
+    name,
+    email,
+    authMethod,
+    status,
+    activity,
+    activeMinutesDelta,
+    device
+  } = body;
+
+  const resolvedEvent = (event || eventType || 'heartbeat').toLowerCase();
 
   if (!email) {
     return res.status(400).json({ error: 'Missing required field: email' });
@@ -74,7 +104,8 @@ export default async function handler(req, res) {
   else if (/safari/i.test(ua)) browser = 'Safari';
 
   const detectedDevice = device || `${os} · ${browser}`;
-  const detectedActivity = activity || eventType || 'Browser Refresh / Page Visit';
+  const detectedActivity = activity || (resolvedEvent === 'offline' ? 'Offline' : 'Home · Syllabus Roadmap');
+  const presenceStatus = status || (resolvedEvent === 'offline' ? 'Offline' : 'Learning');
 
   // 3. Format IST Timestamp (Indian Standard Time: UTC + 5:30)
   const now = new Date();
@@ -105,13 +136,15 @@ export default async function handler(req, res) {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           secret: webhookSecret,
+          event: resolvedEvent,
           name: verifiedName,
           email: verifiedEmail,
           authMethod: authMethod || 'Google',
-          timestamp: istTimestamp,
+          status: presenceStatus,
           activity: detectedActivity,
+          activeMinutesDelta: Number(activeMinutesDelta) || 0,
           device: detectedDevice,
-          action: 'log_student'
+          timestamp: istTimestamp
         })
       });
 
@@ -129,11 +162,14 @@ export default async function handler(req, res) {
 
   return res.status(200).json({
     success: true,
+    event: resolvedEvent,
     student: {
       name: verifiedName,
       email: verifiedEmail,
       authMethod: authMethod || 'Google',
+      status: presenceStatus,
       activity: detectedActivity,
+      activeMinutesDelta: Number(activeMinutesDelta) || 0,
       device: detectedDevice,
       timestamp: istTimestamp
     },
