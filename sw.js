@@ -1,9 +1,14 @@
-const CACHE_NAME = 'maths-master-studio-v1';
+const CACHE_NAME = 'maths-master-studio-v3';
 const STATIC_ASSETS = [
   '/',
   '/index.html',
   '/favicon.svg',
-  '/manifest.json'
+  '/manifest.json',
+  '/exam_questions_bank.json',
+  'https://cdn.tailwindcss.com/3.4.17',
+  'https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css',
+  'https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js',
+  'https://unpkg.com/lucide@0.460.0/dist/umd/lucide.min.js'
 ];
 
 self.addEventListener('install', event => {

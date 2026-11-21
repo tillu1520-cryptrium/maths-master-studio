@@ -1,7 +1,7 @@
 # Maths Master Studio 📐✨
 
-**Interactive Calculus & Differential Equations Learning Platform with Persistent Study Tracking**  
-*150 Flashcards · 150 Worked Questions · 100 Live Animated Math Labs · Student Mastery Engine*
+**Interactive Calculus & Differential Equations Learning Platform & CBT Exam Simulator**  
+*Daily Streak 🔥 · Smart Notebooks · Custom Quiz Generator · 50M · 150 Min University CBT Exam Simulator · 150 Flashcards · 440+ Questions · 100 Live Animated Math Labs*
 
 [![Live Production Site](https://img.shields.io/badge/Live-maths--master--studio.vercel.app-00dfa2?logo=vercel)](https://maths-master-studio.vercel.app)
 [![Vercel Deployment](https://img.shields.io/badge/Deployed%20with-Vercel-black?logo=vercel)](https://maths-master-studio.vercel.app)
@@ -11,84 +11,86 @@
 
 ---
 
-## 🚀 Live Website & Deployment
+## 🚀 Live Website & Production Links
 
 - **Production URL**: [https://maths-master-studio.vercel.app](https://maths-master-studio.vercel.app)
 - **GitHub Repository**: [https://github.com/tillu1520-cryptrium/maths-master-studio](https://github.com/tillu1520-cryptrium/maths-master-studio)
 
 ---
 
-## 🎓 Student Progress & Mastery Engine
+## 🔥 Phase 1: Daily Streak & Smart Notebooks
 
-Maths Master Studio is fully interactive with client-side persistent storage (`localStorage`):
+### 1. Daily Practice Streak (🔥)
+- **Header Flame Indicator**: Displays current consecutive days streak with pulsing fire animations.
+- **Study Activity Modal**:
+  - **Dynamic Streak Counter**: Tracks days active with motivational engineering mathematics quotes.
+  - **Daily Goal Tracker**: Set custom targets (3, 5, 10, or 15 questions/day) with real-time animated progress bars.
+  - **30-Day Activity Heatmap**: Interactive GitHub / MARKS style contribution grid showing daily study intensity with tooltips.
+  - **All-Time Records**: Best streak, active days count, and total solved questions counters.
 
-- **Live Study Dashboard**: Circular completion ring, overall syllabus progress percentage, and metric cards for Topics Studied, Practice Questions Solved, Flashcards Mastered, and Labs Explored.
-- **Topic Completion Tracking**: Mark topics complete with a single click (`Topic Completed ✓`); topic badges dynamically update in real time.
-- **Chapter Roadmap Progress Bars**: Visual progress indicators for all 7 chapters showing exact percentage and topic counts.
-- **Active Recall Rating**: Rate practice questions with **Recalled ✓** or **Reviewing** to keep track of difficult exam concepts.
-- **Auto-Saved Lab Exploration**: Automatically marks live interactive 60 FPS simulations explored as students interact with them.
-- **Study Analytics Modal**: Full syllabus breakdown, "Resume Where You Left Off" quick navigation, and JSON backup **Export** and **Import** tools.
-
----
-
-## 📚 Curriculum & Features
-
-### 1. 7 Core Chapters
-- **Chapter 0 — Pre-Requisite Basics & Foundation Toolkit**: Trig identities, hyperbolic definitions, key integrals, Gamma function, and Heaviside Cover-Up Rule.
-- **CO1 — Multivariable Calculus & Series Expansions**: 2D limits, path tests, Euler's theorem for homogeneous functions, 1D & 2D Taylor/Maclaurin series, $\Delta = rt - s^2$ extrema, Lagrange multipliers.
-- **CO2 — First-Order Ordinary Differential Equations**: Separable, homogeneous, reducible, exact ODEs with all 4 Integrating Factor rules, linear ODEs, and Bernoulli equations.
-- **CO3 — Mathematical Modeling with 1st-Order ODEs**: Mixing tanks, two-tank cascades, air circulation, Newton's law of cooling with ratio shortcuts.
-- **CO4 — Second & Higher-Order Linear ODEs**: Characteristic roots, Cauchy-Euler, Legendre, Method of Undetermined Coefficients, Variation of Parameters, and mechanical/electrical resonance.
-- **CO5 — Series Solutions & Special Functions**: Ordinary & regular singular points, Frobenius method, Bessel functions $J_n(x)$, Legendre polynomials $P_n(x)$, generating functions and orthogonality.
-- **CO6 — Laplace & Inverse Laplace Transforms**: Standard transforms, $s$-shift, $t$-shift (Heaviside step $u(t-a)$), Dirac delta $\delta(t-a)$, $t$-multiplication, $t$-division, periodic functions, convolution theorem, and IVP solving.
-
-### 2. 150 Interactive Flashcards
-- Smooth 3D flip card animations with KaTeX mathematical formulas on front and back.
-- Interactive category filtering, shuffle mode, and mastery tracking.
-
-### 3. 150 Worked Practice Questions
-- Step-by-step fully worked analytical solutions for 1M, 4M, and 6M problems.
-- Rigorous intermediate steps typeset in LaTeX with "Recalled" / "Reviewing" self-assessment buttons.
-
-### 4. 100 Live Animated Math Labs
-- Real-time HTML5 Canvas interactive 60 FPS simulations.
-- Responsive parameter sliders, vector field visualizers, tangent line tracers, phase portraits, and dynamic trajectory generators.
-
-### 5. Master Cheat Sheet & Search
-- Quick-reference formula studio with responsive master comparison tables.
-- Instant keyboard-accessible modal search (`/` or `Ctrl+K`) spanning all chapters, formulas, and flashcards.
-- Seamless Dark / Light mode toggle.
-- PWA-ready: Installable on iOS and Android devices via `manifest.json`.
+### 2. Smart Notebooks & Student Margin Notes
+- **Question Categorization Buckets**:
+  - 🔴 **Tricky Trap**: Questions with subtle edge cases or calculation pitfalls.
+  - 🟡 **High-Yield 4M/6M**: Frequently repeated university examination questions.
+  - 🟢 **Exam Eve Priority**: High-priority questions for rapid review before test day.
+- **Personal Margin Scratchpads**: Expandable markdown/note scratchpads on every question card with auto-saving to local storage.
+- **Formula Studio Question Filters**: Filter questions instantly by `All Qs`, `1M Rapid`, `4M Standard`, `Review Needed`, `📓 My Notes`, `🔴 Trap`, `🟡 High-Yield`, or `🟢 Exam Eve`.
 
 ---
 
-## 🛠️ Tech Stack
+## 🎯 Testing Center & University Exam Simulator
 
-- **Markup & Layout**: Semantic HTML5 & [Tailwind CSS](https://tailwindcss.com/)
-- **Typesetting**: [KaTeX](https://katex.org/) for rapid LaTeX formula rendering
-- **Icons**: [Lucide Icons](https://lucide.dev/)
-- **Visual Simulations**: HTML5 Canvas API (60fps interactive animations)
-- **Client Storage**: `localStorage` JSON state engine with import/export capabilities
-- **Deployment**: [Vercel](https://vercel.com) static hosting with clean URLs and security headers
+### Feature 1: Custom Test Generator & Quick Quiz Mode
+- **Multi-Chapter Filtering**: Select any combination from Ch. 0 through CO6 with single-click "Select All" / "Clear All" controls.
+- **Marks Selection**: Choose `All Marks`, `1M Rapid Sprint`, `4M Standard Analytical`, or `6M Comprehensive`.
+- **Quiz Sizes**: Quick Sprint (5 Qs), Standard Practice (10 Qs), or Full Section Challenge (20 Qs).
+- **Practice Mode vs. Test Mode**:
+  - 💡 **Practice Mode**: Instant step-by-step KaTeX worked solution and hint available after every attempt.
+  - ⏱️ **Test Mode**: Solutions hidden until final submission, real-time countdown timer, and NTA CBT question palette.
+
+### Feature 2: 50 Marks · 150 Min University End-Semester Simulator
+- **Official University Blueprint**:
+  - **Section A (10 Marks Compulsory)**: 10 Rapid Conceptual Questions (1M each, covering CO1 through CO6).
+  - **Section B (12 Marks Analytical)**: 3 Questions × 4 Marks (CO1 Multivariable, CO2 First Order ODE, CO3 Modeling).
+  - **Section C (16 Marks Advanced)**: 4 Questions × 4 Marks (CO4 Power Series & Frobenius, CO5 Fourier Series).
+  - **Section D (12 Marks Laplace Master)**: 2 Questions × 6 Marks (CO6 Laplace Transforms, IVPs & Convolutions).
+- **NTA / MARKS App CBT Question Palette**:
+  - ⚪ **Grey**: Not Visited
+  - 🔴 **Red**: Visited but Unanswered
+  - 🟢 **Green**: Answered
+  - 🟣 **Purple**: Marked for Review
+  - 🟣🟢 **Purple with Dot**: Answered & Marked for Review
+- **Live Countdown Timer**: 150:00 countdown timer with amber visual warning at 30 minutes and red pulsing alert at 10 minutes.
+- **Digital Scratchpad**: In-exam student scratchpad with "Solved on paper" confirmation and confidence ratings (`🟢 High`, `🟡 Moderate`, `🔴 Guess`).
+- **Post-Exam Scorecard & Analytics**:
+  - Score ring gauge and university letter grades (`O · Outstanding`, `E · Excellent`, `A · Very Good`, `B · Good`, `C · Average`).
+  - Performance breakdown by Course Outcome (CO1–CO6) and question marks (1M, 4M, 6M).
+  - Comprehensive question review with step-by-step LaTeX worked solutions and "Add to Notebook" buttons.
 
 ---
 
-## 💻 Local Development
+## 📚 Core Curriculum & Chapters
 
-Run with any static file server:
+1. **Chapter 0 — Pre-Requisite Basics & Foundation Toolkit**: Trig power-reduction, hyperbolic definitions, key integrals, Gamma function, and Heaviside Cover-Up Rule.
+2. **CO1 — Multivariable Calculus & Series Expansions**: 2D limits, path tests, Euler's theorem, 1D & 2D Taylor series, $\Delta = rt - s^2$ extrema, Lagrange multipliers.
+3. **CO2 — First-Order Ordinary Differential Equations**: Separable, homogeneous, exact ODEs with all 4 Integrating Factor rules, linear ODEs, Bernoulli equations.
+4. **CO3 — Mathematical Modeling with 1st-Order ODEs**: Mixing tanks, two-tank cascades, Newton's law of cooling with ratio shortcuts, orthogonal trajectories.
+5. **CO4 — Second-Order & Higher-Order Linear ODEs**: Auxiliary equations, Pure Resonance, Method of Undetermined Coefficients, Variation of Parameters, Cauchy-Euler equations, RLC electrical circuits.
+6. **CO5 — Power Series Solutions & Special Functions**: Radius of convergence (Ratio and Root tests), ordinary vs. singular points, Legendre's ODE, Rodrigues formula, Airy equation.
+7. **CO6 — Laplace & Inverse Laplace Transforms**: Exponential order, $s$-shifting, $t$-multiplication, $t$-division, Dirac delta, unit step function, Convolution Theorem, solving IVPs.
 
-```bash
-# Using Node.js
-npx serve .
+---
 
-# Using Python
-python -m http.server 3000
-```
+## 🛠️ Tech Stack & Architecture
 
-Open `http://localhost:3000` in your web browser.
+- **Vanilla HTML5, Tailwind CSS, JavaScript (ES6+)**: Zero runtime framework overhead, 60 FPS buttery smooth transitions.
+- **KaTeX**: Blazing fast client-side LaTeX mathematics rendering.
+- **PWA Service Worker (`sw.js`)**: Full offline caching of local application assets, question bank, and CDN libraries.
+- **Client-Side Persistence (`localStorage`)**: Daily streak, custom notebook tags, student margin notes, completed topics, flashcards, labs, and exam history.
+- **Vercel Edge Network**: Clean static routing, immutable asset caching, and automated Git continuous deployment.
 
 ---
 
 ## 📄 License
 
-This project is open-source under the MIT License.
+MIT License — Built for engineering mathematics students worldwide.
