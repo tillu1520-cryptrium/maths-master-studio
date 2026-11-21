@@ -792,6 +792,12 @@
           state.studentNotes = parsed.studentNotes || {};
           state.questionBuckets = parsed.questionBuckets || {};
           state.testHistory = parsed.testHistory || [];
+          try {
+            const extraRecords = JSON.parse(localStorage.getItem('mms_test_records') || '[]');
+            if (Array.isArray(extraRecords) && extraRecords.length > state.testHistory.length) {
+              state.testHistory = extraRecords;
+            }
+          } catch (e) {}
 
           // Verify streak validity on startup
           const today = new Date().toISOString().split('T')[0];
@@ -825,6 +831,9 @@
           questionBuckets: state.questionBuckets,
           testHistory: state.testHistory
         }));
+        if (state.testHistory && state.testHistory.length > 0) {
+          localStorage.setItem('mms_test_records', JSON.stringify(state.testHistory));
+        }
       } catch (e) {}
     }
 
@@ -1958,6 +1967,68 @@
 
 // We will construct the complete test studio script and test its syntax using node's vm
     // =========================================================================
+    // =========================================================================
+    // UNLIMITED NON-REPETITIVE QUESTION SELECTION ENGINE
+    // =========================================================================
+    function getTestedQuestionHistory() {
+      try {
+        return JSON.parse(localStorage.getItem('mms_tested_qids') || '{}');
+      } catch (e) {
+        return {};
+      }
+    }
+
+    function recordQuestionsTested(qids) {
+      try {
+        const hist = getTestedQuestionHistory();
+        qids.forEach(qid => {
+          hist[qid] = (hist[qid] || 0) + 1;
+        });
+        localStorage.setItem('mms_tested_qids', JSON.stringify(hist));
+      } catch (e) {}
+    }
+
+    function resetQuestionExposureHistory() {
+      try {
+        localStorage.removeItem('mms_tested_qids');
+      } catch (e) {}
+    }
+
+    function getNonRepetitiveQuestions(pool, targetCount) {
+      if (!pool || pool.length === 0) return [];
+      const history = getTestedQuestionHistory();
+
+      // Group candidate pool into tiers based on exposure count
+      const tiers = {};
+      pool.forEach(q => {
+        const count = history[q.id] || 0;
+        if (!tiers[count]) tiers[count] = [];
+        tiers[count].push(q);
+      });
+
+      // Sort tiers ascending: Tier 0 (unseen) first, then Tier 1, Tier 2, etc.
+      const sortedTiers = Object.keys(tiers).map(Number).sort((a, b) => a - b);
+      const selected = [];
+
+      for (const tier of sortedTiers) {
+        // Shuffle within tier for maximum variety
+        const shuffledTier = [...tiers[tier]].sort(() => 0.5 - Math.random());
+        for (const q of shuffledTier) {
+          if (selected.length < targetCount) {
+            selected.push(q);
+          } else {
+            break;
+          }
+        }
+        if (selected.length >= targetCount) break;
+      }
+
+      // Record exposure
+      recordQuestionsTested(selected.map(q => q.id));
+      return selected;
+    }
+
+    // =========================================================================
     // CBT TEST STUDIO & 50M UNIVERSITY EXAM SIMULATOR ENGINE
     // =========================================================================
     function startCustomTest() {
@@ -1973,9 +2044,9 @@
       }
       if (pool.length === 0) pool = EXAM_BANK;
 
-      // Shuffle pool
-      const shuffled = [...pool].sort(() => 0.5 - Math.random()).slice(0, targetCount);
-      const questions = shuffled.map((q, i) => ({
+      // Select non-repetitive questions prioritizing unattempted questions
+      const selected = getNonRepetitiveQuestions(pool, targetCount);
+      const questions = selected.map((q, i) => ({
         ...q,
         qNum: i + 1,
         sectionId: 'main',
@@ -2039,19 +2110,19 @@
       // 50 Marks · 150 Min University End-Semester Examination Simulator
       // Sec A: 10 x 1M Conceptual Questions (Compulsory)
       const pool1M = EXAM_BANK.filter(q => q.marks === 1);
-      const secA = [...pool1M].sort(() => 0.5 - Math.random()).slice(0, 10);
+      const secA = getNonRepetitiveQuestions(pool1M, 10);
 
       // Sec B: 3 x 4M Analytical Questions (CO1, CO2, CO3)
       const poolB = EXAM_BANK.filter(q => q.marks === 4 && ['co1', 'co2', 'co3'].includes(q.co));
-      const secB = [...poolB].sort(() => 0.5 - Math.random()).slice(0, 3);
+      const secB = getNonRepetitiveQuestions(poolB, 3);
 
       // Sec C: 4 x 4M Advanced Questions (CO4, CO5, CO6)
       const poolC = EXAM_BANK.filter(q => (q.marks === 4 || q.marks === 6) && ['co4', 'co5'].includes(q.co));
-      const secC = [...poolC].sort(() => 0.5 - Math.random()).slice(0, 4);
+      const secC = getNonRepetitiveQuestions(poolC, 4);
 
       // Sec D: 2 x 6M Laplace & Applications (CO6)
       const poolD = EXAM_BANK.filter(q => q.co === 'co6' && (q.marks === 6 || q.marks === 4));
-      const secD = [...poolD].sort(() => 0.5 - Math.random()).slice(0, 2);
+      const secD = getNonRepetitiveQuestions(poolD, 2);
 
       const questions = [
         ...secA.map((q, i) => ({ ...q, qNum: i + 1, sectionId: 'secA', sectionTitle: 'Section A · 10M Rapid Conceptual (Compulsory)' })),
@@ -2272,7 +2343,11 @@
 
       state.testScorecard = scorecard;
       state.testHistory.unshift(scorecard);
-      if (state.testHistory.length > 20) state.testHistory.pop();
+      if (state.testHistory.length > 50) state.testHistory.pop();
+
+      try {
+        localStorage.setItem('mms_test_records', JSON.stringify(state.testHistory));
+      } catch (e) {}
 
       // Record daily streak activity only for actual correct answers or attempts
       recordActivity('exam', Math.max(1, correctCount));
@@ -2303,6 +2378,19 @@
       }
 
       const activeTab = state.testTab || 'endsem';
+      const historyFilter = state.testHistoryFilter || 'all';
+
+      const testedHistory = getTestedQuestionHistory();
+      const uniqueTestedCount = Object.keys(testedHistory).length;
+      const totalBankQuestions = Math.max(318, (window.EXAM_BANK && window.EXAM_BANK.length) || EXAM_BANK.length || 318);
+      const exposurePct = Math.round((uniqueTestedCount / totalBankQuestions) * 100);
+      const remainingFresh = Math.max(0, totalBankQuestions - uniqueTestedCount);
+
+      const filteredHistory = history.filter(item => {
+        if (historyFilter === 'endsem') return item.isEndSem;
+        if (historyFilter === 'custom') return !item.isEndSem;
+        return true;
+      });
 
       container.innerHTML = `
         <div class="space-y-6 animate-in fade-in duration-300">
@@ -2323,7 +2411,7 @@
               <!-- Quick Metrics -->
               <div class="grid grid-cols-3 gap-2.5 shrink-0">
                 <div class="p-3 rounded-2xl bg-white/5 border border-white/10 text-center">
-                  <div class="text-xl sm:text-2xl font-mono font-bold text-cyan-400">${EXAM_BANK.length || 440}+</div>
+                  <div class="text-xl sm:text-2xl font-mono font-bold text-cyan-400">${totalBankQuestions}+</div>
                   <div class="text-[10px] text-slate-400 font-medium">Question Pool</div>
                 </div>
                 <div class="p-3 rounded-2xl bg-white/5 border border-white/10 text-center">
@@ -2339,20 +2427,157 @@
           </div>
 
           <!-- Mode Selector Tabs -->
-          <div class="flex items-center gap-2 border-b border-slate-200 dark:border-slate-800 pb-2">
-            <button data-switch-test-tab="endsem" class="px-4 py-2 rounded-xl text-xs sm:text-sm font-bold flex items-center gap-2 transition-all ${activeTab === 'endsem' ? 'bg-indigo-600 text-white shadow-sm' : 'ed-card text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800'}">
+          <div class="flex items-center gap-2 border-b border-slate-200 dark:border-slate-800 pb-2 overflow-x-auto no-scrollbar">
+            <button data-switch-test-tab="endsem" class="px-4 py-2 rounded-xl text-xs sm:text-sm font-bold flex items-center gap-2 shrink-0 transition-all ${activeTab === 'endsem' ? 'bg-indigo-600 text-white shadow-sm' : 'ed-card text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800'}">
               <i data-lucide="award" class="w-4 h-4"></i>
               <span>50M · 150 Min End-Semester Simulator</span>
               <span class="px-1.5 py-0.5 rounded text-[10px] bg-amber-400 text-slate-900 font-mono font-extrabold uppercase">Official</span>
             </button>
-            <button data-switch-test-tab="custom" class="px-4 py-2 rounded-xl text-xs sm:text-sm font-bold flex items-center gap-2 transition-all ${activeTab === 'custom' ? 'bg-indigo-600 text-white shadow-sm' : 'ed-card text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800'}">
+            <button data-switch-test-tab="custom" class="px-4 py-2 rounded-xl text-xs sm:text-sm font-bold flex items-center gap-2 shrink-0 transition-all ${activeTab === 'custom' ? 'bg-indigo-600 text-white shadow-sm' : 'ed-card text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800'}">
               <i data-lucide="sliders" class="w-4 h-4"></i>
               <span>Custom Test Generator & Quick Quiz</span>
             </button>
+            <button data-switch-test-tab="history" class="px-4 py-2 rounded-xl text-xs sm:text-sm font-bold flex items-center gap-2 shrink-0 transition-all ${activeTab === 'history' ? 'bg-indigo-600 text-white shadow-sm' : 'ed-card text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800'}">
+              <i data-lucide="history" class="w-4 h-4"></i>
+              <span>Past Test History & Archives</span>
+              ${history.length > 0 ? `<span class="px-1.5 py-0.5 rounded text-[10px] bg-indigo-500/20 text-indigo-400 font-mono font-bold">${history.length}</span>` : ''}
+            </button>
           </div>
 
-          <!-- Tab 1: 50M End-Semester Exam Simulator -->
-          ${activeTab === 'endsem' ? `
+          <!-- Tab Content Selection -->
+          ${activeTab === 'history' ? `
+            <!-- Tab 3: Performance Archives & Past Test History -->
+            <div class="space-y-6">
+              <!-- Telemetry Header Card -->
+              <div class="ed-card rounded-2xl p-6 space-y-5 border-l-4 border-l-indigo-600">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                  <div>
+                    <h2 class="text-lg font-bold flex items-center gap-2">
+                      <i data-lucide="bar-chart-2" class="w-5 h-5 text-indigo-500"></i>
+                      <span>Student Examination History & Performance Telemetry</span>
+                    </h2>
+                    <p class="text-xs text-slate-500 mt-1">Review comprehensive scorecards, time expenditure, question accuracy, and silly mistake diagnostics.</p>
+                  </div>
+                  <button data-action="reset-question-exposure" class="px-3.5 py-2 rounded-xl text-xs font-bold border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300 flex items-center gap-1.5 transition-all shadow-sm shrink-0 cursor-pointer">
+                    <i data-lucide="rotate-ccw" class="w-3.5 h-3.5 text-indigo-500"></i>
+                    <span>Reset Question Exposure Tracker</span>
+                  </button>
+                </div>
+
+                <!-- Exposure Progress Bar -->
+                <div class="p-4 rounded-xl bg-indigo-50/70 dark:bg-indigo-950/30 border border-indigo-200/60 dark:border-indigo-800/40 space-y-2">
+                  <div class="flex items-center justify-between text-xs">
+                    <span class="font-bold text-indigo-900 dark:text-indigo-200 flex items-center gap-1.5">
+                      <span>🚀 Question Bank Exposure (Non-Repetitive Mode):</span>
+                    </span>
+                    <span class="font-mono font-bold text-indigo-600 dark:text-indigo-400">
+                      ${uniqueTestedCount} / ${totalBankQuestions} Unique Questions Attempted (${exposurePct}%)
+                    </span>
+                  </div>
+                  <div class="w-full h-2 rounded-full bg-slate-200 dark:bg-slate-800 overflow-hidden">
+                    <div class="h-full bg-gradient-to-r from-indigo-500 to-cyan-400 rounded-full transition-all duration-500" style="width: ${Math.min(100, exposurePct)}%"></div>
+                  </div>
+                  <div class="flex items-center justify-between text-[11px] text-slate-500">
+                    <span>${remainingFresh} fresh questions available before cycling</span>
+                    <span class="text-emerald-500 font-semibold">100% Non-Repetitive Testing Active</span>
+                  </div>
+                </div>
+
+                <!-- Filter Pills -->
+                <div class="flex items-center gap-2 pt-2 border-t border-slate-200 dark:border-slate-800">
+                  <span class="text-xs font-bold text-slate-500">Filter Records:</span>
+                  ${[
+                    { id: 'all', label: 'All Records (' + history.length + ')' },
+                    { id: 'endsem', label: '50M End-Semester' },
+                    { id: 'custom', label: 'Custom Quizzes' }
+                  ].map(f => `
+                    <button data-filter-history-type="${f.id}" class="px-3 py-1 rounded-lg text-xs font-bold border transition-all ${historyFilter === f.id ? 'bg-indigo-600 text-white border-indigo-700 shadow-sm' : 'ed-card text-slate-600 dark:text-slate-300 hover:text-indigo-600'}">
+                      ${f.label}
+                    </button>
+                  `).join('')}
+                </div>
+              </div>
+
+              <!-- Records List -->
+              ${filteredHistory.length > 0 ? `
+                <div class="space-y-3">
+                  ${filteredHistory.map((item, histIdx) => {
+                    const origIdx = history.indexOf(item);
+                    return `
+                      <div class="ed-card rounded-2xl p-5 border transition-all hover:border-indigo-400 shadow-sm space-y-3">
+                        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-200 dark:border-slate-800 pb-3">
+                          <div class="flex items-center gap-2">
+                            <span class="px-2.5 py-0.5 rounded-md text-[10px] font-mono font-bold ${item.isEndSem ? 'bg-amber-400 text-slate-900' : 'bg-indigo-500/15 text-indigo-600 dark:text-indigo-400'} uppercase">
+                              ${item.isEndSem ? '50M Official' : 'Custom Quiz'}
+                            </span>
+                            <h3 class="text-sm font-bold text-slate-900 dark:text-white">${escHtml(item.testTitle)}</h3>
+                          </div>
+                          <div class="flex items-center gap-2 text-xs font-mono text-slate-400">
+                            <i data-lucide="calendar" class="w-3.5 h-3.5"></i>
+                            <span>${item.date}</span>
+                          </div>
+                        </div>
+
+                        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
+                          <div class="p-2.5 rounded-xl bg-slate-50 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800">
+                            <div class="text-[10px] text-slate-400 uppercase font-mono">Score & Result</div>
+                            <div class="text-base font-mono font-extrabold ${item.percentage >= 70 ? 'text-emerald-500' : 'text-amber-500'}">
+                              ${item.score} / ${item.totalMarks} <span class="text-xs font-normal text-slate-400">(${item.percentage}%)</span>
+                            </div>
+                          </div>
+                          <div class="p-2.5 rounded-xl bg-slate-50 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800">
+                            <div class="text-[10px] text-slate-400 uppercase font-mono">Time Invested</div>
+                            <div class="text-base font-mono font-bold text-slate-700 dark:text-slate-200">
+                              ${Math.floor(item.timeTakenSec / 60)}m ${item.timeTakenSec % 60}s
+                            </div>
+                          </div>
+                          <div class="p-2.5 rounded-xl bg-slate-50 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800">
+                            <div class="text-[10px] text-slate-400 uppercase font-mono">Attempt Accuracy</div>
+                            <div class="text-base font-mono font-bold text-indigo-500">
+                              ${item.answeredCount > 0 ? Math.round((item.correctCount / item.answeredCount) * 100) : 0}%
+                            </div>
+                          </div>
+                          <div class="p-2.5 rounded-xl bg-slate-50 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800">
+                            <div class="text-[10px] text-slate-400 uppercase font-mono">Breakdown</div>
+                            <div class="text-xs font-mono font-semibold pt-1 flex items-center gap-1.5">
+                              <span class="text-emerald-500">🟢 ${item.correctCount}</span>
+                              <span class="text-rose-500">🔴 ${item.incorrectCount}</span>
+                              <span class="text-slate-400">⚪ ${item.unattemptedCount}</span>
+                            </div>
+                          </div>
+                        </div>
+
+                        <div class="flex items-center justify-end gap-2 pt-2">
+                          <button data-delete-history-test="${origIdx}" class="px-3 py-1.5 rounded-xl text-xs font-bold text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-950/40 border border-transparent hover:border-rose-200 transition-all flex items-center gap-1 cursor-pointer">
+                            <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+                            <span>Delete</span>
+                          </button>
+                          <button data-view-history-scorecard="${origIdx}" class="px-4 py-1.5 rounded-xl text-xs font-bold bg-indigo-600 hover:bg-indigo-700 text-white flex items-center gap-1.5 transition-all shadow-sm active:scale-95 cursor-pointer">
+                            <i data-lucide="file-text" class="w-3.5 h-3.5"></i>
+                            <span>Review Full Scorecard & LaTeX Solutions</span>
+                          </button>
+                        </div>
+                      </div>
+                    `;
+                  }).join('')}
+                </div>
+              ` : `
+                <div class="ed-card rounded-2xl p-12 text-center space-y-4">
+                  <div class="w-16 h-16 rounded-2xl bg-indigo-500/10 text-indigo-500 mx-auto flex items-center justify-center text-2xl">
+                    <i data-lucide="clipboard-list" class="w-8 h-8"></i>
+                  </div>
+                  <div>
+                    <h3 class="text-base font-bold">No Examination Records Found</h3>
+                    <p class="text-xs text-slate-500 max-w-sm mx-auto mt-1">Take your first 50M End-Semester Exam Simulator or launch a rapid 5-question Custom Quiz to start archiving your progress.</p>
+                  </div>
+                  <button data-switch-test-tab="endsem" class="px-5 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold inline-flex items-center gap-2 shadow-sm transition-all cursor-pointer">
+                    <i data-lucide="rocket" class="w-4 h-4"></i>
+                    <span>Take Official 50M Simulation</span>
+                  </button>
+                </div>
+              `}
+            </div>
+          ` : activeTab === 'endsem' ? `
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
               <!-- Left 2 Cols: Exam Blueprint Specification -->
               <div class="lg:col-span-2 space-y-4">
@@ -2468,24 +2693,23 @@
               <!-- 1. Chapters Selection -->
               <div class="space-y-3">
                 <div class="flex items-center justify-between text-xs">
-                  <span class="font-bold flex items-center gap-1.5"><i data-lucide="book" class="w-3.5 h-3.5 text-indigo-500"></i>Select Chapters:</span>
+                  <span class="font-bold text-slate-700 dark:text-slate-300">Select Modules / Chapters:</span>
                   <div class="flex items-center gap-2">
-                    <button data-action="custom-select-all-cos" class="text-indigo-600 dark:text-indigo-400 font-bold hover:underline">Select All</button>
+                    <button data-action="custom-select-all-cos" class="text-indigo-600 dark:text-indigo-400 hover:underline font-semibold cursor-pointer">Select All</button>
                     <span class="text-slate-300 dark:text-slate-700">|</span>
-                    <button data-action="custom-clear-all-cos" class="text-slate-400 hover:underline">Clear All</button>
+                    <button data-action="custom-clear-all-cos" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 font-semibold cursor-pointer">Clear</button>
                   </div>
                 </div>
-                <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2.5" id="customCosGrid">
-                  ${CHAPTERS.map(c => {
-                    const checked = state.testConfig.chapters.includes(c.id);
+
+                <div class="grid grid-cols-2 sm:grid-cols-3 gap-2.5">
+                  ${CHAPTERS.map(ch => {
+                    const isSelected = (state.testConfig.chapters || []).includes(ch.id);
                     return `
-                      <label class="flex items-center gap-2.5 p-2.5 rounded-xl border transition-all cursor-pointer ${checked ? 'bg-indigo-50 dark:bg-indigo-950/40 border-indigo-400/60 shadow-sm' : 'border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800/40'}">
-                        <input type="checkbox" data-co-checkbox="${c.id}" ${checked ? 'checked' : ''} class="w-4 h-4 rounded text-indigo-600 focus:ring-indigo-500">
+                      <label class="flex items-center gap-2.5 p-3 rounded-xl border cursor-pointer select-none transition-all ${isSelected ? 'border-indigo-500 bg-indigo-50/70 dark:bg-indigo-950/40 text-indigo-900 dark:text-indigo-200 font-bold' : 'border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-900/50'}">
+                        <input type="checkbox" data-custom-co-toggle="${ch.id}" ${isSelected ? 'checked' : ''} class="w-4 h-4 rounded text-indigo-600 focus:ring-indigo-500">
                         <div class="min-w-0">
-                          <div class="flex items-center gap-1.5">
-                            <span class="px-1.5 py-0.2 rounded text-[10px] font-mono font-bold text-white" style="background:${c.gradCss}">${c.co}</span>
-                            <span class="text-xs font-bold truncate">${c.shortTitle}</span>
-                          </div>
+                          <div class="text-xs uppercase font-mono">${ch.co}</div>
+                          <div class="text-[11px] text-slate-500 truncate font-normal">${ch.title}</div>
                         </div>
                       </label>
                     `;
@@ -2493,61 +2717,64 @@
                 </div>
               </div>
 
-              <!-- 2. Marks & Size Filters -->
-              <div class="grid grid-cols-1 md:grid-cols-3 gap-6 pt-2">
-                <!-- Marks Filter -->
-                <div class="space-y-2">
-                  <label class="text-xs font-bold block">Question Types / Marks:</label>
-                  <div class="grid grid-cols-2 gap-2" id="customMarksSelector">
-                    ${[
-                      { id: 'all', label: 'All Marks' },
-                      { id: '1M', label: '1M Rapid' },
-                      { id: '4M', label: '4M Standard' },
-                      { id: '6M', label: '6M Long' }
-                    ].map(m => {
-                      const sel = state.testConfig.marks === m.id;
-                      return `<button data-set-custom-marks="${m.id}" class="p-2 rounded-xl text-xs font-bold border transition-all ${sel ? 'bg-indigo-600 text-white border-indigo-700 shadow-sm' : 'ed-card text-slate-600 dark:text-slate-300 hover:border-indigo-400'}">${m.label}</button>`;
-                    }).join('')}
-                  </div>
-                </div>
-
-                <!-- Quiz Size -->
-                <div class="space-y-2">
-                  <label class="text-xs font-bold block">Quiz Size:</label>
-                  <div class="grid grid-cols-3 gap-2" id="customCountSelector">
-                    ${[
-                      { count: 5, label: '5 Qs', sub: 'Sprint' },
-                      { count: 10, label: '10 Qs', sub: 'Standard' },
-                      { count: 20, label: '20 Qs', sub: 'Section' }
-                    ].map(s => {
-                      const sel = state.testConfig.count === s.count;
-                      return `
-                        <button data-set-custom-count="${s.count}" class="p-2 rounded-xl border text-center transition-all ${sel ? 'bg-indigo-600 text-white border-indigo-700 shadow-sm' : 'ed-card text-slate-600 dark:text-slate-300 hover:border-indigo-400'}">
-                          <div class="text-xs font-bold">${s.label}</div>
-                          <div class="text-[10px] opacity-80">${s.sub}</div>
-                        </button>
-                      `;
-                    }).join('')}
-                  </div>
-                </div>
-
-                <!-- Mode -->
-                <div class="space-y-2">
-                  <label class="text-xs font-bold block">Session Mode:</label>
-                  <div class="grid grid-cols-2 gap-2">
-                    <button data-set-custom-mode="practice" class="p-2 rounded-xl border text-left transition-all ${state.testConfig.mode === 'practice' ? 'bg-emerald-600 text-white border-emerald-700 shadow-sm' : 'ed-card text-slate-600 dark:text-slate-300 hover:border-emerald-400'}">
-                      <div class="text-xs font-bold flex items-center gap-1"><span>💡</span> Practice</div>
-                      <div class="text-[10px] opacity-80 mt-0.5">Instant hints & solutions</div>
+              <!-- 2. Question Types Filter -->
+              <div class="space-y-2">
+                <label class="text-xs font-bold text-slate-700 dark:text-slate-300">Question Weightage:</label>
+                <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                  ${[
+                    { id: 'all', label: 'All Types (1M, 4M, 6M)', sub: 'Mixed Challenge' },
+                    { id: '1M', label: '1M Rapid', sub: 'Conceptual & Speed' },
+                    { id: '4M', label: '4M Standard', sub: 'Step-by-Step Analytical' },
+                    { id: '6M', label: '6M Long', sub: 'Comprehensive Derivations' }
+                  ].map(m => `
+                    <button data-set-custom-marks="${m.id}" class="p-3 rounded-xl border text-left transition-all ${state.testConfig.marks === m.id ? 'border-indigo-500 bg-indigo-50/70 dark:bg-indigo-950/40 shadow-sm' : 'border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-900/50'}">
+                      <div class="text-xs font-bold ${state.testConfig.marks === m.id ? 'text-indigo-600 dark:text-indigo-400' : 'text-slate-700 dark:text-slate-200'}">${m.label}</div>
+                      <div class="text-[10px] text-slate-400 mt-0.5">${m.sub}</div>
                     </button>
-                    <button data-set-custom-mode="test" class="p-2 rounded-xl border text-left transition-all ${state.testConfig.mode === 'test' ? 'bg-indigo-600 text-white border-indigo-700 shadow-sm' : 'ed-card text-slate-600 dark:text-slate-300 hover:border-indigo-400'}">
-                      <div class="text-xs font-bold flex items-center gap-1"><span>⏱️</span> CBT Test</div>
-                      <div class="text-[10px] opacity-80 mt-0.5">Timed, solutions on submit</div>
-                    </button>
-                  </div>
+                  `).join('')}
                 </div>
               </div>
 
-              <!-- Start Button -->
+              <!-- 3. Quiz Size Filter -->
+              <div class="space-y-2">
+                <label class="text-xs font-bold text-slate-700 dark:text-slate-300">Quiz Size (Questions):</label>
+                <div class="grid grid-cols-3 gap-2">
+                  ${[
+                    { count: 5, label: 'Quick Sprint', sub: '5 Questions · ~10 Min' },
+                    { count: 10, label: 'Standard Quiz', sub: '10 Questions · ~25 Min' },
+                    { count: 20, label: 'Full Section', sub: '20 Questions · ~50 Min' }
+                  ].map(s => `
+                    <button data-set-custom-count="${s.count}" class="p-3 rounded-xl border text-left transition-all ${state.testConfig.count === s.count ? 'border-indigo-500 bg-indigo-50/70 dark:bg-indigo-950/40 shadow-sm' : 'border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-900/50'}">
+                      <div class="text-xs font-bold ${state.testConfig.count === s.count ? 'text-indigo-600 dark:text-indigo-400' : 'text-slate-700 dark:text-slate-200'}">${s.label}</div>
+                      <div class="text-[10px] text-slate-400 mt-0.5">${s.sub}</div>
+                    </button>
+                  `).join('')}
+                </div>
+              </div>
+
+              <!-- 4. Mode Selection -->
+              <div class="space-y-2">
+                <label class="text-xs font-bold text-slate-700 dark:text-slate-300">Test Execution Mode:</label>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <button data-set-custom-mode="practice" class="p-4 rounded-xl border text-left transition-all ${state.testConfig.mode === 'practice' ? 'border-indigo-500 bg-indigo-50/70 dark:bg-indigo-950/40 shadow-sm' : 'border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-900/50'}">
+                    <div class="flex items-center gap-2">
+                      <span class="text-base">💡</span>
+                      <span class="text-xs font-bold ${state.testConfig.mode === 'practice' ? 'text-indigo-600 dark:text-indigo-400' : 'text-slate-700 dark:text-slate-200'}">Practice Mode</span>
+                    </div>
+                    <p class="text-[11px] text-slate-500 mt-1.5 leading-relaxed">Method strategic hints available during quiz. Complete step-by-step KaTeX worked solutions unlocked upon submission.</p>
+                  </button>
+
+                  <button data-set-custom-mode="test" class="p-4 rounded-xl border text-left transition-all ${state.testConfig.mode === 'test' ? 'border-indigo-500 bg-indigo-50/70 dark:bg-indigo-950/40 shadow-sm' : 'border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-900/50'}">
+                    <div class="flex items-center gap-2">
+                      <span class="text-base">⏱️</span>
+                      <span class="text-xs font-bold ${state.testConfig.mode === 'test' ? 'text-indigo-600 dark:text-indigo-400' : 'text-slate-700 dark:text-slate-200'}">Timed Test Mode</span>
+                    </div>
+                    <p class="text-[11px] text-slate-500 mt-1.5 leading-relaxed">Solutions & hints hidden until final submission. Real-time countdown timer simulates realistic exam pressure.</p>
+                  </button>
+                </div>
+              </div>
+
+              <!-- Launch Action -->
               <div class="pt-4 flex items-center justify-end">
                 <button data-action="launch-custom-quiz" class="py-3 px-6 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs sm:text-sm shadow-md hover:shadow-indigo-500/25 transition-all flex items-center gap-2 active:scale-95 cursor-pointer">
                   <i data-lucide="target" class="w-4 h-4"></i>
@@ -2556,38 +2783,10 @@
               </div>
             </div>
           `}
-
-          <!-- Past Test History Section -->
-          ${history.length > 0 ? `
-            <div class="space-y-3 pt-4">
-              <div class="flex items-center justify-between text-xs font-bold">
-                <span class="flex items-center gap-1.5"><i data-lucide="history" class="w-4 h-4 text-indigo-500"></i>Recent Examination Records</span>
-                <span class="text-slate-400 font-mono">${history.length} completed</span>
-              </div>
-              <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
-                ${history.slice(0, 6).map((item, idx) => `
-                  <div class="ed-card rounded-2xl p-4 flex flex-col justify-between gap-3 border transition-all hover:border-indigo-400">
-                    <div>
-                      <div class="flex items-center justify-between gap-2 mb-1.5">
-                        <span class="text-[10px] font-mono text-slate-400">${item.date}</span>
-                        <span class="px-2 py-0.5 rounded text-[10px] font-mono font-bold ${item.percentage >= 70 ? 'bg-emerald-500/15 text-emerald-600' : 'bg-amber-500/15 text-amber-600'}">${item.percentage}%</span>
-                      </div>
-                      <h4 class="text-xs font-bold leading-snug line-clamp-1">${escHtml(item.testTitle)}</h4>
-                      <div class="text-[11px] font-mono text-slate-500 mt-1">Score: ${item.score} / ${item.totalMarks} Marks · ${item.answeredCount} answered</div>
-                    </div>
-                    <button data-view-history-scorecard="${idx}" class="w-full py-1.5 rounded-lg border border-indigo-200 dark:border-indigo-800/80 text-indigo-600 dark:text-indigo-400 text-xs font-bold hover:bg-indigo-50 dark:hover:bg-indigo-950/40 transition-colors">
-                      View Scorecard & Solutions
-                    </button>
-                  </div>
-                `).join('')}
-              </div>
-            </div>
-          ` : ''}
         </div>
       `;
     }
 
-    // =========================================================================
     // ACTIVE CBT EXAM ENVIRONMENT (NTA / MARKS APP QUESTION PALETTE)
     // =========================================================================
     function renderCbtExamEnvironment(container) {
@@ -4546,6 +4745,41 @@
       }
 
       // View History Scorecard
+      // Filter History Type
+      const filterHist = e.target.closest('[data-filter-history-type]');
+      if (filterHist) {
+        state.testHistoryFilter = filterHist.dataset.filterHistoryType;
+        renderApp();
+        return;
+      }
+
+      // Reset Question Exposure History
+      const resetExposure = e.target.closest('[data-action="reset-question-exposure"]');
+      if (resetExposure) {
+        if (confirm('Reset your question exposure history? All 318 questions will be treated as fresh and unattempted.')) {
+          resetQuestionExposureHistory();
+          showToast('Question exposure history reset to 0!', 'success');
+          renderApp();
+        }
+        return;
+      }
+
+      // Delete History Record
+      const delHist = e.target.closest('[data-delete-history-test]');
+      if (delHist) {
+        const idx = Number(delHist.dataset.deleteHistoryTest);
+        if (state.testHistory && state.testHistory[idx] !== undefined) {
+          state.testHistory.splice(idx, 1);
+          saveState();
+          try {
+            localStorage.setItem('mms_test_records', JSON.stringify(state.testHistory));
+          } catch (e) {}
+          showToast('Examination record deleted.', 'info');
+          renderApp();
+        }
+        return;
+      }
+
       const viewHist = e.target.closest('[data-view-history-scorecard]');
       if (viewHist) {
         const idx = Number(viewHist.dataset.viewHistoryScorecard);
