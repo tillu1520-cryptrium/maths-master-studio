@@ -1,29 +1,22 @@
 /**
  * =========================================================================
- * MATHS MASTER STUDIO — GOOGLE APPS SCRIPT WEBHOOK FOR STUDENT LOGGING
+ * MATHS MASTER STUDIO — ADVANCED GOOGLE APPS SCRIPT WEBHOOK
+ * Tracks:
+ * 1. "Dashboard": Real-time counters (Unique Students, Total Sessions, Last Activity)
+ * 2. "Joined_Students": Unique Student Directory (First Joined, Last Login, Total Logins, Latest Activity)
+ * 3. "Session_Logs": Complete historical audit log of every login, browser refresh, test start, and test submission!
  * =========================================================================
  * 
- * HOW TO SET UP IN YOUR GOOGLE SHEET:
- * 1. Create a new Google Sheet (or open your existing Maths Master Studio sheet).
+ * SETUP INSTRUCTIONS:
+ * 1. Open your target Google Sheet (Maths-Master-Studio).
  * 2. Click "Extensions" > "Apps Script".
- * 3. Delete any code in the editor and paste THIS ENTIRE FILE.
- * 4. At the top of the script below, set WEBHOOK_SECRET to a secure password of your choice
- *    (e.g., "mms_secure_secret_2026").
- * 5. Click "Deploy" > "New deployment".
- * 6. Select Type: "Web app".
- * 7. Set:
- *    - Description: "Maths Master Studio Student Sync Webhook"
- *    - Execute as: "Me" (your Google account)
- *    - Who has access: "Anyone" (crucial so Vercel serverless function can post to it)
- * 8. Click "Deploy", authorize permissions when prompted, and copy the "Web app URL"
- *    (looks like https://script.google.com/macros/s/.../exec).
- * 9. Add the URL and Secret to your Vercel Environment Variables:
- *    - GOOGLE_SHEET_WEBHOOK_URL: <your-web-app-url>
- *    - GOOGLE_SHEET_WEBHOOK_SECRET: <your-chosen-secret>
+ * 3. Delete any previous code in the editor and PASTE THIS ENTIRE FILE.
+ * 4. Click "Deploy" > "Manage deployments".
+ * 5. Click the pencil icon to edit the active deployment, change Version to "New version", and click "Deploy"!
+ *    (Or click "Deploy" > "New deployment" > Web app > Access: Anyone > Deploy).
  * =========================================================================
  */
 
-// Define the matching secret expected from your Vercel serverless function
 var WEBHOOK_SECRET = "mms_2026";
 
 function doPost(e) {
@@ -47,6 +40,8 @@ function doPost(e) {
     var name = (data.name || "").trim();
     var email = (data.email || "").trim().toLowerCase();
     var authMethod = (data.authMethod || "Google").trim();
+    var activity = (data.activity || data.eventType || "Page Refresh / Visit").trim();
+    var device = (data.device || "Desktop / Browser").trim();
     var timestamp = data.timestamp || getFormattedISTDate();
 
     if (!email) {
@@ -68,7 +63,8 @@ function doPost(e) {
         "Email Address",
         "Auth Method",
         "Last Login (IST)",
-        "Login Count"
+        "Login Count",
+        "Latest Activity"
       ];
       studentsSheet.appendRow(headers);
       var headerRange = studentsSheet.getRange(1, 1, 1, headers.length);
@@ -98,24 +94,24 @@ function doPost(e) {
     var isNew = (foundRow === -1);
 
     if (isNew) {
-      // Append new student record
+      currentLogins = 1;
       studentsSheet.appendRow([
         timestamp,       // Col A: First Joined
         name,            // Col B: Name
         email,           // Col C: Email
         authMethod,      // Col D: Auth Method
         timestamp,       // Col E: Last Login
-        1                // Col F: Login Count
+        1,               // Col F: Login Count
+        activity         // Col G: Latest Activity
       ]);
-      // Format row font
       var newRowIdx = studentsSheet.getLastRow();
-      studentsSheet.getRange(newRowIdx, 1, 1, 6).setFontFamily("Inter");
+      studentsSheet.getRange(newRowIdx, 1, 1, 7).setFontFamily("Inter");
     } else {
-      // Existing student: update Last Login and increment Login Count
       var existingLogins = parseInt(studentsSheet.getRange(foundRow, 6).getValue(), 10) || 1;
       currentLogins = existingLogins + 1;
       studentsSheet.getRange(foundRow, 5).setValue(timestamp); // Col E: Last Login
       studentsSheet.getRange(foundRow, 6).setValue(currentLogins); // Col F: Count
+      studentsSheet.getRange(foundRow, 7).setValue(activity); // Col G: Latest Activity
 
       // Update name if previously blank or generic
       var existingName = studentsSheet.getRange(foundRow, 2).getValue();
@@ -124,18 +120,54 @@ function doPost(e) {
       }
     }
 
-    // 4. Update "Dashboard" tab metrics
+    // 4. Ensure "Session_Logs" Tab Exists & Record This Event Chronologically
+    var logsSheet = ss.getSheetByName("Session_Logs");
+    if (!logsSheet) {
+      logsSheet = ss.insertSheet("Session_Logs");
+      var logHeaders = [
+        "Timestamp (IST)",
+        "Student Name",
+        "Email Address",
+        "Activity / Event",
+        "Auth Method",
+        "Device / Browser",
+        "User Visit #"
+      ];
+      logsSheet.appendRow(logHeaders);
+      var logHeaderRange = logsSheet.getRange(1, 1, 1, logHeaders.length);
+      logHeaderRange.setBackground("#1e1b4b");
+      logHeaderRange.setFontColor("#ffffff");
+      logHeaderRange.setFontWeight("bold");
+      logHeaderRange.setFontFamily("Inter");
+      logHeaderRange.setHorizontalAlignment("center");
+      logsSheet.setFrozenRows(1);
+    }
+
+    logsSheet.appendRow([
+      timestamp,
+      name,
+      email,
+      activity,
+      authMethod,
+      device,
+      currentLogins
+    ]);
+    var newLogIdx = logsSheet.getLastRow();
+    logsSheet.getRange(newLogIdx, 1, 1, 7).setFontFamily("Inter");
+
+    // 5. Update "Dashboard" tab metrics
     updateDashboard(ss, timestamp);
 
     return responseJSON({
       status: "success",
-      message: isNew ? "Student registered successfully in Joined_Students" : "Student login updated in Joined_Students",
+      message: "Activity logged in Joined_Students & Session_Logs",
       student: {
         name: name,
         email: email,
         authMethod: authMethod,
+        activity: activity,
         isNew: isNew,
-        logins: isNew ? 1 : currentLogins,
+        logins: currentLogins,
         timestamp: timestamp
       }
     }, 200);
@@ -152,9 +184,12 @@ function updateDashboard(ss, lastActivity) {
   }
 
   var studentsSheet = ss.getSheetByName("Joined_Students");
+  var logsSheet = ss.getSheetByName("Session_Logs");
+
   var totalStudents = 0;
   var googleCount = 0;
   var emailCount = 0;
+  var totalSessions = logsSheet ? Math.max(0, logsSheet.getLastRow() - 1) : 0;
 
   if (studentsSheet && studentsSheet.getLastRow() > 1) {
     var data = studentsSheet.getRange(2, 4, studentsSheet.getLastRow() - 1, 1).getValues();
@@ -179,10 +214,11 @@ function updateDashboard(ss, lastActivity) {
   // Summary Metrics Table
   var metrics = [
     ["Metric", "Value", "Notes"],
-    ["Total Registered Students", totalStudents, "Unique students logged across all devices"],
+    ["Total Registered Students", totalStudents, "Unique students registered"],
+    ["Total Sessions & Refreshes Recorded", totalSessions, "Total live logins, visits and exam actions in Session_Logs"],
     ["Google Sign-In Accounts", googleCount, "Verified via Google OAuth"],
     ["Email/Password Accounts", emailCount, "Verified via Supabase Email Auth"],
-    ["Last Active Sync (IST)", lastActivity || getFormattedISTDate(), "Real-time webhook sync from Vercel"]
+    ["Last Active Sync (IST)", lastActivity || getFormattedISTDate(), "Real-time webhook sync from Maths Master Studio"]
   ];
 
   var range = dashSheet.getRange(3, 1, metrics.length, 3);
@@ -193,7 +229,7 @@ function updateDashboard(ss, lastActivity) {
   var metricHdr = dashSheet.getRange("A3:C3");
   metricHdr.setBackground("#4338ca").setFontColor("#ffffff").setFontWeight("bold");
 
-  dashSheet.getRange("B4:B6").setFontWeight("bold").setFontSize(12).setHorizontalAlignment("center").setFontColor("#312e81");
+  dashSheet.getRange("B4:B7").setFontWeight("bold").setFontSize(12).setHorizontalAlignment("center").setFontColor("#312e81");
 
   dashSheet.autoResizeColumns(1, 4);
 }

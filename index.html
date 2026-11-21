@@ -2256,6 +2256,14 @@
 
       renderApp();
       window.scrollTo({ top: 0, behavior: 'smooth' });
+      if (state.authUser && state.authUser.email) {
+        syncStudentToSheet({
+          name: state.authUser.name,
+          email: state.authUser.email,
+          authMethod: state.authUser.provider || 'Google',
+          activity: `Started Custom Quiz (${state.testConfig?.count || 5} Qs · ${state.testConfig?.mode || 'practice'})`
+        });
+      }
     }
 
     function startEndSemExam() {
@@ -2334,6 +2342,14 @@
 
       renderApp();
       window.scrollTo({ top: 0, behavior: 'smooth' });
+      if (state.authUser && state.authUser.email) {
+        syncStudentToSheet({
+          name: state.authUser.name,
+          email: state.authUser.email,
+          authMethod: state.authUser.provider || 'Google',
+          activity: 'Started End-Sem Simulator (50 Marks · 150 Min)'
+        });
+      }
     }
 
     function updateTimerDisplay() {
@@ -2521,6 +2537,15 @@
       try {
         localStorage.setItem('mms_test_records', JSON.stringify(state.testHistory));
       } catch (e) {}
+
+      if (state.authUser && state.authUser.email) {
+        syncStudentToSheet({
+          name: state.authUser.name,
+          email: state.authUser.email,
+          authMethod: state.authUser.provider || 'Google',
+          activity: `Exam Completed: Scored ${scorecard.score}/${scorecard.totalPossibleMarks} (${scorecard.percentage}%)`
+        });
+      }
 
       // Record daily streak activity only for actual correct answers or attempts
       recordActivity('exam', Math.max(1, correctCount));
@@ -5379,18 +5404,14 @@
         updateAuthUI();
       }
 
-      // Ensure existing logged-in user syncs to Google Sheet on session start
+      // Ensure existing logged-in user syncs to Google Sheet on every browser refresh / load
       if (state.authUser && state.authUser.email) {
-        const syncedSession = sessionStorage.getItem('mms_sheet_synced');
-        if (!syncedSession) {
-          syncStudentToSheet({
-            name: state.authUser.name,
-            email: state.authUser.email,
-            authMethod: state.authUser.provider || 'Google'
-          }).then(() => {
-            sessionStorage.setItem('mms_sheet_synced', 'true');
-          });
-        }
+        syncStudentToSheet({
+          name: state.authUser.name,
+          email: state.authUser.email,
+          authMethod: state.authUser.provider || 'Google',
+          activity: 'Browser Refresh / Page Visit'
+        });
       }
 
       wireAuthListeners();
@@ -5425,6 +5446,7 @@
         name: state.authUser.name,
         email: state.authUser.email,
         authMethod,
+        activity: 'Student Logged In (' + authMethod + ')',
         token: session.access_token
       });
 
@@ -5435,15 +5457,21 @@
       }
     }
 
-    async function syncStudentToSheet({ name, email, authMethod, token }) {
+    async function syncStudentToSheet({ name, email, authMethod, activity, eventType, token }) {
       try {
         const headers = { 'Content-Type': 'application/json' };
         if (token) headers['Authorization'] = `Bearer ${token}`;
 
+        const act = activity || eventType || 'Browser Refresh / Page Visit';
         const res = await fetch('/api/log-student', {
           method: 'POST',
           headers,
-          body: JSON.stringify({ name, email, authMethod })
+          body: JSON.stringify({
+            name,
+            email,
+            authMethod,
+            activity: act
+          })
         });
         const data = await res.json();
         return data;

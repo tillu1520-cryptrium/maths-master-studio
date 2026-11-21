@@ -12,7 +12,7 @@ export default async function handler(req, res) {
     return res.status(405).json({ error: 'Method not allowed. Use POST.' });
   }
 
-  const { name, email, authMethod } = req.body || {};
+  const { name, email, authMethod, eventType, activity, device } = req.body || {};
 
   if (!email) {
     return res.status(400).json({ error: 'Missing required field: email' });
@@ -48,11 +48,9 @@ export default async function handler(req, res) {
                            userData.email.split('@')[0];
           }
         }
-      } else {
-        console.warn('Supabase token verification note (status ' + userRes.status + ') - proceeding with student log.');
       }
     } catch (authErr) {
-      console.warn('Supabase Auth check caught error:', authErr.message);
+      console.warn('Supabase Auth check note:', authErr.message);
     }
   }
 
@@ -60,7 +58,25 @@ export default async function handler(req, res) {
     verifiedName = verifiedEmail.split('@')[0];
   }
 
-  // 2. Format IST Timestamp (Indian Standard Time: UTC + 5:30)
+  // 2. Parse User Agent / Device
+  const ua = req.headers['user-agent'] || '';
+  let os = 'Desktop';
+  if (/iphone|ipad|ipod/i.test(ua)) os = 'iOS';
+  else if (/android/i.test(ua)) os = 'Android';
+  else if (/macintosh|mac os x/i.test(ua)) os = 'macOS';
+  else if (/windows/i.test(ua)) os = 'Windows';
+  else if (/linux/i.test(ua)) os = 'Linux';
+
+  let browser = 'Browser';
+  if (/edg/i.test(ua)) browser = 'Edge';
+  else if (/chrome|crios/i.test(ua)) browser = 'Chrome';
+  else if (/firefox|fxios/i.test(ua)) browser = 'Firefox';
+  else if (/safari/i.test(ua)) browser = 'Safari';
+
+  const detectedDevice = device || `${os} · ${browser}`;
+  const detectedActivity = activity || eventType || 'Browser Refresh / Page Visit';
+
+  // 3. Format IST Timestamp (Indian Standard Time: UTC + 5:30)
   const now = new Date();
   const istOffset = 5.5 * 60 * 60 * 1000;
   const istDate = new Date(now.getTime() + istOffset);
@@ -75,7 +91,7 @@ export default async function handler(req, res) {
   h = h % 12 || 12;
   const istTimestamp = `${d}/${m}/${y} ${pad(h)}:${min}:${s} ${ampm} IST`;
 
-  // 3. Forward to Google Sheet Webhook (Server-to-Server)
+  // 4. Forward to Google Sheet Webhook (Server-to-Server)
   const webhookUrl = process.env.GOOGLE_SHEET_WEBHOOK_URL || 'https://script.google.com/macros/s/AKfycbyBfgpmjzCIpMB-4adXIHA1Bv5wRWqxOPzPZ42h1iCYAy4Nq7uxCrLxKVBhVYbQJxUj/exec';
   const webhookSecret = process.env.GOOGLE_SHEET_WEBHOOK_SECRET || 'mms_2026';
 
@@ -93,6 +109,8 @@ export default async function handler(req, res) {
           email: verifiedEmail,
           authMethod: authMethod || 'Google',
           timestamp: istTimestamp,
+          activity: detectedActivity,
+          device: detectedDevice,
           action: 'log_student'
         })
       });
@@ -115,6 +133,8 @@ export default async function handler(req, res) {
       name: verifiedName,
       email: verifiedEmail,
       authMethod: authMethod || 'Google',
+      activity: detectedActivity,
+      device: detectedDevice,
       timestamp: istTimestamp
     },
     sheetSync: sheetResponse,
