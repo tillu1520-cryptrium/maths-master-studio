@@ -60,23 +60,23 @@
     "options": [
       {
         "id": "A",
-        "text": "9"
+        "text": "y(t) = \\sin 2t"
       },
       {
         "id": "B",
-        "text": "6"
+        "text": "y(t) = -\\sin 2t"
       },
       {
         "id": "C",
-        "text": "3"
+        "text": "y(t) = \\sin 4t"
       },
       {
         "id": "D",
-        "text": "12"
+        "text": "y(t) = \\cos 2t"
       }
     ],
     "correctOption": "A",
-    "answer": "9",
+    "answer": "y(t) = \\sin 2t",
     "solution": "1. Compute first-order partial derivatives:\n$$\\frac{\\partial u}{\\partial x} = 2xy + z^2,\\quad \\frac{\\partial u}{\\partial y} = x^2 + 2yz,\\quad \\frac{\\partial u}{\\partial z} = y^2 + 2zx$$\n2. Sum the derivatives:\n$$\\frac{\\partial u}{\\partial x} + \\frac{\\partial u}{\\partial y} + \\frac{\\partial u}{\\partial z} = (x^2 + y^2 + z^2) + 2(xy + yz + zx)$$\n3. Evaluate at \\((1, 1, 1)\\):\n$$(1 + 1 + 1) + 2(1 + 1 + 1) = 3 + 6 = 9$$",
     "steps": [
       {
@@ -776,23 +776,23 @@
     "options": [
       {
         "id": "A",
-        "text": "C1"
+        "text": "y(t) = \\sin 2t"
       },
       {
         "id": "B",
-        "text": "-C1"
+        "text": "y(t) = -\\sin 2t"
       },
       {
         "id": "C",
-        "text": "2C1"
+        "text": "y(t) = \\sin 4t"
       },
       {
         "id": "D",
-        "text": "C1 + 1"
+        "text": "y(t) = \\cos 2t"
       }
     ],
     "correctOption": "A",
-    "answer": "C1",
+    "answer": "y(t) = \\sin 2t",
     "solution": "Separating variables in dy\ndx = e3xe2y:\n\\int \ne−2ydy =\n\\int \ne3xdx  \\implies  −1\n2e−2y = 1\n3e3x +C  \\implies \n2e3x + 3e−2y = C1.",
     "steps": [
       {
@@ -1550,23 +1550,23 @@
     "options": [
       {
         "id": "A",
-        "text": "0"
+        "text": "y(1) = 0 \\implies C =− 1 2e2, so y2(x) = 1 2x ( ex−e2−x)"
       },
       {
         "id": "B",
-        "text": "-0"
+        "text": "-y(1) = 0 \\implies C =− 1 2e2, so y2(x) = 1 2x ( ex−e2−x)"
       },
       {
         "id": "C",
-        "text": "20"
+        "text": "y(1) = 0 \\implies C =− 1 4e2, so y2(x) = 1 2x ( ex−e2−x)"
       },
       {
         "id": "D",
-        "text": "0 + 1"
+        "text": "y(1) = 0 \\implies C =− 1 2e2, so y2(x) = 1 2x ( ex−e2−x) + 1"
       }
     ],
     "correctOption": "A",
-    "answer": "",
+    "answer": "y(1) = 0 \\implies C =− 1 2e2, so y2(x) = 1 2x ( ex−e2−x)",
     "solution": "Dividing by x gives 2yy′ +\n(\n1− 1\nx\n)\ny2 =xex. Substitute u =y2  \\implies  u′ = 2yy′ to obtain the\nlinear ODE du\ndx +\n(\n1− 1\nx\n)\nu =xex with I.F. = ex−lnx = ex\nx . Multiplying and integrating:\nuex\nx =\n\\int \ne2xdx +C = 1\n2e2x +C  \\implies  y2 = 1\n2xex +Cxe−x.\nApplying y(1) = 0  \\implies  C =− 1\n2e2, so y2(x) = 1\n2x\n(\nex−e2−x)\n.",
     "steps": [
       {
@@ -1712,23 +1712,23 @@
     "options": [
       {
         "id": "A",
-        "text": "\\pi"
+        "text": "y(x) =x cscx, and y (\\pi 6 ) = \\pi 6· 2 = \\pi 3"
       },
       {
         "id": "B",
-        "text": "-\\pi"
+        "text": "-y(x) =x cscx, and y (\\pi 6 ) = \\pi 6· 2 = \\pi 3"
       },
       {
         "id": "C",
-        "text": "2\\pi"
+        "text": "y(x) =x cscx, and y (\\pi 6 ) = \\pi 6· 4 = \\pi 3"
       },
       {
         "id": "D",
-        "text": "\\pi + 1"
+        "text": "y(x) =x cscx, and y (\\pi 6 ) = \\pi 6· 2 = \\pi 3 + 1"
       }
     ],
     "correctOption": "A",
-    "answer": "\\pi",
+    "answer": "y(x) =x cscx, and y (\\pi 6 ) = \\pi 6· 2 = \\pi 3",
     "solution": "Notice the LHS is d\ndx(y sinx) = 1. Integrating gives y sinx = x +C. Applying y(\\pi /2) =\n\\pi /2  \\implies  \\pi \n2 (1) = \\pi \n2 +C  \\implies  C = 0. Thus y(x) =x cscx, and y\n(\\pi \n6\n)\n= \\pi \n6· 2 = \\pi \n3.",
     "steps": [
       {
@@ -2036,23 +2036,23 @@
     "options": [
       {
         "id": "A",
-        "text": "ln 5"
+        "text": "y(t) = 20,000(1−e−0"
       },
       {
         "id": "B",
-        "text": "-ln 5"
+        "text": "-y(t) = 20,000(1−e−0"
       },
       {
         "id": "C",
-        "text": "2ln 5"
+        "text": "y(t) = 40,000(1−e−0"
       },
       {
         "id": "D",
-        "text": "ln 5 + 1"
+        "text": "y(t) = 20,000(1−e−0 + 1"
       }
     ],
     "correctOption": "A",
-    "answer": "ln 5",
+    "answer": "y(t) = 20,000(1−e−0",
     "solution": "Let y(t) be the volume of fresh air (ft 3). Then dy\ndt = 600− 600\n20,000y = 600− 0.03y, y(0) = 0.\nWith I.F. = e0.03t, solving gives y(t) = 20,000(1−e−0.03t). Setting y = 0.80× 20,000:\n1−e−0.03t = 0.80  \\implies  e−0.03t = 1\n5  \\implies  t = ln 5\n0.03≈ 53.65 minutes.",
     "steps": [
       {
@@ -2090,23 +2090,23 @@
     "options": [
       {
         "id": "A",
-        "text": "ln 2"
+        "text": "y(t) = 200(1−e−0"
       },
       {
         "id": "B",
-        "text": "-ln 2"
+        "text": "-y(t) = 200(1−e−0"
       },
       {
         "id": "C",
-        "text": "ln 4"
+        "text": "y(t) = 400(1−e−0"
       },
       {
         "id": "D",
-        "text": "ln 2 + 1"
+        "text": "y(t) = 200(1−e−0 + 1"
       }
     ],
     "correctOption": "A",
-    "answer": "ln 2",
+    "answer": "y(t) = 200(1−e−0",
     "solution": "Rate in = 2 × 5 = 10 kg/min; rate out = 5\n100y = 0.05y. Solving dy\ndt + 0.05y = 10 with\ny(0) = 0 (I.F. = e0.05t) gives y(t) = 200(1−e−0.05t) kg. When y(t) = 100 kg: 1 −e−0.05t = 0.5  \\implies  t = ln 2\n0.05≈\n13.86 minutes.",
     "steps": [
       {
@@ -2144,23 +2144,23 @@
     "options": [
       {
         "id": "A",
-        "text": "402"
+        "text": "y(100) = 2(250)− 270 (150 250 )2 = 500− 97"
       },
       {
         "id": "B",
-        "text": "-402"
+        "text": "-y(100) = 2(250)− 270 (150 250 )2 = 500− 97"
       },
       {
         "id": "C",
-        "text": "404"
+        "text": "y(100) = 4(250)− 270 (150 250 )2 = 500− 97"
       },
       {
         "id": "D",
-        "text": "402 + 1"
+        "text": "y(100) = 2(250)− 270 (150 250 )2 = 500− 97 + 1"
       }
     ],
     "correctOption": "A",
-    "answer": "402",
+    "answer": "y(100) = 2(250)− 270 (150 250 )2 = 500− 97",
     "solution": "Volume at timet isV (t) = 300+(6−4)t = 300+2t. The ODE is dy\ndt + 2\n150 +ty = 6,y(0) = 30,\nwith I.F. = (150 +t)2. Integrating gives y(t)(150 +t)2 = 2(150 +t)3 +C. Using y(0) = 30  \\implies  C =−270(150)2. At\nt = 100 min: y(100) = 2(250)− 270\n(150\n250\n)2\n= 500− 97.2 = 402.8 kg.",
     "steps": [
       {
@@ -2780,23 +2780,23 @@
     "options": [
       {
         "id": "A",
-        "text": "N0(1"
+        "text": "N0(1.5)t)"
       },
       {
         "id": "B",
-        "text": "-N0(1"
+        "text": "-N0(1.5)t)"
       },
       {
         "id": "C",
-        "text": "2N0(1"
+        "text": "2N0(1.5)t)"
       },
       {
         "id": "D",
-        "text": "N0(1 + 1"
+        "text": "N0(1.5)t) + 1"
       }
     ],
     "correctOption": "A",
-    "answer": "N0(1",
+    "answer": "N0(1.5)t)",
     "solution": "Let N(t) be the bacteria count at time t (weeks): dN\ndt =kN, N(0) =N0, N(1) = 1.5N0\n(giving N(t) =N0(1.5)t).",
     "steps": [
       {
@@ -2830,23 +2830,23 @@
     "options": [
       {
         "id": "A",
-        "text": "3N0"
+        "text": "1 3N0"
       },
       {
         "id": "B",
-        "text": "-3N0"
+        "text": "-1 3N0"
       },
       {
         "id": "C",
-        "text": "6N0"
+        "text": "1 6N0"
       },
       {
         "id": "D",
-        "text": "3N0 + 1"
+        "text": "1 3N0 + 1"
       }
     ],
     "correctOption": "A",
-    "answer": "3N0",
+    "answer": "1 3N0",
     "solution": "Let N(t) be the insect population at time t (days): dN\ndt =−kN (k > 0), N(0) =\nN0, N(5) = 1\n3N0.",
     "steps": [
       {
@@ -2884,23 +2884,23 @@
     "options": [
       {
         "id": "A",
-        "text": "ln 2"
+        "text": "ln 2 1500≈ 4.621× 10−4 yr−1"
       },
       {
         "id": "B",
-        "text": "-ln 2"
+        "text": "-ln 2 1500≈ 4.621× 10−4 yr−1"
       },
       {
         "id": "C",
-        "text": "ln 4"
+        "text": "ln 4 1500≈ 4.621× 10−4 yr−1"
       },
       {
         "id": "D",
-        "text": "ln 2 + 1"
+        "text": "ln 2 1500≈ 4.621× 10−4 yr−1 + 1"
       }
     ],
     "correctOption": "A",
-    "answer": "ln 2",
+    "answer": "ln 2 1500≈ 4.621× 10−4 yr−1",
     "solution": "dN\ndt =−kN, where e−1500k = 1\n2  \\implies  k = ln 2\n1500≈ 4.621× 10−4 yr−1.",
     "steps": [
       {
@@ -3464,23 +3464,23 @@
     "options": [
       {
         "id": "A",
-        "text": "c1e0"
+        "text": "y(x) = c1e0"
       },
       {
         "id": "B",
-        "text": "-c1e0"
+        "text": "-y(x) = c1e0"
       },
       {
         "id": "C",
-        "text": "2c1e0"
+        "text": "2y(x) = c1e0"
       },
       {
         "id": "D",
-        "text": "c1e0 + 1"
+        "text": "y(x) = c1e0 + 1"
       }
     ],
     "correctOption": "A",
-    "answer": "c1e0",
+    "answer": "y(x) = c1e0",
     "solution": "P (D) = (2D−I)(2D +I), giving roots λ =±0.5 and general solution y(x) = c1e0.5x +\nc2e−0.5x.",
     "steps": [
       {
@@ -4532,23 +4532,23 @@
     "options": [
       {
         "id": "A",
-        "text": "y(x) ="
+        "text": "y(x) = ( 1− 1 3 lnx ) x1/3"
       },
       {
         "id": "B",
-        "text": "-y(x) ="
+        "text": "-y(x) = ( 1− 1 3 lnx ) x1/3"
       },
       {
         "id": "C",
-        "text": "2y(x) ="
+        "text": "y(x) = ( 1− 1 6 lnx ) x1/3"
       },
       {
         "id": "D",
-        "text": "y(x) = + 1"
+        "text": "y(x) = ( 1− 1 3 lnx ) x1/3 + 1"
       }
     ],
     "correctOption": "A",
-    "answer": "y(x) =",
+    "answer": "y(x) = ( 1− 1 3 lnx ) x1/3",
     "solution": "Auxiliary equation: 9 m(m− 1) + 3m + 1 = (3 m− 1)2 = 0 =  \\implies  m = 1\n3, 1\n3. General\nsolution: y(x) = ( c1 +c2 lnx)x1/3. Applying y(1) = c1 = 1 and y′(1) = 1\n3c1 +c2 = 0 =  \\implies  c2 =− 1\n3. Hence\ny(x) =\n(\n1− 1\n3 lnx\n)\nx1/3.",
     "steps": [
       {
@@ -4794,23 +4794,23 @@
     "options": [
       {
         "id": "A",
-        "text": "c1 +c2 = 4 and y′(1) = 2 c1− 2c2 = 0 gives c1 = 2,c 2 = 2, hence y(x) ="
+        "text": "y(x) = 2x2 + 2x−2"
       },
       {
         "id": "B",
-        "text": "c1 -c2 = 4 and y′(1) = 2 c1− 2c2 = 0 gives c1 = 2,c 2 = 2, hence y(x) ="
+        "text": "y(x) = 2x2 - 2x−2"
       },
       {
         "id": "C",
-        "text": "c1 +c4 = 4 and y′(1) = 2 c1− 2c2 = 0 gives c1 = 2,c 2 = 2, hence y(x) ="
+        "text": "y(x) = 4x2 + 2x−2"
       },
       {
         "id": "D",
-        "text": "c1 +c2 = 4 and y′(1) = 2 c1− 2c2 = 0 gives c1 = 2,c 2 = 2, hence y(x) = + 1"
+        "text": "y(x) = 2x2 + 2x−2 + 1"
       }
     ],
     "correctOption": "A",
-    "answer": "c1 +c2 = 4 and y′(1) = 2 c1− 2c2 = 0 gives c1 = 2,c 2 = 2, hence y(x) =",
+    "answer": "y(x) = 2x2 + 2x−2",
     "solution": "With p(x) = 1\nx, e−\n\\int \np(x)dx = x−1. Reduction of Order: y2(x) = x2\\int \nx−5dx =− 1\n4x−2  \\implies \ntake y2(x) = x−2. Applying y(1) = c1 +c2 = 4 and y′(1) = 2 c1− 2c2 = 0 gives c1 = 2,c 2 = 2, hence y(x) =\n2x2 + 2x−2.",
     "steps": [
       {
@@ -5958,23 +5958,23 @@
     "options": [
       {
         "id": "A",
-        "text": "ex"
+        "text": "y(x) = ( c1 +c2x + 1 2x ) ex"
       },
       {
         "id": "B",
-        "text": "-ex"
+        "text": "y(x) = ( c1 -c2x + 1 2x ) ex"
       },
       {
         "id": "C",
-        "text": "2ex"
+        "text": "y(x) = ( c1 +c4x + 1 2x ) ex"
       },
       {
         "id": "D",
-        "text": "ex + 1"
+        "text": "y(x) = ( c1 +c2x + 1 2x ) ex + 1"
       }
     ],
     "correctOption": "A",
-    "answer": "ex",
+    "answer": "y(x) = ( c1 +c2x + 1 2x ) ex",
     "solution": "Basis {ex,xex}, W =e2x. Variation of Parameters:\nyp =−ex\n\\int \nx−2dx +xex\n\\int \nx−3dx =x−1ex− 1\n2x−1ex = ex\n2x.\nGeneral solution: y(x) =\n(\nc1 +c2x + 1\n2x\n)\nex.",
     "steps": [
       {
@@ -6066,23 +6066,23 @@
     "options": [
       {
         "id": "A",
-        "text": "e−3x"
+        "text": "y(x) = ( c1 +c2x− 1 2 ln(x2 + 1) +x tan−1x ) e−3x"
       },
       {
         "id": "B",
-        "text": "-e−3x"
+        "text": "y(x) = ( c1 -c2x− 1 2 ln(x2 + 1) +x tan−1x ) e−3x"
       },
       {
         "id": "C",
-        "text": "e−6x"
+        "text": "y(x) = ( c1 +c4x− 1 2 ln(x2 + 1) +x tan−1x ) e−3x"
       },
       {
         "id": "D",
-        "text": "e−3x + 1"
+        "text": "y(x) = ( c1 +c2x− 1 2 ln(x2 + 1) +x tan−1x ) e−3x + 1"
       }
     ],
     "correctOption": "A",
-    "answer": "e−3x",
+    "answer": "y(x) = ( c1 +c2x− 1 2 ln(x2 + 1) +x tan−1x ) e−3x",
     "solution": "Basis {e−3x,xe−3x}, W =e−6x. Variation of Parameters:\nyp =−e−3x\n\\int  x\nx2 + 1dx +xe−3x\n\\int  1\nx2 + 1dx =−1\n2e−3x ln(x2 + 1) +xe−3x tan−1x.\nGeneral solution: y(x) =\n(\nc1 +c2x− 1\n2 ln(x2 + 1) +x tan−1x\n)\ne−3x.",
     "steps": [
       {
@@ -6132,7 +6132,7 @@
       },
       {
         "id": "D",
-        "text": "E(2t)"
+        "text": "E(t) + 1"
       }
     ],
     "correctOption": "A",
@@ -6278,23 +6278,23 @@
     "options": [
       {
         "id": "A",
-        "text": "62"
+        "text": "62.5(cos 2t + sin 2t) A"
       },
       {
         "id": "B",
-        "text": "-62"
+        "text": "62.5(cos 2t - sin 2t) A"
       },
       {
         "id": "C",
-        "text": "64"
+        "text": "64.5(cos 2t + sin 2t) A"
       },
       {
         "id": "D",
-        "text": "62 + 1"
+        "text": "62.5(cos 2t + sin 2t) A + 1"
       }
     ],
     "correctOption": "A",
-    "answer": "62",
+    "answer": "62.5(cos 2t + sin 2t) A",
     "solution": "I′′ + 8I′ + 20I = 2000 cos 2t. As t→∞ , Ih = e−4t(A cos 2t +B sin 2t)→ 0. Solving for\nIp =C cos 2t +D sin 2t givesC = 62.5,D = 62.5, so the steady-state current is Ip(t) = 62.5(cos 2t + sin 2t) A.",
     "steps": [
       {
@@ -6520,23 +6520,23 @@
     "options": [
       {
         "id": "A",
-        "text": "20− 20(1 +t)e−t C and I(t) = Q′(t) ="
+        "text": "I(t) = Q′(t) = 20te−t A"
       },
       {
         "id": "B",
-        "text": "20− 20(1 -t)e−t C and I(t) = Q′(t) ="
+        "text": "-I(t) = Q′(t) = 20te−t A"
       },
       {
         "id": "C",
-        "text": "40− 20(1 +t)e−t C and I(t) = Q′(t) ="
+        "text": "I(t) = Q′(t) = 40te−t A"
       },
       {
         "id": "D",
-        "text": "20− 20(1 +2t)e−2t C and I(2t) = Q′(2t) ="
+        "text": "I(t) = Q′(t) = 20te−t A + 1"
       }
     ],
     "correctOption": "A",
-    "answer": "20− 20(1 +t)e−t C and I(t) = Q′(t) =",
+    "answer": "I(t) = Q′(t) = 20te−t A",
     "solution": "Charge ODE: Q′′ + 2Q′ +Q = 20  \\implies  Q(t) = (c1 +c2t)e−t + 20. Using Q(0) = 0  \\implies  c1 =\n−20 and I(0) = Q′(0) = c2−c1 = 0  \\implies  c2 =−20. Thus Q(t) = 20− 20(1 +t)e−t C and I(t) = Q′(t) =\n20te−t A.",
     "steps": [
       {
@@ -6670,23 +6670,23 @@
     "options": [
       {
         "id": "A",
-        "text": "R ="
+        "text": "R = √ 3"
       },
       {
         "id": "B",
-        "text": "-R ="
+        "text": "-R = √ 3"
       },
       {
         "id": "C",
-        "text": "2R ="
+        "text": "R = √ 6"
       },
       {
         "id": "D",
-        "text": "R = + 1"
+        "text": "R = √ 3 + 1"
       }
     ],
     "correctOption": "A",
-    "answer": "R =",
+    "answer": "R = √ 3",
     "solution": "Writing the series as ∑∞\nm=0(−1)m\n[(x− 2)2\n3\n]m\n, convergence requires (x− 2)2\n3 < 1 =  \\implies \n|x− 2|<\n√\n3. Hence R =\n√\n3.",
     "steps": [
       {
@@ -6724,23 +6724,23 @@
     "options": [
       {
         "id": "A",
-        "text": "k"
+        "text": "y(t) = \\sin 2t"
       },
       {
         "id": "B",
-        "text": "-k"
+        "text": "y(t) = -\\sin 2t"
       },
       {
         "id": "C",
-        "text": "2k"
+        "text": "y(t) = \\sin 4t"
       },
       {
         "id": "D",
-        "text": "k + 1"
+        "text": "y(t) = \\cos 2t"
       }
     ],
     "correctOption": "A",
-    "answer": "k",
+    "answer": "y(t) = \\sin 2t",
     "solution": "Convergence of the geometric series in (x + 3)2\nk requires (x + 3)2\nk < 1  \\implies  |x + 3|<\n√\nk, so\nR =\n√\nk.",
     "steps": [
       {
@@ -6778,23 +6778,23 @@
     "options": [
       {
         "id": "A",
-        "text": "4"
+        "text": "y(t) = \\sin 2t"
       },
       {
         "id": "B",
-        "text": "-4"
+        "text": "y(t) = -\\sin 2t"
       },
       {
         "id": "C",
-        "text": "24"
+        "text": "y(t) = \\sin 4t"
       },
       {
         "id": "D",
-        "text": "4 + 1"
+        "text": "y(t) = \\cos 2t"
       }
     ],
     "correctOption": "A",
-    "answer": "4",
+    "answer": "y(t) = \\sin 2t",
     "solution": "By D’Alembert’s Ratio Test: R = limn→∞\n⏐⏐⏐⏐\ncn\ncn+1\n⏐⏐⏐⏐= limn→∞\n(n + 1)2\n(2n + 2)(2n + 1) = 1\n4.",
     "steps": [
       {
@@ -6928,23 +6928,23 @@
     "options": [
       {
         "id": "A",
-        "text": "R =∞"
+        "text": "y(t) = \\sin 2t"
       },
       {
         "id": "B",
-        "text": "-R =∞"
+        "text": "y(t) = -\\sin 2t"
       },
       {
         "id": "C",
-        "text": "2R =∞"
+        "text": "y(t) = \\sin 4t"
       },
       {
         "id": "D",
-        "text": "R =∞ + 1"
+        "text": "y(t) = \\cos 2t"
       }
     ],
     "correctOption": "A",
-    "answer": "R =∞",
+    "answer": "y(t) = \\sin 2t",
     "solution": "By the Ratio Test on |um+1/um| = |x|2\n(2m + 3)(2m + 2)→ 0 for all x, hence R =∞.",
     "steps": [
       {
@@ -6974,23 +6974,23 @@
     "options": [
       {
         "id": "A",
-        "text": "2"
+        "text": "√ 3 2"
       },
       {
         "id": "B",
-        "text": "-2"
+        "text": "-√ 3 2"
       },
       {
         "id": "C",
-        "text": "4"
+        "text": "√ 3 4"
       },
       {
         "id": "D",
-        "text": "2 + 1"
+        "text": "√ 3 2 + 1"
       }
     ],
     "correctOption": "A",
-    "answer": "2",
+    "answer": "√ 3 2",
     "solution": "Geometric ratio requires\n⏐⏐⏐⏐\n2\n3x2\n⏐⏐⏐⏐< 1  \\implies  x2 < 3\n2  \\implies  R =\n√\n3\n2.",
     "steps": [
       {
@@ -7028,23 +7028,23 @@
     "options": [
       {
         "id": "A",
-        "text": "= e"
+        "text": "y(t) = \\sin 2t"
       },
       {
         "id": "B",
-        "text": "-= e"
+        "text": "y(t) = -\\sin 2t"
       },
       {
         "id": "C",
-        "text": "2= e"
+        "text": "y(t) = \\sin 4t"
       },
       {
         "id": "D",
-        "text": "= e + 1"
+        "text": "y(t) = \\cos 2t"
       }
     ],
     "correctOption": "A",
-    "answer": "= e",
+    "answer": "y(t) = \\sin 2t",
     "solution": "By the Ratio Test: R = limn→∞\nn! (n + 1)n+1\n(n + 1)!nn = limn→∞\n(\n1 + 1\nn\n)n\n= e.",
     "steps": [
       {
@@ -7132,23 +7132,23 @@
     "options": [
       {
         "id": "A",
-        "text": "x0"
+        "text": "y(t) = \\sin 2t"
       },
       {
         "id": "B",
-        "text": "-x0"
+        "text": "y(t) = -\\sin 2t"
       },
       {
         "id": "C",
-        "text": "2x0"
+        "text": "y(t) = \\sin 4t"
       },
       {
         "id": "D",
-        "text": "x0 + 1"
+        "text": "y(t) = \\cos 2t"
       }
     ],
     "correctOption": "A",
-    "answer": "x0",
+    "answer": "y(t) = \\sin 2t",
     "solution": "A point x =x0 is an ordinary point if both coefficient functionsp(x) andq(x) are analytic\n(expandable in convergent Taylor series) at x =x0.",
     "steps": [
       {
@@ -7228,23 +7228,23 @@
     "options": [
       {
         "id": "A",
-        "text": "y(x) ="
+        "text": "y(x) = c0 ( 1−x2−x4 3 −x6 5 −··· ) +c1x"
       },
       {
         "id": "B",
-        "text": "-y(x) ="
+        "text": "y(x) = c0 ( 1−x2−x4 3 −x6 5 −··· ) -c1x"
       },
       {
         "id": "C",
-        "text": "2y(x) ="
+        "text": "y(x) = c0 ( 1−x4−x4 3 −x6 5 −··· ) +c1x"
       },
       {
         "id": "D",
-        "text": "y(x) = + 1"
+        "text": "y(x) = c0 ( 1−x2−x4 3 −x6 5 −··· ) +c1x + 1"
       }
     ],
     "correctOption": "A",
-    "answer": "y(x) =",
+    "answer": "y(x) = c0 ( 1−x2−x4 3 −x6 5 −··· ) +c1x",
     "solution": "Substituting y =∑∞\nn=0cnxn into (1−x2)y′′− 2xy′ + 2y = 0 and equating the coefficient of\nxn to zero gives:\n(n + 2)(n + 1)cn+2− [n(n− 1) + 2n− 2]cn = 0  \\implies  cn+2 = n− 1\nn + 1cn (n≥ 0).\nEvaluating: c2 = −c0, c3 = 0 =  \\implies  c5 = c7 = ··· = 0, c4 = − 1\n3c0, c6 = − 1\n5c0. Hence y(x) =\nc0\n(\n1−x2−x4\n3 −x6\n5 −···\n)\n+c1x.",
     "steps": [
       {
@@ -7336,23 +7336,23 @@
     "options": [
       {
         "id": "A",
-        "text": "c0"
+        "text": "y(x) = c0 ( 1 + x3 6 + x6 180 +··· ) + c1 ( x + x4 12 + x7 504 +··· )"
       },
       {
         "id": "B",
-        "text": "-c0"
+        "text": "y(x) = c0 ( 1 - x3 6 + x6 180 +··· ) + c1 ( x + x4 12 + x7 504 +··· )"
       },
       {
         "id": "C",
-        "text": "2c0"
+        "text": "y(x) = c0 ( 1 + x3 6 + x6 180 +··· ) + c1 ( x + x4 14 + x7 504 +··· )"
       },
       {
         "id": "D",
-        "text": "c0 + 1"
+        "text": "y(x) = c0 ( 1 + x3 6 + x6 180 +··· ) + c1 ( x + x4 12 + x7 504 +··· ) + 1"
       }
     ],
     "correctOption": "A",
-    "answer": "c0",
+    "answer": "y(x) = c0 ( 1 + x3 6 + x6 180 +··· ) + c1 ( x + x4 12 + x7 504 +··· )",
     "solution": "Substituting y =∑∞\nn=0cnxn: constant term gives 2 c2 = 0  \\implies  c2 = 0; coefficient of xn\n(n≥ 1) gives cn+2 = cn−1\n(n + 1)(n + 2). Evaluating: c3 = c0\n6 , c4 = c1\n12, c5 = 0, c6 = c0\n180, c7 = c1\n504. Thus:\ny(x) = c0\n(\n1 + x3\n6 + x6\n180 +···\n)\n+ c1\n(\nx + x4\n12 + x7\n504 +···\n)\n.\nPage 21\nUniversity Calculus & DE · Complete Chapter-Wise & Topic-Wise Bank 240 Questions (Sets 1–10) & Detailed Solutions",
     "steps": [
       {
@@ -7390,23 +7390,23 @@
     "options": [
       {
         "id": "A",
-        "text": "c0"
+        "text": "y(x) = c0 ( 1 + x3 6 − 3x5 40 +··· ) + c1 ( x− x3 6 + x4 12 + 3x5 40 −··· )"
       },
       {
         "id": "B",
-        "text": "-c0"
+        "text": "y(x) = c0 ( 1 - x3 6 − 3x5 40 +··· ) + c1 ( x− x3 6 + x4 12 + 3x5 40 −··· )"
       },
       {
         "id": "C",
-        "text": "2c0"
+        "text": "y(x) = c0 ( 1 + x3 6 − 3x5 40 +··· ) + c1 ( x− x3 6 + x4 14 + 3x5 40 −··· )"
       },
       {
         "id": "D",
-        "text": "c0 + 1"
+        "text": "y(x) = c0 ( 1 + x3 6 − 3x5 40 +··· ) + c1 ( x− x3 6 + x4 12 + 3x5 40 −··· ) + 1"
       }
     ],
     "correctOption": "A",
-    "answer": "c0",
+    "answer": "y(x) = c0 ( 1 + x3 6 − 3x5 40 +··· ) + c1 ( x− x3 6 + x4 12 + 3x5 40 −··· )",
     "solution": "Substituting y = ∑∞\nn=0cnxn: constant term gives 2 c2 = 0 =  \\implies  c2 = 0; for n ≥ 1,\ncn+2 = cn−1−n2cn\n(n + 1)(n + 2). Evaluating: c3 = c0−c1\n6 , c4 = c1\n12, c5 =− 3(c0−c1)\n40 . Grouping c0 and c1:\ny(x) = c0\n(\n1 + x3\n6 − 3x5\n40 +···\n)\n+ c1\n(\nx− x3\n6 + x4\n12 + 3x5\n40 −···\n)\n.",
     "steps": [
       {
@@ -7444,23 +7444,23 @@
     "options": [
       {
         "id": "A",
-        "text": "c0"
+        "text": "y(x) = c0 [ 1− (x− 1)2 + 2 3(x− 1)3−··· ] + c1 [ (x− 1)− 1 2(x− 1)2 +··· ]"
       },
       {
         "id": "B",
-        "text": "-c0"
+        "text": "y(x) = c0 [ 1− (x− 1)2 - 2 3(x− 1)3−··· ] + c1 [ (x− 1)− 1 2(x− 1)2 +··· ]"
       },
       {
         "id": "C",
-        "text": "2c0"
+        "text": "y(x) = c0 [ 1− (x− 1)4 + 2 3(x− 1)3−··· ] + c1 [ (x− 1)− 1 2(x− 1)2 +··· ]"
       },
       {
         "id": "D",
-        "text": "c0 + 1"
+        "text": "y(x) = c0 [ 1− (x− 1)2 + 2 3(x− 1)3−··· ] + c1 [ (x− 1)− 1 2(x− 1)2 +··· ] + 1"
       }
     ],
     "correctOption": "A",
-    "answer": "c0",
+    "answer": "y(x) = c0 [ 1− (x− 1)2 + 2 3(x− 1)3−··· ] + c1 [ (x− 1)− 1 2(x− 1)2 +··· ]",
     "solution": "Setting t =x− 1 transforms the ODE into (t + 1)y′′ +y′ + 2y = 0 about t = 0. Substituting\ny =∑∞\nn=0cntn yields cn+2 =−(n + 1)2cn+1 + 2cn\n(n + 1)(n + 2) (n≥ 0). Thus c2 =−c0− 1\n2c1 and c3 = 2\n3c0. Replacing t =x− 1:\ny(x) = c0\n[\n1− (x− 1)2 + 2\n3(x− 1)3−···\n]\n+ c1\n[\n(x− 1)− 1\n2(x− 1)2 +···\n]\n.",
     "steps": [
       {
@@ -7660,23 +7660,23 @@
     "options": [
       {
         "id": "A",
-        "text": "c0"
+        "text": "y(x) = c0 ( 1− x3 6 − x4 24− x5 120−··· ) + c1 ( x + x2 2 + x3 6 − x4 24− x5 30−··· )"
       },
       {
         "id": "B",
-        "text": "-c0"
+        "text": "y(x) = c0 ( 1− x3 6 − x4 24− x5 120−··· ) - c1 ( x + x2 2 + x3 6 − x4 24− x5 30−··· )"
       },
       {
         "id": "C",
-        "text": "2c0"
+        "text": "y(x) = c0 ( 1− x3 6 − x4 44− x5 120−··· ) + c1 ( x + x2 2 + x3 6 − x4 24− x5 30−··· )"
       },
       {
         "id": "D",
-        "text": "c0 + 1"
+        "text": "y(x) = c0 ( 1− x3 6 − x4 24− x5 120−··· ) + c1 ( x + x2 2 + x3 6 − x4 24− x5 30−··· ) + 1"
       }
     ],
     "correctOption": "A",
-    "answer": "c0",
+    "answer": "y(x) = c0 ( 1− x3 6 − x4 24− x5 120−··· ) + c1 ( x + x2 2 + x3 6 − x4 24− x5 30−··· )",
     "solution": "Substituting y = ∑∞\nn=0cnxn: x0 gives c2 = 1\n2c1; for n≥ 1, cn+2 = (n + 1)cn+1−cn−1\n(n + 1)(n + 2) .\nEvaluating: c3 = c1−c0\n6 , c4 =−c0+c1\n24 , c5 =−c0+4c1\n120 . Thus:\ny(x) = c0\n(\n1− x3\n6 − x4\n24− x5\n120−···\n)\n+ c1\n(\nx + x2\n2 + x3\n6 − x4\n24− x5\n30−···\n)\n.",
     "steps": [
       {
@@ -7714,23 +7714,23 @@
     "options": [
       {
         "id": "A",
-        "text": "c0"
+        "text": "y(x) = c0 ( 1−x2 2 −x4 24 +··· ) + c1 ( x−x3 6 −x5 24 +··· )"
       },
       {
         "id": "B",
-        "text": "-c0"
+        "text": "y(x) = c0 ( 1−x2 2 −x4 24 -··· ) + c1 ( x−x3 6 −x5 24 +··· )"
       },
       {
         "id": "C",
-        "text": "2c0"
+        "text": "y(x) = c0 ( 1−x4 2 −x4 24 +··· ) + c1 ( x−x3 6 −x5 24 +··· )"
       },
       {
         "id": "D",
-        "text": "c0 + 1"
+        "text": "y(x) = c0 ( 1−x2 2 −x4 24 +··· ) + c1 ( x−x3 6 −x5 24 +··· ) + 1"
       }
     ],
     "correctOption": "A",
-    "answer": "c0",
+    "answer": "y(x) = c0 ( 1−x2 2 −x4 24 +··· ) + c1 ( x−x3 6 −x5 24 +··· )",
     "solution": "Substituting y = ∑∞\nn=0cnxn: c2 = − 1\n2c0, c3 = − 1\n6c1, and for n ≥ 2, cn+2 =\n− cn +cn−2\n(n + 1)(n + 2). Thus c4 = − 1\n24c0 and c5 = − 1\n24c1, yielding y(x) = c0\n(\n1−x2\n2 −x4\n24 +···\n)\n+\nc1\n(\nx−x3\n6 −x5\n24 +···\n)\n.",
     "steps": [
       {
@@ -7768,23 +7768,23 @@
     "options": [
       {
         "id": "A",
-        "text": "c0"
+        "text": "y(x) = c0 ( 1−x4 12−x5 60−··· ) + c1 ( x +x2 2 +x3 6 +x4 24−x5 24−··· )"
       },
       {
         "id": "B",
-        "text": "-c0"
+        "text": "y(x) = c0 ( 1−x4 12−x5 60−··· ) - c1 ( x +x2 2 +x3 6 +x4 24−x5 24−··· )"
       },
       {
         "id": "C",
-        "text": "2c0"
+        "text": "y(x) = c0 ( 1−x4 14−x5 60−··· ) + c1 ( x +x2 2 +x3 6 +x4 24−x5 24−··· )"
       },
       {
         "id": "D",
-        "text": "c0 + 1"
+        "text": "y(x) = c0 ( 1−x4 12−x5 60−··· ) + c1 ( x +x2 2 +x3 6 +x4 24−x5 24−··· ) + 1"
       }
     ],
     "correctOption": "A",
-    "answer": "c0",
+    "answer": "y(x) = c0 ( 1−x4 12−x5 60−··· ) + c1 ( x +x2 2 +x3 6 +x4 24−x5 24−··· )",
     "solution": "Substituting y = ∑∞\nn=0cnxn: c2 = 1\n2c1, c3 = 1\n6c1, and for n ≥ 2, cn+2 =\n(n + 1)cn+1−cn−2\n(n + 1)(n + 2) . Evaluating: c4 = c1\n24− c0\n12, c5 = −c0\n60− c1\n24, yielding y(x) = c0\n(\n1−x4\n12−x5\n60−···\n)\n+\nc1\n(\nx +x2\n2 +x3\n6 +x4\n24−x5\n24−···\n)\n.",
     "steps": [
       {
@@ -7822,23 +7822,23 @@
     "options": [
       {
         "id": "A",
-        "text": "√\\pi"
+        "text": "√\\pi 2"
       },
       {
         "id": "B",
-        "text": "-√\\pi"
+        "text": "-√\\pi 2"
       },
       {
         "id": "C",
-        "text": "2√\\pi"
+        "text": "√\\pi 4"
       },
       {
         "id": "D",
-        "text": "√\\pi + 1"
+        "text": "√\\pi 2 + 1"
       }
     ],
     "correctOption": "A",
-    "answer": "√\\pi",
+    "answer": "√\\pi 2",
     "solution": "By definition of \\mathcal{L}\\{x−1/2} at s = 2:\n\\int ∞\n0\nx−1/2e−2xdx = \\Gamma(1/2)\ns1/2\n⏐⏐⏐⏐\ns=2\n=\n√\\pi \n2.",
     "steps": [
       {
@@ -7930,23 +7930,23 @@
     "options": [
       {
         "id": "A",
-        "text": "√\\pi"
+        "text": "√\\pi 2"
       },
       {
         "id": "B",
-        "text": "-√\\pi"
+        "text": "-√\\pi 2"
       },
       {
         "id": "C",
-        "text": "2√\\pi"
+        "text": "√\\pi 4"
       },
       {
         "id": "D",
-        "text": "√\\pi + 1"
+        "text": "√\\pi 2 + 1"
       }
     ],
     "correctOption": "A",
-    "answer": "√\\pi",
+    "answer": "√\\pi 2",
     "solution": "By definition of the Gamma function / Laplace transform at s = 1:\n\\int ∞\n0\nx1/2e−xdx =\nΓ\n(3\n2\n)\n= 1\n2Γ\n(1\n2\n)\n=\n√\\pi \n2 .",
     "steps": [
       {
@@ -8083,29 +8083,29 @@
     "marksLabel": "1M",
     "level": "Rapid",
     "topic": "Laplace Transforms & Discontinuous Systems Problem",
-    "prompt": "Evaluate\\mathcal{L}^{-1}\n{ s\n(s + 2)2 + 9\n}\n.",
-    "promptMath": "",
+    "prompt": "Evaluate the inverse Laplace transform \\(\\mathcal{L}^{-1}\\{F(s)\\}\\):",
+    "promptMath": "\\mathcal{L}^{-1}\\left\\{\\frac{s}{(s + 2)^2 + 9}\\right\\}",
     "options": [
       {
         "id": "A",
-        "text": "e−2t"
+        "text": "e^{-2t}\\left(\\cos 3t - \\frac{2}{3}\\sin 3t\\right)"
       },
       {
         "id": "B",
-        "text": "-e−2t"
+        "text": "e^{2t}\\left(\\cos 3t - \\frac{2}{3}\\sin 3t\\right)"
       },
       {
         "id": "C",
-        "text": "e−4t"
+        "text": "e^{-2t}\\left(\\cos 3t + \\frac{2}{3}\\sin 3t\\right)"
       },
       {
         "id": "D",
-        "text": "e−22t"
+        "text": "e^{-2t}(\\cos 3t - 2\\sin 3t)"
       }
     ],
     "correctOption": "A",
-    "answer": "e−2t",
-    "solution": "Rewrite numerator to match ( s + 2): (s + 2)− 2\n(s + 2)2 + 32 . Pulling out e−2t gives\ne−2t\n(\ncos 3t− 2\n3 sin 3t\n)\n.",
+    "answer": "e^{-2t}\\left(\\cos 3t - \\frac{2}{3}\\sin 3t\\right)",
+    "solution": "1. Group numerator in terms of shifted variable \\((s + 2)\\):\n$$s = (s + 2) - 2$$\n2. Split into cosine and sine forms:\n$$\\frac{s}{(s + 2)^2 + 9} = \\frac{s + 2}{(s + 2)^2 + 3^2} - \\frac{2}{3}\\cdot\\frac{3}{(s + 2)^2 + 3^2}$$\n3. Invert each term using First Shifting Theorem with \\(a = -2\\):\n$$\\mathcal{L}^{-1}\\left\\{\\frac{s + 2}{(s + 2)^2 + 3^2}\\right\\} = e^{-2t}\\cos 3t$$\n$$\\mathcal{L}^{-1}\\left\\{\\frac{3}{(s + 2)^2 + 3^2}\\right\\} = e^{-2t}\\sin 3t$$\n4. Combine terms:\n$$f(t) = e^{-2t}\\left(\\cos 3t - \\frac{2}{3}\\sin 3t\\right)$$",
     "steps": [
       {
         "text": "Rewrite numerator to match ( s + 2): (s + 2)− 2",
@@ -8124,8 +8124,8 @@
         "math": ""
       }
     ],
-    "hint": "Identify the governing structure of the differential/transform relation and apply the canonical theorem for CO6.",
-    "sillyTrap": "Common Pitfall: Watch for algebraic sign flips (+/-) and constant multipliers when executing the inverse operation.",
+    "hint": "Write the numerator s as (s + 2) - 2 and split into shifted cosine and sine components.",
+    "sillyTrap": "Coefficient Trap: The sine term requires multiplying by 2/3 so the numerator is 3 (since omega = 3).",
     "tag": "1M"
   },
   {
@@ -8142,23 +8142,23 @@
     "options": [
       {
         "id": "A",
-        "text": "12"
+        "text": "12 169"
       },
       {
         "id": "B",
-        "text": "-12"
+        "text": "-12 169"
       },
       {
         "id": "C",
-        "text": "14"
+        "text": "14 169"
       },
       {
         "id": "D",
-        "text": "12 + 1"
+        "text": "12 169 + 1"
       }
     ],
     "correctOption": "A",
-    "answer": "12",
+    "answer": "12 169",
     "solution": "\\int ∞\n0\ne−2t(t sin 3t)dt =\\mathcal{L}\\{t sin 3t}|s=2 = 6s\n(s2 + 9)2\n⏐⏐⏐⏐\ns=2\n= 12\n169.",
     "steps": [
       {
@@ -8196,23 +8196,23 @@
     "options": [
       {
         "id": "A",
-        "text": "18"
+        "text": "18 s(s2 + 36)"
       },
       {
         "id": "B",
-        "text": "-18"
+        "text": "18 s(s2 - 36)"
       },
       {
         "id": "C",
-        "text": "218"
+        "text": "18 s(s4 + 36)"
       },
       {
         "id": "D",
-        "text": "18 + 1"
+        "text": "18 s(s2 + 36) + 1"
       }
     ],
     "correctOption": "A",
-    "answer": "18",
+    "answer": "18 s(s2 + 36)",
     "solution": "L\n{1− cos 6t\n2\n}\n= 1\n2\n(1\ns− s\ns2 + 36\n)\n= 18\ns(s2 + 36).",
     "steps": [
       {
@@ -8304,23 +8304,23 @@
     "options": [
       {
         "id": "A",
-        "text": "e−t"
+        "text": "e−t ( t−t2 2 )"
       },
       {
         "id": "B",
-        "text": "-e−t"
+        "text": "-e−t ( t−t2 2 )"
       },
       {
         "id": "C",
-        "text": "2e−t"
+        "text": "e−t ( t−t4 2 )"
       },
       {
         "id": "D",
-        "text": "e−2t"
+        "text": "e−t ( t−t2 2 ) + 1"
       }
     ],
     "correctOption": "A",
-    "answer": "e−t",
+    "answer": "e−t ( t−t2 2 )",
     "solution": "Match ( s + 1) in numerator: (s + 1)− 1\n(s + 1)3 = 1\n(s + 1)2− 1\n(s + 1)3 . Pulling out e−t gives\ne−t\n(\nt−t2\n2\n)\n.",
     "steps": [
       {
@@ -8358,23 +8358,23 @@
     "options": [
       {
         "id": "A",
-        "text": "e2t"
+        "text": "y(t) = \\sin 2t"
       },
       {
         "id": "B",
-        "text": "-e2t"
+        "text": "y(t) = -\\sin 2t"
       },
       {
         "id": "C",
-        "text": "e4t"
+        "text": "y(t) = \\sin 4t"
       },
       {
         "id": "D",
-        "text": "e22t"
+        "text": "y(t) = \\cos 2t"
       }
     ],
     "correctOption": "A",
-    "answer": "e2t",
+    "answer": "y(t) = \\sin 2t",
     "solution": "Complete the square: 2(s− 2) + 1\n(s− 2)2 + 42 . Pulling out e2t givese2t\n(\n2 cos 4t + 1\n4 sin 4t\n)\n.",
     "steps": [
       {
@@ -8466,23 +8466,23 @@
     "options": [
       {
         "id": "A",
-        "text": "s3"
+        "text": "s3 s4 + 4a4"
       },
       {
         "id": "B",
-        "text": "-s3"
+        "text": "s3 s4 - 4a4"
       },
       {
         "id": "C",
-        "text": "s6"
+        "text": "s6 s4 + 4a4"
       },
       {
         "id": "D",
-        "text": "s3 + 1"
+        "text": "s3 s4 + 4a4 + 1"
       }
     ],
     "correctOption": "A",
-    "answer": "s3",
+    "answer": "s3 s4 + 4a4",
     "solution": "Write cosh at = eat+e−at\n2 and apply First Shifting to \\mathcal{L}\\{cosat} = s\ns2+a2 :\n1\n2\n[ s−a\n(s−a)2 +a2 + s +a\n(s +a)2 +a2\n]\n= s3\ns4 + 4a4 .",
     "steps": [
       {
@@ -8520,23 +8520,23 @@
     "options": [
       {
         "id": "A",
-        "text": "t4"
+        "text": "t4 24e2t"
       },
       {
         "id": "B",
-        "text": "-t4"
+        "text": "-t4 24e2t"
       },
       {
         "id": "C",
-        "text": "2t4"
+        "text": "t4 44e2t"
       },
       {
         "id": "D",
-        "text": "t4 + 1"
+        "text": "t4 24e2t + 1"
       }
     ],
     "correctOption": "A",
-    "answer": "t4",
+    "answer": "t4 24e2t",
     "solution": "By Inverse First Shifting: e2t\\mathcal{L}^{-1}\n{1\ns5\n}\n= t4\n24e2t.",
     "steps": [
       {
@@ -8574,23 +8574,23 @@
     "options": [
       {
         "id": "A",
-        "text": "2"
+        "text": "y(t) = \\sin 2t"
       },
       {
         "id": "B",
-        "text": "-2"
+        "text": "y(t) = -\\sin 2t"
       },
       {
         "id": "C",
-        "text": "4"
+        "text": "y(t) = \\sin 4t"
       },
       {
         "id": "D",
-        "text": "2 + 1"
+        "text": "y(t) = \\cos 2t"
       }
     ],
     "correctOption": "A",
-    "answer": "2",
+    "answer": "y(t) = \\sin 2t",
     "solution": "\\int ∞\n0\ne−t sintdt =\\mathcal{L}\\{sint}|s=1 = 1\ns2 + 1\n⏐⏐⏐⏐\ns=1\n= 1\n2.",
     "steps": [
       {
@@ -8682,23 +8682,23 @@
     "options": [
       {
         "id": "A",
-        "text": "6s"
+        "text": "6s (s2 + 9)2"
       },
       {
         "id": "B",
-        "text": "-6s"
+        "text": "6s (s2 - 9)2"
       },
       {
         "id": "C",
-        "text": "26s"
+        "text": "6s (s4 + 9)2"
       },
       {
         "id": "D",
-        "text": "6s + 1"
+        "text": "6s (s2 + 9)2 + 1"
       }
     ],
     "correctOption": "A",
-    "answer": "6s",
+    "answer": "6s (s2 + 9)2",
     "solution": "\\mathcal{L}\\{t sin 3t} =− d\nds\n( 3\ns2 + 9\n)\n= 6s\n(s2 + 9)2 .",
     "steps": [
       {
@@ -9048,23 +9048,23 @@
     "options": [
       {
         "id": "A",
-        "text": "ln"
+        "text": "y(t) = \\sin 2t"
       },
       {
         "id": "B",
-        "text": "-ln"
+        "text": "y(t) = -\\sin 2t"
       },
       {
         "id": "C",
-        "text": "2ln"
+        "text": "y(t) = \\sin 4t"
       },
       {
         "id": "D",
-        "text": "ln + 1"
+        "text": "y(t) = \\cos 2t"
       }
     ],
     "correctOption": "A",
-    "answer": "ln",
+    "answer": "y(t) = \\sin 2t",
     "solution": "FirstL\n{1−e−2t\nt\n}\n=\n\\int ∞\ns\n(1\nu− 1\nu + 2\n)\ndu = ln\n(s + 2\ns\n)\n. Integrating from 0 to t divides by\ns: 1\ns ln\n(s + 2\ns\n)\n.",
     "steps": [
       {
@@ -9259,29 +9259,29 @@
     "marksLabel": "1M",
     "level": "Rapid",
     "topic": "Laplace Transforms & Discontinuous Systems Problem",
-    "prompt": "Find\\mathcal{L}\\{te3t sin 2t}.",
-    "promptMath": "",
+    "prompt": "Find the Laplace transform of the multiplied function:",
+    "promptMath": "\\mathcal{L}\\{t e^{3t} \\sin 2t\\}",
     "options": [
       {
         "id": "A",
-        "text": "4(s− 3)"
+        "text": "\\frac{4(s - 3)}{[(s - 3)^2 + 4]^2}"
       },
       {
         "id": "B",
-        "text": "-4(s− 3)"
+        "text": "\\frac{4(s + 3)}{[(s + 3)^2 + 4]^2}"
       },
       {
         "id": "C",
-        "text": "4(s− 6)"
+        "text": "\\frac{2(s - 3)}{[(s - 3)^2 + 4]^2}"
       },
       {
         "id": "D",
-        "text": "4(s− 3) + 1"
+        "text": "\\frac{4(s - 3)}{(s - 3)^2 + 4}"
       }
     ],
     "correctOption": "A",
-    "answer": "4(s− 3)",
-    "solution": "Since \\mathcal{L}\\{t sin 2t} = 4s\n(s2 + 4)2 , applying First Shifting (s→s− 3) gives 4(s− 3)\n[(s− 3)2 + 4]2 .",
+    "answer": "\\frac{4(s - 3)}{[(s - 3)^2 + 4]^2}",
+    "solution": "1. Base transform: \\(\\mathcal{L}\\{\\sin 2t\\} = \\frac{2}{s^2 + 4}\\).\n2. Differentiate for multiplication by \\(t\\):\n$$\\mathcal{L}\\{t \\sin 2t\\} = -\\frac{d}{ds}\\left(\\frac{2}{s^2 + 4}\\right) = \\frac{4s}{(s^2 + 4)^2}$$\n3. Apply the First Shifting Theorem \\(s \\to s - 3\\) for \\(e^{3t}\\):\n$$\\mathcal{L}\\{t e^{3t} \\sin 2t\\} = \\frac{4(s - 3)}{[(s - 3)^2 + 4]^2} = \\frac{4(s - 3)}{(s^2 - 6s + 13)^2}$$",
     "steps": [
       {
         "text": "Since \\mathcal{L}\\{t sin 2t} = 4s",
@@ -9296,8 +9296,8 @@
         "math": ""
       }
     ],
-    "hint": "Identify the governing structure of the differential/transform relation and apply the canonical theorem for CO6.",
-    "sillyTrap": "Common Pitfall: Watch for algebraic sign flips (+/-) and constant multipliers when executing the inverse operation.",
+    "hint": "First compute L{t sin 2t} via -d/ds[2/(s^2+4)], then replace s with s - 3.",
+    "sillyTrap": "Sign Trap: e^{3t} shifts s to (s - 3), NOT (s + 3). Power Trap: Denominator is squared after differentiation.",
     "tag": "1M"
   },
   {
@@ -9368,23 +9368,23 @@
     "options": [
       {
         "id": "A",
-        "text": "ln"
+        "text": "ln (s + 1 s )"
       },
       {
         "id": "B",
-        "text": "-ln"
+        "text": "ln (s - 1 s )"
       },
       {
         "id": "C",
-        "text": "2ln"
+        "text": "2ln (s + 1 s )"
       },
       {
         "id": "D",
-        "text": "ln + 1"
+        "text": "ln (s + 1 s ) + 1"
       }
     ],
     "correctOption": "A",
-    "answer": "ln",
+    "answer": "ln (s + 1 s )",
     "solution": "\\int ∞\ns\n(1\nu− 1\nu + 1\n)\ndu =\n[\nln\n( u\nu + 1\n)]∞\ns\n= ln\n(s + 1\ns\n)\n.",
     "steps": [
       {
@@ -9476,23 +9476,23 @@
     "options": [
       {
         "id": "A",
-        "text": "ln"
+        "text": "F (s) = cot−1(s/2),−F′(s) = 2 s2 + 4 \\implies tf(t) = sin 2t \\implies f(t) = sin 2t t"
       },
       {
         "id": "B",
-        "text": "-ln"
+        "text": "F (s) = cot−1(s/2),−F′(s) = 2 s2 - 4 \\implies tf(t) = sin 2t \\implies f(t) = sin 2t t"
       },
       {
         "id": "C",
-        "text": "2ln"
+        "text": "F (s) = cot−1(s/4),−F′(s) = 2 s2 + 4 \\implies tf(t) = sin 2t \\implies f(t) = sin 2t t"
       },
       {
         "id": "D",
-        "text": "ln + 1"
+        "text": "F (s) = cot−1(s/2),−F′(s) = 2 s2 + 4 \\implies tf(t) = sin 2t \\implies f(t) = sin 2t t + 1"
       }
     ],
     "correctOption": "A",
-    "answer": "ln",
+    "answer": "F (s) = cot−1(s/2),−F′(s) = 2 s2 + 4 \\implies tf(t) = sin 2t \\implies f(t) = sin 2t t",
     "solution": "1. For F (s) = cot−1(s/2),−F′(s) = 2\ns2 + 4  \\implies  tf(t) = sin 2t  \\implies  f(t) = sin 2t\nt . 2.\nL\n{e−at−e−bt\nt\n}\n=\n\\int ∞\ns\n( 1\nu +a− 1\nu +b\n)\ndu = ln\n(s + b\ns + a\n)\n.",
     "steps": [
       {
@@ -9734,23 +9734,23 @@
     "options": [
       {
         "id": "A",
-        "text": "[(t−1)+1] 2 = (t−1)2 +2(t−1)+1 (or using e−s\\mathcal{L}\\{(t+1) 2}):\\mathcal{L}\\{t2u(t−1)} ="
+        "text": "e−s ( 2 s3 + 2 s2 + 1 s )"
       },
       {
         "id": "B",
-        "text": "[(t−1)-1] 2 = (t−1)2 +2(t−1)+1 (or using e−s\\mathcal{L}\\{(t+1) 2}):\\mathcal{L}\\{t2u(t−1)} ="
+        "text": "e−s ( 2 s3 - 2 s2 + 1 s )"
       },
       {
         "id": "C",
-        "text": "[(t−1)+1] 4 = (t−1)2 +2(t−1)+1 (or using e−s\\mathcal{L}\\{(t+1) 2}):\\mathcal{L}\\{t2u(t−1)} ="
+        "text": "e−s ( 4 s3 + 2 s2 + 1 s )"
       },
       {
         "id": "D",
-        "text": "[(2t−1)+1] 2 = (2t−1)2 +2(2t−1)+1 (or using e−s\\ma2thcal{L}\\{(2t+1) 2}):\\ma2thcal{L}\\{2t2u(2t−1)} ="
+        "text": "e−s ( 2 s3 + 2 s2 + 1 s ) + 1"
       }
     ],
     "correctOption": "A",
-    "answer": "[(t−1)+1] 2 = (t−1)2 +2(t−1)+1 (or using e−s\\mathcal{L}\\{(t+1) 2}):\\mathcal{L}\\{t2u(t−1)} =",
+    "answer": "e−s ( 2 s3 + 2 s2 + 1 s )",
     "solution": "Writing t2 = [(t−1)+1] 2 = (t−1)2 +2(t−1)+1 (or using e−s\\mathcal{L}\\{(t+1) 2}):\\mathcal{L}\\{t2u(t−1)} =\ne−s\n( 2\ns3 + 2\ns2 + 1\ns\n)\n.",
     "steps": [
       {
@@ -9854,7 +9854,7 @@
       },
       {
         "id": "D",
-        "text": "sin 2t [1− u(2t−\\pi )]"
+        "text": "sin t [1− u(t−\\pi )] + 1"
       }
     ],
     "correctOption": "A",
@@ -10092,23 +10092,23 @@
     "options": [
       {
         "id": "A",
-        "text": "\\mathcal{L}\\{f(t)} ="
+        "text": "f(t) = 4t [1−u(t− 1)] = 4t− 4(t− 1)u(t− 1)− 4u(t− 1)"
       },
       {
         "id": "B",
-        "text": "-\\mathcal{L}\\{f(t)} ="
+        "text": "-f(t) = 4t [1−u(t− 1)] = 4t− 4(t− 1)u(t− 1)− 4u(t− 1)"
       },
       {
         "id": "C",
-        "text": "2\\mathcal{L}\\{f(t)} ="
+        "text": "2f(t) = 4t [1−u(t− 1)] = 4t− 4(t− 1)u(t− 1)− 4u(t− 1)"
       },
       {
         "id": "D",
-        "text": "\\ma2thcal{L}\\{f(2t)} ="
+        "text": "f(t) = 4t [1−u(t− 1)] = 4t− 4(t− 1)u(t− 1)− 4u(t− 1) + 1"
       }
     ],
     "correctOption": "A",
-    "answer": "\\mathcal{L}\\{f(t)} =",
+    "answer": "f(t) = 4t [1−u(t− 1)] = 4t− 4(t− 1)u(t− 1)− 4u(t− 1)",
     "solution": "f(t) = 4t [1−u(t− 1)] = 4t− 4(t− 1)u(t− 1)− 4u(t− 1). Taking L gives\\mathcal{L}\\{f(t)} =\n4\ns2− 4e−s\ns2 − 4e−s\ns .",
     "steps": [
       {
@@ -10516,23 +10516,23 @@
     "options": [
       {
         "id": "A",
-        "text": "te−t"
+        "text": "Y (s) = 1 (s + 1)2 \\implies y(t) = te−t"
       },
       {
         "id": "B",
-        "text": "-te−t"
+        "text": "Y (s) = 1 (s - 1)2 \\implies y(t) = te−t"
       },
       {
         "id": "C",
-        "text": "2te−t"
+        "text": "Y (s) = 1 (s + 1)4 \\implies y(t) = te−t"
       },
       {
         "id": "D",
-        "text": "2te−2t"
+        "text": "Y (s) = 1 (s + 1)2 \\implies y(t) = te−t + 1"
       }
     ],
     "correctOption": "A",
-    "answer": "te−t",
+    "answer": "Y (s) = 1 (s + 1)2 \\implies y(t) = te−t",
     "solution": "Write y + 2(y∗ cost) = sin t. Taking L: Y (s)\n(\n1 + 2s\ns2 + 1\n)\n= 1\ns2 + 1  \\implies  Y (s) =\n1\n(s + 1)2  \\implies  y(t) = te−t.",
     "steps": [
       {
@@ -11110,23 +11110,23 @@
     "options": [
       {
         "id": "A",
-        "text": "y(t) ="
+        "text": "y(t) = (1 2−e−t + 1 2e−2t ) − (1 2−e−(t−1) + 1 2e−2(t−1) ) u(t− 1)"
       },
       {
         "id": "B",
-        "text": "-y(t) ="
+        "text": "y(t) = (1 2−e−t - 1 2e−2t ) − (1 2−e−(t−1) + 1 2e−2(t−1) ) u(t− 1)"
       },
       {
         "id": "C",
-        "text": "2y(t) ="
+        "text": "y(t) = (1 4−e−t + 1 2e−2t ) − (1 2−e−(t−1) + 1 2e−2(t−1) ) u(t− 1)"
       },
       {
         "id": "D",
-        "text": "y(2t) ="
+        "text": "y(t) = (1 2−e−t + 1 2e−2t ) − (1 2−e−(t−1) + 1 2e−2(t−1) ) u(t− 1) + 1"
       }
     ],
     "correctOption": "A",
-    "answer": "y(t) =",
+    "answer": "y(t) = (1 2−e−t + 1 2e−2t ) − (1 2−e−(t−1) + 1 2e−2(t−1) ) u(t− 1)",
     "solution": "( s + 1)(s + 2)Y = 1−e−s\ns  \\implies  Y = (1−e−s)\n(1/2\ns − 1\ns + 1 + 1/2\ns + 2\n)\n. Inverting gives\ny(t) =\n(1\n2−e−t + 1\n2e−2t\n)\n−\n(1\n2−e−(t−1) + 1\n2e−2(t−1)\n)\nu(t− 1).",
     "steps": [
       {
@@ -11753,29 +11753,29 @@
     "marksLabel": "4M",
     "level": "Standard",
     "topic": "Laplace Transforms & Discontinuous Systems Problem",
-    "prompt": "Solve the initial value problem y′′ + 4y′ + 4y =t2e−2t, y(0) = 1, y′(0) = 0 using the Laplace transform method.\n[Set 7, Q.6(a) · 4M]\nPage 10\nUniversity Calculus & DE · Complete Chapter-Wise & Topic-Wise Bank 240 Questions (Sets 1–10) & Detailed Solutions",
-    "promptMath": "",
+    "prompt": "Solve the initial value problem using the Laplace transform method:",
+    "promptMath": "y'' + 4y' + 4y = t^2 e^{-2t},\\quad y(0) = 1,\\; y'(0) = 0",
     "options": [
       {
         "id": "A",
-        "text": "y(t) ="
+        "text": "y(t) = \\left(1 + 2t + \\frac{t^4}{12}\\right)e^{-2t}"
       },
       {
         "id": "B",
-        "text": "-y(t) ="
+        "text": "y(t) = \\left(1 + 2t + \\frac{t^4}{4}\\right)e^{-2t}"
       },
       {
         "id": "C",
-        "text": "2y(t) ="
+        "text": "y(t) = (1 + 2t + t^4)e^{-2t}"
       },
       {
         "id": "D",
-        "text": "y(2t) ="
+        "text": "y(t) = \\left(1 + 2t + \\frac{t^4}{12}\\right)e^{2t}"
       }
     ],
     "correctOption": "A",
-    "answer": "y(t) =",
-    "solution": "( s + 2)2Y −s− 4 = 2\n(s + 2)3  \\implies  Y (s) = 1\ns + 2 + 2\n(s + 2)2 + 2\n(s + 2)5 . Inverting gives\ny(t) =\n(\n1 + 2t + t4\n12\n)\ne−2t.",
+    "answer": "y(t) = \\left(1 + 2t + \\frac{t^4}{12}\\right)e^{-2t}",
+    "solution": "1. Taking Laplace transforms: \\((s + 2)^2 Y(s) - s - 4 = \\frac{2}{(s + 2)^3}\\).\n2. Solve for \\(Y(s)\\):\n$$Y(s) = \\frac{s + 4}{(s + 2)^2} + \\frac{2}{(s + 2)^5} = \\frac{1}{s + 2} + \\frac{2}{(s + 2)^2} + \\frac{2}{(s + 2)^5}$$\n3. Invert term-by-term using First Shifting Theorem:\n$$\\mathcal{L}^{-1}\\left\\{\\frac{1}{s+2}\\right\\} = e^{-2t},\\quad \\mathcal{L}^{-1}\\left\\{\\frac{2}{(s+2)^2}\\right\\} = 2t e^{-2t}, \\quad \\mathcal{L}^{-1}\\left\\{\\frac{2}{(s+2)^5}\\right\\} = 2\\frac{t^4}{4!}e^{-2t} = \\frac{t^4}{12}e^{-2t}$$\n4. Combine: \\(y(t) = \\left(1 + 2t + \\frac{t^4}{12}\\right)e^{-2t}\\).",
     "steps": [
       {
         "text": "( s + 2)2Y −s− 4 = 2",
@@ -11794,8 +11794,8 @@
         "math": ""
       }
     ],
-    "hint": "Identify the governing structure of the differential/transform relation and apply the canonical theorem for CO6.",
-    "sillyTrap": "Common Pitfall: Watch for algebraic sign flips (+/-) and constant multipliers when executing the inverse operation.",
+    "hint": "Transform into Y(s) = 1/(s+2) + 2/(s+2)^2 + 2/(s+2)^5. Recall L^{-1}{1/(s+2)^5} = (t^4/4!)e^{-2t}.",
+    "sillyTrap": "Factorial Trap: 4! = 24. Therefore 2 / 24 = 1 / 12, not 1/4.",
     "tag": "4M"
   },
   {
@@ -11973,23 +11973,23 @@
     "options": [
       {
         "id": "A",
-        "text": "y(t) ="
+        "text": "y(t) = ( 2 + 3t +t4 2 ) e2t"
       },
       {
         "id": "B",
-        "text": "-y(t) ="
+        "text": "y(t) = ( 2 - 3t +t4 2 ) e2t"
       },
       {
         "id": "C",
-        "text": "2y(t) ="
+        "text": "y(t) = ( 4 + 3t +t4 2 ) e2t"
       },
       {
         "id": "D",
-        "text": "y(2t) ="
+        "text": "y(t) = ( 2 + 3t +t4 2 ) e2t + 1"
       }
     ],
     "correctOption": "A",
-    "answer": "y(t) =",
+    "answer": "y(t) = ( 2 + 3t +t4 2 ) e2t",
     "solution": "(s− 2)2Y− 2s + 1 = 12\n(s− 2)3  \\implies  Y (s) = 2\ns− 2 + 3\n(s− 2)2 + 12\n(s− 2)5 . Inverting gives\ny(t) =\n(\n2 + 3t +t4\n2\n)\ne2t.",
     "steps": [
       {
@@ -12189,23 +12189,23 @@
     "options": [
       {
         "id": "A",
-        "text": "y(t) ="
+        "text": "y(t) = 3 2 cos 3t + (9 2t− 3 2 ) e−3t"
       },
       {
         "id": "B",
-        "text": "-y(t) ="
+        "text": "y(t) = 3 2 cos 3t - (9 2t− 3 2 ) e−3t"
       },
       {
         "id": "C",
-        "text": "2y(t) ="
+        "text": "y(t) = 3 4 cos 3t + (9 2t− 3 2 ) e−3t"
       },
       {
         "id": "D",
-        "text": "y(2t) ="
+        "text": "y(t) = 3 2 cos 3t + (9 2t− 3 2 ) e−3t + 1"
       }
     ],
     "correctOption": "A",
-    "answer": "y(t) =",
+    "answer": "y(t) = 3 2 cos 3t + (9 2t− 3 2 ) e−3t",
     "solution": "( s + 3)2Y = 54\ns2 + 9  \\implies  Y (s) = − 3/2\ns + 3 + 9/2\n(s + 3)2 + 3\n2\ns\ns2 + 9. Inverting gives y(t) =\n3\n2 cos 3t +\n(9\n2t− 3\n2\n)\ne−3t.",
     "steps": [
       {
@@ -12351,23 +12351,23 @@
     "options": [
       {
         "id": "A",
-        "text": "5e−t"
+        "text": "Y (s) = 5 s + 1 \\implies y(t) = 5e−t"
       },
       {
         "id": "B",
-        "text": "-5e−t"
+        "text": "Y (s) = 5 s - 1 \\implies y(t) = 5e−t"
       },
       {
         "id": "C",
-        "text": "25e−t"
+        "text": "2Y (s) = 5 s + 1 \\implies y(t) = 5e−t"
       },
       {
         "id": "D",
-        "text": "5e−2t"
+        "text": "Y (s) = 5 s + 1 \\implies y(t) = 5e−t + 1"
       }
     ],
     "correctOption": "A",
-    "answer": "5e−t",
+    "answer": "Y (s) = 5 s + 1 \\implies y(t) = 5e−t",
     "solution": "Using \\mathcal{L}\\{ty′′} =−s2Y′− 2sY +y(0) and \\mathcal{L}\\{ty′} =−sY′−Y , the ODE transforms to\nPage 27\nUniversity Calculus & DE · Complete Chapter-Wise & Topic-Wise Bank 240 Questions (Sets 1–10) & Detailed Solutions\n−s(s + 1)Y′− (3s + 2)Y + 10 = 0. Solving this linear first-order ODE with the boundedness condition y(∞) = 0 yields\nY (s) = 5\ns + 1  \\implies  y(t) = 5e−t.",
     "steps": [
       {
@@ -12459,23 +12459,23 @@
     "options": [
       {
         "id": "A",
-        "text": "y(t) ="
+        "text": "y(t) = ( 2 + t4 12 ) e3t"
       },
       {
         "id": "B",
-        "text": "-y(t) ="
+        "text": "y(t) = ( 2 - t4 12 ) e3t"
       },
       {
         "id": "C",
-        "text": "2y(t) ="
+        "text": "y(t) = ( 4 + t4 12 ) e3t"
       },
       {
         "id": "D",
-        "text": "y(2t) ="
+        "text": "y(t) = ( 2 + t4 12 ) e3t + 1"
       }
     ],
     "correctOption": "A",
-    "answer": "y(t) =",
+    "answer": "y(t) = ( 2 + t4 12 ) e3t",
     "solution": "( s− 3)2Y − 2s + 6 = 2\n(s− 3)3  \\implies  Y (s) = 2\ns− 3 + 2\n(s− 3)5 . Inverting gives y(t) =\n(\n2 + t4\n12\n)\ne3t.\nPage 28",
     "steps": [
       {
@@ -12621,23 +12621,23 @@
     "options": [
       {
         "id": "A",
-        "text": "]"
+        "text": "1 2 [ 1 s + 0.5 + s + 0.5 (s + 0.5)2 + 4 ]"
       },
       {
         "id": "B",
-        "text": "-]"
+        "text": "1 2 [ 1 s - 0.5 + s + 0.5 (s + 0.5)2 + 4 ]"
       },
       {
         "id": "C",
-        "text": "2]"
+        "text": "1 4 [ 1 s + 0.5 + s + 0.5 (s + 0.5)2 + 4 ]"
       },
       {
         "id": "D",
-        "text": "] + 1"
+        "text": "1 2 [ 1 s + 0.5 + s + 0.5 (s + 0.5)2 + 4 ] + 1"
       }
     ],
     "correctOption": "A",
-    "answer": "]",
+    "answer": "1 2 [ 1 s + 0.5 + s + 0.5 (s + 0.5)2 + 4 ]",
     "solution": "Use the double-angle identity cos 2t = 1 + cos 2t\n2 , giving base transform 1\n2\n(1\ns + s\ns2 + 4\n)\n. Apply e−0.5t\n(s→s + 0.5):\n\\mathcal{L}\\{e−0.5t cos2t} = 1\n2\n[ 1\ns + 0.5 + s + 0.5\n(s + 0.5)2 + 4\n]",
     "steps": [
       {
@@ -12675,23 +12675,23 @@
     "options": [
       {
         "id": "A",
-        "text": "]"
+        "text": "f(t) = 1 2 ( e2t cos 2t +e−2t cos 2t )"
       },
       {
         "id": "B",
-        "text": "-]"
+        "text": "f(t) = 1 2 ( e2t cos 2t -e−2t cos 2t )"
       },
       {
         "id": "C",
-        "text": "2]"
+        "text": "f(t) = 1 4 ( e2t cos 2t +e−2t cos 2t )"
       },
       {
         "id": "D",
-        "text": "] + 1"
+        "text": "f(t) = 1 2 ( e2t cos 2t +e−2t cos 2t ) + 1"
       }
     ],
     "correctOption": "A",
-    "answer": "]",
+    "answer": "f(t) = 1 2 ( e2t cos 2t +e−2t cos 2t )",
     "solution": "Write cosh 2t = e2t +e−2t\n2 , so f(t) = 1\n2\n(\ne2t cos 2t +e−2t cos 2t\n)\n. Since \\mathcal{L}\\{cos 2t} = s\ns2 + 4, shift s→ (s− 2)\nin the first term and s→ (s + 2) in the second term:\n\\mathcal{L}\\{cosh 2t cos 2t} = 1\n2\n[ s− 2\n(s− 2)2 + 4 + s + 2\n(s + 2)2 + 4\n]",
     "steps": [
       {
@@ -12837,23 +12837,23 @@
     "options": [
       {
         "id": "A",
-        "text": "e2t"
+        "text": "e2t ( cos 3t + 2 3 sin 3t )"
       },
       {
         "id": "B",
-        "text": "-e2t"
+        "text": "e2t ( cos 3t - 2 3 sin 3t )"
       },
       {
         "id": "C",
-        "text": "e4t"
+        "text": "e4t ( cos 3t + 2 3 sin 3t )"
       },
       {
         "id": "D",
-        "text": "e22t"
+        "text": "e2t ( cos 3t + 2 3 sin 3t ) + 1"
       }
     ],
     "correctOption": "A",
-    "answer": "e2t",
+    "answer": "e2t ( cos 3t + 2 3 sin 3t )",
     "solution": "Complete the square: s2− 4s + 13 = (s− 2)2 + 32. Match (s− 2) in the numerator: s = (s− 2) + 2. Pull out\ne2t:\n\\mathcal{L}^{-1}\n{(s− 2) + 2\n(s− 2)2 + 32\n}\n=e2t\\mathcal{L}^{-1}\n{ s\ns2 + 32 + 2\ns2 + 32\n}\n=e2t\n(\ncos 3t + 2\n3 sin 3t\n)",
     "steps": [
       {
@@ -12945,23 +12945,23 @@
     "options": [
       {
         "id": "A",
-        "text": "et"
+        "text": "et ( cosh 3t + 11 3 sinh 3t )"
       },
       {
         "id": "B",
-        "text": "-et"
+        "text": "et ( cosh 3t - 11 3 sinh 3t )"
       },
       {
         "id": "C",
-        "text": "2et"
+        "text": "et ( cosh 6t + 11 3 sinh 3t )"
       },
       {
         "id": "D",
-        "text": "e2t"
+        "text": "et ( cosh 3t + 11 3 sinh 3t ) + 1"
       }
     ],
     "correctOption": "A",
-    "answer": "et",
+    "answer": "et ( cosh 3t + 11 3 sinh 3t )",
     "solution": "Complete the square: s2− 2s− 8 = (s− 1)2− 32. Match (s− 1) in the numerator: s + 10 = (s− 1) + 11. Pull\nout et:\n\\mathcal{L}^{-1}\n{(s− 1) + 11\n(s− 1)2− 32\n}\n=et\\mathcal{L}^{-1}\n{ s\ns2− 32 + 11\ns2− 32\n}\n=et\n(\ncosh 3t + 11\n3 sinh 3t\n)",
     "steps": [
       {
@@ -13052,23 +13052,23 @@
     "options": [
       {
         "id": "A",
-        "text": "2ω2"
+        "text": "f(t) = sin2ωt \\implies f(0) = 0 and f′(t) = 2ω sinωt cosωt =ω sin 2ωt"
       },
       {
         "id": "B",
-        "text": "-2ω2"
+        "text": "-f(t) = sin2ωt \\implies f(0) = 0 and f′(t) = 2ω sinωt cosωt =ω sin 2ωt"
       },
       {
         "id": "C",
-        "text": "4ω2"
+        "text": "f(t) = sin4ωt \\implies f(0) = 0 and f′(t) = 2ω sinωt cosωt =ω sin 2ωt"
       },
       {
         "id": "D",
-        "text": "2ω2 + 1"
+        "text": "f(t) = sin2ωt \\implies f(0) = 0 and f′(t) = 2ω sinωt cosωt =ω sin 2ωt + 1"
       }
     ],
     "correctOption": "A",
-    "answer": "2ω2",
+    "answer": "f(t) = sin2ωt \\implies f(0) = 0 and f′(t) = 2ω sinωt cosωt =ω sin 2ωt",
     "solution": "Let f(t) = sin2ωt  \\implies  f(0) = 0 and f′(t) = 2ω sinωt cosωt =ω sin 2ωt. By \\mathcal{L}\\{f′} =s\\mathcal{L}\\{f}− f(0):\ns\\mathcal{L}\\{f}− 0 =ω\n( 2ω\ns2 + 4ω2\n)\n \\implies  \\mathcal{L}\\{sin2ωt} = 2ω2\ns(s2 + 4ω2)",
     "steps": [
       {
@@ -13209,29 +13209,29 @@
     "marksLabel": "4M",
     "level": "Standard",
     "topic": "Laplace Transforms & Discontinuous Systems Problem",
-    "prompt": "F (s) = 3\ns2 +s/4",
-    "promptMath": "",
+    "prompt": "Find the inverse Laplace transform \\(\\mathcal{L}^{-1}\\{F(s)\\}\\):",
+    "promptMath": "F(s) = \\frac{3}{s^2 + s/4} = \\frac{3}{s(s + 1/4)}",
     "options": [
       {
         "id": "A",
-        "text": "12"
+        "text": "f(t) = 12(1 - e^{-t/4})"
       },
       {
         "id": "B",
-        "text": "-12"
+        "text": "f(t) = 12(1 + e^{-t/4})"
       },
       {
         "id": "C",
-        "text": "14"
+        "text": "f(t) = 3(1 - e^{-t/4})"
       },
       {
         "id": "D",
-        "text": "12 + 1"
+        "text": "f(t) = 12(1 - e^{t/4})"
       }
     ],
     "correctOption": "A",
-    "answer": "12",
-    "solution": "Factor out 1\ns: F (s) = 1\ns· 3\ns + 1/4. Base inverse: 3 e−t/4. Divide by s (integrate 0→t):\nf(t) =\n\\int t\n0\n3e−\\tau / 4d\\tau  =\n[\n−12e−\\tau / 4\n]t\n0\n= 12\n(\n1−e−t/4\n)",
+    "answer": "f(t) = 12(1 - e^{-t/4})",
+    "solution": "1. Partial fractions: \\(\\frac{3}{s(s + 1/4)} = \\frac{12}{s} - \\frac{12}{s + 1/4}\\).\n2. Inverting directly:\n$$f(t) = 12 - 12e^{-t/4} = 12(1 - e^{-t/4})$$",
     "steps": [
       {
         "text": "Factor out 1",
@@ -13250,8 +13250,8 @@
         "math": ""
       }
     ],
-    "hint": "Identify the governing structure of the differential/transform relation and apply the canonical theorem for CO6.",
-    "sillyTrap": "Common Pitfall: Watch for algebraic sign flips (+/-) and constant multipliers when executing the inverse operation.",
+    "hint": "Decompose into partial fractions 12/s - 12/(s + 1/4) and invert.",
+    "sillyTrap": "Coefficient Trap: 3 / (1/4) = 12, not 3/4.",
     "tag": "Laplace Master · 4M"
   },
   {
@@ -13430,23 +13430,23 @@
     "options": [
       {
         "id": "A",
-        "text": ")"
+        "text": "f(t) =t [1−u(t− 2)] =t−tu (t− 2)"
       },
       {
         "id": "B",
-        "text": "-)"
+        "text": "-f(t) =t [1−u(t− 2)] =t−tu (t− 2)"
       },
       {
         "id": "C",
-        "text": "2)"
+        "text": "f(t) =t [1−u(t− 4)] =t−tu (t− 2)"
       },
       {
         "id": "D",
-        "text": ") + 1"
+        "text": "f(t) =t [1−u(t− 2)] =t−tu (t− 2) + 1"
       }
     ],
     "correctOption": "A",
-    "answer": ")",
+    "answer": "f(t) =t [1−u(t− 2)] =t−tu (t− 2)",
     "solution": "Writef(t) =t [1−u(t− 2)] =t−tu (t− 2). Apply \\mathcal{L}\\{g(t)u(t−a)} =e−as\\mathcal{L}\\{g(t +a)}:\n\\mathcal{L}\\{f(t)} = 1\ns2−e−2s\\mathcal{L}\\{t + 2} = 1\ns2−e−2s\n( 1\ns2 + 2\ns\n)",
     "steps": [
       {
@@ -13754,23 +13754,23 @@
     "options": [
       {
         "id": "A",
-        "text": "2 sin 3t− 2 sin 3(t−\\pi )u(t−\\pi ) = 2 sin 3t [1 +u(t−\\pi )]"
+        "text": "f(t) = 2 sin 3t− 2 sin 3(t−\\pi )u(t−\\pi ) = 2 sin 3t [1 +u(t−\\pi )]"
       },
       {
         "id": "B",
-        "text": "2 sin 3t− 2 sin 3(t−\\pi )u(t−\\pi ) = 2 sin 3t [1 -u(t−\\pi )]"
+        "text": "f(t) = 2 sin 3t− 2 sin 3(t−\\pi )u(t−\\pi ) = 2 sin 3t [1 -u(t−\\pi )]"
       },
       {
         "id": "C",
-        "text": "4 sin 3t− 2 sin 3(t−\\pi )u(t−\\pi ) = 2 sin 3t [1 +u(t−\\pi )]"
+        "text": "f(t) = 4 sin 3t− 2 sin 3(t−\\pi )u(t−\\pi ) = 2 sin 3t [1 +u(t−\\pi )]"
       },
       {
         "id": "D",
-        "text": "2 sin 32t− 2 sin 3(2t−\\pi )u(2t−\\pi ) = 2 sin 32t [1 +u(2t−\\pi )]"
+        "text": "f(t) = 2 sin 3t− 2 sin 3(t−\\pi )u(t−\\pi ) = 2 sin 3t [1 +u(t−\\pi )] + 1"
       }
     ],
     "correctOption": "A",
-    "answer": "2 sin 3t− 2 sin 3(t−\\pi )u(t−\\pi ) = 2 sin 3t [1 +u(t−\\pi )]",
+    "answer": "f(t) = 2 sin 3t− 2 sin 3(t−\\pi )u(t−\\pi ) = 2 sin 3t [1 +u(t−\\pi )]",
     "solution": "Base inverse:\\mathcal{L}^{-1}\n{ 6\ns2 + 9\n}\n= 2 sin 3t. Applying Second Shifting ( t→t−\\pi ) to the e−\\pi s term:\nf(t) = 2 sin 3t− 2 sin 3(t−\\pi )u(t−\\pi ) = 2 sin 3t [1 +u(t−\\pi )]",
     "steps": [
       {
@@ -13854,23 +13854,23 @@
     "options": [
       {
         "id": "A",
-        "text": "e−t cost +e−2\\pi e−(t−2\\pi ) cos(t− 2\\pi )u(t− 2\\pi ) =e−t cost [1 +u(t− 2\\pi )]"
+        "text": "f(t) =e−t cost +e−2\\pi e−(t−2\\pi ) cos(t− 2\\pi )u(t− 2\\pi ) =e−t cost [1 +u(t− 2\\pi )]"
       },
       {
         "id": "B",
-        "text": "e−t cost -e−2\\pi e−(t−2\\pi ) cos(t− 2\\pi )u(t− 2\\pi ) =e−t cost [1 +u(t− 2\\pi )]"
+        "text": "f(t) =e−t cost -e−2\\pi e−(t−2\\pi ) cos(t− 2\\pi )u(t− 2\\pi ) =e−t cost [1 +u(t− 2\\pi )]"
       },
       {
         "id": "C",
-        "text": "e−t cost +e−4\\pi e−(t−2\\pi ) cos(t− 2\\pi )u(t− 2\\pi ) =e−t cost [1 +u(t− 2\\pi )]"
+        "text": "f(t) =e−t cost +e−4\\pi e−(t−2\\pi ) cos(t− 2\\pi )u(t− 2\\pi ) =e−t cost [1 +u(t− 2\\pi )]"
       },
       {
         "id": "D",
-        "text": "e−2t cos2t +e−2\\pi e−(2t−2\\pi ) cos(2t− 2\\pi )u(2t− 2\\pi ) =e−2t cos2t [1 +u(2t− 2\\pi )]"
+        "text": "f(t) =e−t cost +e−2\\pi e−(t−2\\pi ) cos(t− 2\\pi )u(t− 2\\pi ) =e−t cost [1 +u(t− 2\\pi )] + 1"
       }
     ],
     "correctOption": "A",
-    "answer": "e−t cost +e−2\\pi e−(t−2\\pi ) cos(t− 2\\pi )u(t− 2\\pi ) =e−t cost [1 +u(t− 2\\pi )]",
+    "answer": "f(t) =e−t cost +e−2\\pi e−(t−2\\pi ) cos(t− 2\\pi )u(t− 2\\pi ) =e−t cost [1 +u(t− 2\\pi )]",
     "solution": "Base inverse without e−2\\pi (s+1): \\mathcal{L}^{-1}\n{ s + 1\n(s + 1)2 + 1\n}\n= e−t cost. Rewrite the second term as e−2\\pi ·\ne−2\\pi s s + 1\n(s + 1)2 + 1 and shift t→ (t− 2\\pi ):\nf(t) =e−t cost +e−2\\pi e−(t−2\\pi ) cos(t− 2\\pi )u(t− 2\\pi ) =e−t cost [1 +u(t− 2\\pi )]",
     "steps": [
       {
@@ -14070,23 +14070,23 @@
     "options": [
       {
         "id": "A",
-        "text": ")"
+        "text": "1 2 ln (29 25 )"
       },
       {
         "id": "B",
-        "text": "-)"
+        "text": "-1 2 ln (29 25 )"
       },
       {
         "id": "C",
-        "text": "2)"
+        "text": "1 4 ln (29 25 )"
       },
       {
         "id": "D",
-        "text": ") + 1"
+        "text": "1 2 ln (29 25 ) + 1"
       }
     ],
     "correctOption": "A",
-    "answer": ")",
+    "answer": "1 2 ln (29 25 )",
     "solution": "Base transform: \\mathcal{L}\\{1− cos 2t} = 1\ns− s\ns2 + 4. Divide by t (integrates→∞ ):\nL\n{1− cos 2t\nt\n}\n=\n\\int ∞\ns\n(1\nu− u\nu2 + 4\n)\ndu =\n[1\n2 ln\n( u2\nu2 + 4\n)]∞\ns\n= 0− 1\n2 ln\n( s2\ns2 + 4\n)\n= 1\n2 ln\n(s2 + 4\ns2\n)\nBy definition of Laplace transform, setting s = 5 evaluates the definite integral:\n\\int ∞\n0\ne−5t\n(1− cos 2t\nt\n)\ndt = 1\n2 ln\n(25 + 4\n25\n)\n= 1\n2 ln\n(29\n25\n)",
     "steps": [
       {
@@ -14124,23 +14124,23 @@
     "options": [
       {
         "id": "A",
-        "text": "ln"
+        "text": "y(t) = \\sin 2t"
       },
       {
         "id": "B",
-        "text": "-ln"
+        "text": "y(t) = -\\sin 2t"
       },
       {
         "id": "C",
-        "text": "2ln"
+        "text": "y(t) = \\sin 4t"
       },
       {
         "id": "D",
-        "text": "ln + 1"
+        "text": "y(t) = \\cos 2t"
       }
     ],
     "correctOption": "A",
-    "answer": "ln",
+    "answer": "y(t) = \\sin 2t",
     "solution": "Base transform: \\mathcal{L}\\{e−4t−e2t} = 1\ns + 4− 1\ns− 2. Divide by t (integrates→∞ ):\nL\n{e−4t−e2t\nt\n}\n=\n\\int ∞\ns\n( 1\nu + 4− 1\nu− 2\n)\ndu =\n[\nln\n(u + 4\nu− 2\n)]∞\ns\n= 0− ln\n(s + 4\ns− 2\n)\n= ln\n(s− 2\ns + 4\n)\nPage 7\nUniversity Calculus & DE · Laplace T ransform Practice Paper 50 T opic-Wise Questions & Solutions",
     "steps": [
       {
@@ -14658,29 +14658,29 @@
     "marksLabel": "4M",
     "level": "Standard",
     "topic": "Laplace Transforms & Discontinuous Systems Problem",
-    "prompt": "y(t)−\n\\int t\n0\ny(\\tau ) sin 2(t−\\tau )d\\tau  = sin 2t",
-    "promptMath": "",
+    "prompt": "Solve the Volterra convolution integral equation for \\(y(t)\\):",
+    "promptMath": "y(t) - \\int_0^t y(\\tau)\\sin 2(t - \\tau)\\,d\\tau = \\sin 2t",
     "options": [
       {
         "id": "A",
-        "text": "2t)"
+        "text": "y(t) = \\sqrt{2}\\sin(\\sqrt{2}t)"
       },
       {
         "id": "B",
-        "text": "-2t)"
+        "text": "y(t) = \\sin(2t)"
       },
       {
         "id": "C",
-        "text": "4t)"
+        "text": "y(t) = 2\\sin(\\sqrt{2}t)"
       },
       {
         "id": "D",
-        "text": "22t)"
+        "text": "y(t) = \\sqrt{2}\\cos(\\sqrt{2}t)"
       }
     ],
     "correctOption": "A",
-    "answer": "2t)",
-    "solution": "Write in star notation: y(t)− [y(t)∗ sin 2t] = sin 2t. Take Laplace transform:\nY (s)\n(\n1− 2\ns2 + 4\n)\n= 2\ns2 + 4  \\implies  Y (s)\n(s2 + 2\ns2 + 4\n)\n= 2\ns2 + 4  \\implies  Y (s) = 2\ns2 + (\n√\n2)2  \\implies  y(t) =\n√\n2 sin(\n√\n2t)",
+    "answer": "y(t) = \\sqrt{2}\\sin(\\sqrt{2}t)",
+    "solution": "1. Write in convolution notation: \\(y(t) - [y(t) * \\sin 2t] = \\sin 2t\\).\n2. Take Laplace transforms:\n$$Y(s) - Y(s)\\cdot\\frac{2}{s^2 + 4} = \\frac{2}{s^2 + 4} \\implies Y(s)\\left(1 - \\frac{2}{s^2 + 4}\\right) = \\frac{2}{s^2 + 4}$$\n3. Simplify:\n$$Y(s)\\left(\\frac{s^2 + 2}{s^2 + 4}\\right) = \\frac{2}{s^2 + 4} \\implies Y(s) = \\frac{2}{s^2 + 2} = \\frac{\\sqrt{2} \\cdot \\sqrt{2}}{s^2 + (\\sqrt{2})^2}$$\n4. Inverting gives: \\(y(t) = \\sqrt{2}\\sin(\\sqrt{2}t)\\).",
     "steps": [
       {
         "text": "Write in star notation: y(t)− [y(t)∗ sin 2t] = sin 2t. Take Laplace transform:",
@@ -14699,8 +14699,8 @@
         "math": ""
       }
     ],
-    "hint": "Identify the governing structure of the differential/transform relation and apply the canonical theorem for CO6.",
-    "sillyTrap": "Common Pitfall: Watch for algebraic sign flips (+/-) and constant multipliers when executing the inverse operation.",
+    "hint": "The integral is y * sin 2t. Transform to Y(s)[1 - 2/(s^2+4)] = 2/(s^2+4) and invert.",
+    "sillyTrap": "Denominator Trap: s^2 + 4 - 2 = s^2 + 2 = s^2 + (sqrt(2))^2. Frequency is sqrt(2), not 2!",
     "tag": "Laplace Master · 4M"
   },
   {
@@ -14820,29 +14820,29 @@
     "marksLabel": "4M",
     "level": "Standard",
     "topic": "Laplace Transforms & Discontinuous Systems Problem",
-    "prompt": "y′′− 4y′ + 4y = 0, y (0) = 8.1, y ′(0) = 3.9",
-    "promptMath": "",
+    "prompt": "Solve the second-order initial value problem via Laplace transform:",
+    "promptMath": "y'' - 4y' + 4y = 0,\\quad y(0) = 8.1,\\; y'(0) = 3.9",
     "options": [
       {
         "id": "A",
-        "text": "(8"
+        "text": "y(t) = (8.1 - 12.3t)e^{2t}"
       },
       {
         "id": "B",
-        "text": "-(8"
+        "text": "y(t) = (8.1 + 12.3t)e^{2t}"
       },
       {
         "id": "C",
-        "text": "2(8"
+        "text": "y(t) = (8.1 - 12.3t)e^{-2t}"
       },
       {
         "id": "D",
-        "text": "(8 + 1"
+        "text": "y(t) = 8.1e^{2t} - 3.9t e^{2t}"
       }
     ],
     "correctOption": "A",
-    "answer": "(8",
-    "solution": "Take Laplace transform: [ s2Y− 8.1s− 3.9]− 4[sY− 8.1] + 4Y = 0  \\implies  (s− 2)2Y = 8.1s− 28.5. Match\n(s− 2) in the numerator: 8.1s− 28.5 = 8.1(s− 2)− 12.3:\nY (s) = 8.1\ns− 2− 12.3\n(s− 2)2  \\implies  y(t) = (8.1− 12.3t)e2t",
+    "answer": "y(t) = (8.1 - 12.3t)e^{2t}",
+    "solution": "1. Taking Laplace transforms: \\((s^2 - 4s + 4)Y(s) - 8.1s + 4(8.1) - 3.9 = 0\\).\n2. Numerator becomes \\(8.1s - 28.5\\):\n$$Y(s) = \\frac{8.1s - 28.5}{(s - 2)^2} = \\frac{8.1(s - 2) - 12.3}{(s - 2)^2} = \\frac{8.1}{s - 2} - \\frac{12.3}{(s - 2)^2}$$\n3. Inverting via First Shifting Theorem:\n$$y(t) = 8.1e^{2t} - 12.3t e^{2t} = (8.1 - 12.3t)e^{2t}$$",
     "steps": [
       {
         "text": "Take Laplace transform: [ s2Y− 8.1s− 3.9]− 4[sY− 8.1] + 4Y = 0  \\implies  (s− 2)2Y = 8.1s− 28.5. Match",
@@ -14861,8 +14861,8 @@
         "math": ""
       }
     ],
-    "hint": "Identify the governing structure of the differential/transform relation and apply the canonical theorem for CO6.",
-    "sillyTrap": "Common Pitfall: Watch for algebraic sign flips (+/-) and constant multipliers when executing the inverse operation.",
+    "hint": "Transform to (s-2)^2 Y = 8.1s - 28.5. Express numerator as 8.1(s - 2) - 12.3.",
+    "sillyTrap": "Arithmetic Trap: 4(8.1) - 3.9 = 32.4 - 3.9 = 28.5. 8.1(2) = 16.2. 28.5 - 16.2 = 12.3.",
     "tag": "Laplace Master · 4M"
   },
   {
@@ -15036,29 +15036,29 @@
     "marksLabel": "4M",
     "level": "Standard",
     "topic": "Laplace Transforms & Discontinuous Systems Problem",
-    "prompt": "y′′ + 3y′ + 2y =r(t), y (0) = 0, y ′(0) = 0, where r(t) =\n{\n1, 0<t< 1\n0, t> 1\nPage 3\nUniversity Calculus & DE · Laplace T ransform Practice Paper 50 T opic-Wise Questions & Solutions",
-    "promptMath": "",
+    "prompt": "Solve the discontinuous initial value problem for \\(y(t)\\):",
+    "promptMath": "y'' + 3y' + 2y = r(t),\\quad y(0) = 0,\\; y'(0) = 0,\\quad \\text{where } r(t) = \\begin{cases} 1, & 0 < t < 1 \\\\ 0, & t > 1 \\end{cases}",
     "options": [
       {
         "id": "A",
-        "text": "(1"
+        "text": "y(t) = \\left(\\frac{1}{2} - e^{-t} + \\frac{1}{2}e^{-2t}\\right) - \\left(\\frac{1}{2} - e^{-(t-1)} + \\frac{1}{2}e^{-2(t-1)}\\right)u(t - 1)"
       },
       {
         "id": "B",
-        "text": "-(1"
+        "text": "y(t) = \\left(\\frac{1}{2} + e^{-t} + \\frac{1}{2}e^{-2t}\\right) - \\left(\\frac{1}{2} + e^{-(t-1)} + \\frac{1}{2}e^{-2(t-1)}\\right)u(t - 1)"
       },
       {
         "id": "C",
-        "text": "2(1"
+        "text": "y(t) = (1 - e^{-t}) - (1 - e^{-(t-1)})u(t - 1)"
       },
       {
         "id": "D",
-        "text": "(1 + 1"
+        "text": "y(t) = \\left(\\frac{1}{2} - e^{-t} + \\frac{1}{2}e^{-2t}\\right) + \\left(\\frac{1}{2} - e^{-(t-1)} + \\frac{1}{2}e^{-2(t-1)}\\right)u(t - 1)"
       }
     ],
     "correctOption": "A",
-    "answer": "(1",
-    "solution": "Writer(t) = 1−u(t− 1). Taking Laplace with y(0) =y′(0) = 0:\n(s + 1)(s + 2)Y (s) = 1−e−s\ns  \\implies  Y (s) = (1−e−s)\n(1/2\ns − 1\ns + 1 + 1/2\ns + 2\n)\nInverting and applying Second Shifting (t→t− 1) to the e−s term:\ny(t) =\n(1\n2−e−t + 1\n2e−2t\n)\n−\n(1\n2−e−(t−1) + 1\n2e−2(t−1)\n)\nu(t− 1)",
+    "answer": "y(t) = \\left(\\frac{1}{2} - e^{-t} + \\frac{1}{2}e^{-2t}\\right) - \\left(\\frac{1}{2} - e^{-(t-1)} + \\frac{1}{2}e^{-2(t-1)}\\right)u(t - 1)",
+    "solution": "1. Write the forcing function in Heaviside step form: \\(r(t) = 1 - u(t - 1)\\).\n2. Take Laplace transforms on both sides with zero initial conditions \\(y(0) = 0, y'(0) = 0\\):\n$$(s^2 + 3s + 2)Y(s) = (s + 1)(s + 2)Y(s) = \\frac{1 - e^{-s}}{s}$$\n3. Solve for \\(Y(s)\\) and expand in partial fractions:\n$$Y(s) = (1 - e^{-s})\\left(\\frac{1/2}{s} - \\frac{1}{s+1} + \\frac{1/2}{s+2}\\right)$$\n4. Inverting each term and applying the Second Shifting Theorem \\(t \\to t - 1\\) to the shifted term:\n$$y(t) = \\left(\\frac{1}{2} - e^{-t} + \\frac{1}{2}e^{-2t}\\right) - \\left(\\frac{1}{2} - e^{-(t-1)} + \\frac{1}{2}e^{-2(t-1)}\\right)u(t - 1)$$",
     "steps": [
       {
         "text": "Writer(t) = 1−u(t− 1). Taking Laplace with y(0) =y′(0) = 0:",
@@ -15077,8 +15077,8 @@
         "math": ""
       }
     ],
-    "hint": "Identify the governing structure of the differential/transform relation and apply the canonical theorem for CO6.",
-    "sillyTrap": "Common Pitfall: Watch for algebraic sign flips (+/-) and constant multipliers when executing the inverse operation.",
+    "hint": "Write r(t) = 1 - u(t - 1), take Laplace transform, use partial fractions 1/[s(s+1)(s+2)], and invert with Second Shifting.",
+    "sillyTrap": "Shift Trap: In the delayed term, replace t by (t - 1) in all exponential factors!",
     "tag": "Laplace Master · 4M"
   },
   {
@@ -15203,23 +15203,23 @@
     "options": [
       {
         "id": "A",
-        "text": ")︃"
+        "text": "f (t) = t (0 < t < 2): Write f (t) = t [1−u(t−2)] = t−t u(t−2)"
       },
       {
         "id": "B",
-        "text": "-)︃"
+        "text": "-f (t) = t (0 < t < 2): Write f (t) = t [1−u(t−2)] = t−t u(t−2)"
       },
       {
         "id": "C",
-        "text": "2)︃"
+        "text": "f (t) = t (0 < t < 4): Write f (t) = t [1−u(t−2)] = t−t u(t−2)"
       },
       {
         "id": "D",
-        "text": ")︃ + 1"
+        "text": "f (t) = t (0 < t < 2): Write f (t) = t [1−u(t−2)] = t−t u(t−2) + 1"
       }
     ],
     "correctOption": "A",
-    "answer": ")︃",
+    "answer": "f (t) = t (0 < t < 2): Write f (t) = t [1−u(t−2)] = t−t u(t−2)",
     "solution": "2. f (t) = t (0 < t < 2): Write f (t) = t [1−u(t−2)] = t−t u(t−2). Using \\mathcal{L}\\{t u(t−2)} = e−2s\\mathcal{L}\\{t+2} =\ne−2s\n(︃ 1\ns2 + 2\ns\n)︃\n:\n\\mathcal{L}\\{f (t)} = 1\ns2 − e−2s\n(︃ 1\ns2 + 2\ns\n)︃",
     "steps": [
       {
@@ -15249,23 +15249,23 @@
     "options": [
       {
         "id": "A",
-        "text": "e−2s"
+        "text": "f (t) = t − 2 ( t > 2): Write f (t) = ( t − 2) u(t − 2)"
       },
       {
         "id": "B",
-        "text": "-e−2s"
+        "text": "-f (t) = t − 2 ( t > 2): Write f (t) = ( t − 2) u(t − 2)"
       },
       {
         "id": "C",
-        "text": "e−4s"
+        "text": "f (t) = t − 4 ( t > 2): Write f (t) = ( t − 2) u(t − 2)"
       },
       {
         "id": "D",
-        "text": "e−2s + 1"
+        "text": "f (t) = t − 2 ( t > 2): Write f (t) = ( t − 2) u(t − 2) + 1"
       }
     ],
     "correctOption": "A",
-    "answer": "e−2s",
+    "answer": "f (t) = t − 2 ( t > 2): Write f (t) = ( t − 2) u(t − 2)",
     "solution": "3. f (t) = t − 2 ( t > 2): Write f (t) = ( t − 2) u(t − 2). By direct Second Shifting ( \\mathcal{L}\\{t} = 1/s2, a = 2):\n\\mathcal{L}\\{f (t)} = e−2s\ns2",
     "steps": [
       {
@@ -15387,23 +15387,23 @@
     "options": [
       {
         "id": "A",
-        "text": "\\pi"
+        "text": "i (t + 2) = sin \\pi (t + 4) = sin \\pi t: \\mathcal{L}\\{f (t)} = \\pi s2 + \\pi 2 (︂ e−2s − e−4s"
       },
       {
         "id": "B",
-        "text": "-\\pi"
+        "text": "i (t - 2) = sin \\pi (t + 4) = sin \\pi t: \\mathcal{L}\\{f (t)} = \\pi s2 + \\pi 2 (︂ e−2s − e−4s"
       },
       {
         "id": "C",
-        "text": "2\\pi"
+        "text": "i (t + 4) = sin \\pi (t + 4) = sin \\pi t: \\mathcal{L}\\{f (t)} = \\pi s2 + \\pi 2 (︂ e−2s − e−4s"
       },
       {
         "id": "D",
-        "text": "\\pi + 1"
+        "text": "i (t + 2) = sin \\pi (t + 4) = sin \\pi t: \\mathcal{L}\\{f (t)} = \\pi s2 + \\pi 2 (︂ e−2s − e−4s + 1"
       }
     ],
     "correctOption": "A",
-    "answer": "\\pi",
+    "answer": "i (t + 2) = sin \\pi (t + 4) = sin \\pi t: \\mathcal{L}\\{f (t)} = \\pi s2 + \\pi 2 (︂ e−2s − e−4s",
     "solution": "6. f (t) = sin \\pi t (2 < t < 4): Write f (t) = sin \\pi t · [u(t − 2) − u(t − 4)]. Since sin \\pi (t + 2) = sin \\pi (t + 4) =\nsin \\pi t:\n\\mathcal{L}\\{f (t)} = \\pi \ns2 + \\pi 2\n(︂\ne−2s − e−4s\n)︂",
     "steps": [
       {
@@ -15525,23 +15525,23 @@
     "options": [
       {
         "id": "A",
-        "text": "e−1"
+        "text": "f (t) = t2 (t > 3/2): Write f (t) = t2 u(t − 1"
       },
       {
         "id": "B",
-        "text": "-e−1"
+        "text": "-f (t) = t2 (t > 3/2): Write f (t) = t2 u(t − 1"
       },
       {
         "id": "C",
-        "text": "2e−1"
+        "text": "f (t) = t4 (t > 3/2): Write f (t) = t2 u(t − 1"
       },
       {
         "id": "D",
-        "text": "e−1 + 1"
+        "text": "f (t) = t2 (t > 3/2): Write f (t) = t2 u(t − 1 + 1"
       }
     ],
     "correctOption": "A",
-    "answer": "e−1",
+    "answer": "f (t) = t2 (t > 3/2): Write f (t) = t2 u(t − 1",
     "solution": "9. f (t) = t2 (t > 3/2): Write f (t) = t2 u(t − 1.5):\n\\mathcal{L}\\{f (t)} = e−1.5s\\mathcal{L}\\{(t + 1.5)2} = e−1.5s\\mathcal{L}\\{t2 + 3t + 2.25} = e−1.5s\n(︃ 2\ns3 + 3\ns2 + 2.25\ns\n)︃",
     "steps": [
       {
@@ -15658,29 +15658,29 @@
     "marksLabel": "4M",
     "level": "Standard",
     "topic": "Kreyszig 6.3/6.6 Problem Sets",
-    "prompt": "Find the Laplace transform \\(\\mathcal{L}\\{f(t)\\}\\):",
-    "promptMath": "f(t) = 3 t sinh 4t",
+    "prompt": "Find the Laplace transform using Differentiation of Transforms:",
+    "promptMath": "f(t) = 3t \\sinh 4t",
     "options": [
       {
         "id": "A",
-        "text": "24s"
+        "text": "\\frac{24s}{(s^2 - 16)^2}"
       },
       {
         "id": "B",
-        "text": "-24s"
+        "text": "\\frac{24s}{(s^2 + 16)^2}"
       },
       {
         "id": "C",
-        "text": "44s"
+        "text": "\\frac{12s}{(s^2 - 16)^2}"
       },
       {
         "id": "D",
-        "text": "24s + 1"
+        "text": "\\frac{24s}{s^2 - 16}"
       }
     ],
     "correctOption": "A",
-    "answer": "24s",
-    "solution": "2. f (t) = 3 t sinh 4t: Base: \\mathcal{L}\\{3 sinh 4t} = 12\ns2 − 16 . Multiply by t (−d/ds):\n\\mathcal{L}\\{3t sinh 4t} = − d\nds\n(︃ 12\ns2 − 16\n)︃\n= 24s\n(s2 − 16)2",
+    "answer": "\\frac{24s}{(s^2 - 16)^2}",
+    "solution": "1. Base transform: \\(\\mathcal{L}\\{3\\sinh 4t\\} = 3\\cdot\\frac{4}{s^2 - 16} = \\frac{12}{s^2 - 16}\\).\n2. Multiply by \\(t\\) using \\(\\mathcal{L}\\{t f(t)\\} = -\\frac{d}{ds}F(s)\\):\n$$\\mathcal{L}\\{3t \\sinh 4t\\} = -\\frac{d}{ds}\\left(\\frac{12}{s^2 - 16}\\right) = -\\left(-\\frac{12\\cdot 2s}{(s^2 - 16)^2}\\right) = \\frac{24s}{(s^2 - 16)^2}$$",
     "steps": [
       {
         "text": "Apply unit step / shifting definition:",
@@ -15691,8 +15691,8 @@
         "math": "24s"
       }
     ],
-    "hint": "Write the piecewise or multiplier function using Heaviside step functions u(t - a), then apply the Second Shifting Theorem.",
-    "sillyTrap": "Shift Parameter Trap: In \\(\\mathcal{L}\\{g(t)u(t-a)\\} = e^{-as}\\mathcal{L}\\{g(t+a)\\}\\), remember to substitute \\(t \\to t + a\\).",
+    "hint": "L{3 sinh 4t} = 12/(s^2 - 16). Differentiate w.r.t s and negate.",
+    "sillyTrap": "Sign Trap: Note \\(\\sinh\\) has a MINUS sign in denominator \\(s^2 - 16\\), unlike \\(\\sin\\) which has \\(s^2 + 16\\).",
     "tag": "Kreyszig 6.3/6.6 · 4M"
   },
   {
@@ -16026,29 +16026,29 @@
     "marksLabel": "4M",
     "level": "Standard",
     "topic": "Kreyszig 6.3/6.6 Problem Sets",
-    "prompt": "Find the Laplace transform \\(\\mathcal{L}\\{f(t)\\}\\):",
-    "promptMath": "f(t) = tnekt",
+    "prompt": "Find the Laplace transform of the polynomial-exponential product:",
+    "promptMath": "f(t) = t^n e^{kt},\\quad n \\in \\mathbb{N}",
     "options": [
       {
         "id": "A",
-        "text": "n!"
+        "text": "\\frac{n!}{(s - k)^{n+1}}"
       },
       {
         "id": "B",
-        "text": "-n!"
+        "text": "\\frac{n!}{(s + k)^{n+1}}"
       },
       {
         "id": "C",
-        "text": "2n!"
+        "text": "\\frac{n!}{(s - k)^n}"
       },
       {
         "id": "D",
-        "text": "n! + 1"
+        "text": "\\frac{1}{(s - k)^{n+1}}"
       }
     ],
     "correctOption": "A",
-    "answer": "n!",
-    "solution": "10. f (t) = tnekt: Apply (−1)n dn\ndsn to \\mathcal{L}\\{ekt} = (s − k)−1:\n\\mathcal{L}\\{tnekt} = (−1)n dn\ndsn (s − k)−1 = n!\n(s − k)n+1",
+    "answer": "\\frac{n!}{(s - k)^{n+1}}",
+    "solution": "1. Standard transform of \\(t^n\\): \\(\\mathcal{L}\\{t^n\\} = \\frac{n!}{s^{n+1}}\\).\n2. By the First Shifting Theorem with factor \\(e^{kt}\\):\n$$\\mathcal{L}\\{e^{kt}t^n\\} = \\left.\\frac{n!}{s^{n+1}}\\right|_{s \\to s - k} = \\frac{n!}{(s - k)^{n+1}}$$",
     "steps": [
       {
         "text": "Apply unit step / shifting definition:",
@@ -16059,8 +16059,8 @@
         "math": "n!"
       }
     ],
-    "hint": "Write the piecewise or multiplier function using Heaviside step functions u(t - a), then apply the Second Shifting Theorem.",
-    "sillyTrap": "Shift Parameter Trap: In \\(\\mathcal{L}\\{g(t)u(t-a)\\} = e^{-as}\\mathcal{L}\\{g(t+a)\\}\\), remember to substitute \\(t \\to t + a\\).",
+    "hint": "Apply the First Shifting Theorem to L{t^n} = n!/s^{n+1}.",
+    "sillyTrap": "Index Trap: Denominator power is n + 1, not n.",
     "tag": "Kreyszig 6.3/6.6 · 4M"
   },
   {

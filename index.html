@@ -627,7 +627,7 @@
       EXAM_BANK = Array.from(qMap.values());
 
       // Fetch comprehensive enriched question bank (318+ items with 4 options and KaTeX math)
-      fetch('/exam_questions_bank.json')
+      fetch('/exam_questions_bank.json?t=' + Date.now())
         .then(res => res.ok ? res.json() : [])
         .then(data => {
           if (Array.isArray(data) && data.length > 0) {
@@ -4734,7 +4734,13 @@
       renderAllTex(document.getElementById('appMain'));
       refreshIcons();
       if ('serviceWorker' in navigator && (window.location.protocol === 'https:' || window.location.hostname === 'localhost')) {
-        navigator.serviceWorker.register('/sw.js').catch(() => {});
+        navigator.serviceWorker.addEventListener('controllerchange', () => {
+          console.log('New Service Worker controller activated. Reloading page...');
+          window.location.reload();
+        });
+        navigator.serviceWorker.register('/sw.js?v=5').then(reg => {
+          if (reg) reg.update();
+        }).catch(() => {});
       }
     });
 
