@@ -557,12 +557,52 @@
     // =========================================================================
     let EXAM_BANK = [];
 
+    function synthesizeLocalOptions(rawAns) {
+      const ans = (rawAns || '0').trim();
+      let d1 = ans, d2 = ans, d3 = ans;
+      if (ans.includes('-')) d1 = ans.replace('-', '+');
+      else if (ans.includes('+')) d1 = ans.replace('+', '-');
+      else if (ans.includes('e^{')) d1 = ans.replace('e^{', 'e^{-');
+      else if (ans.includes('\\sin')) d1 = ans.replace('\\sin', '-\\sin');
+      else d1 = '-' + ans;
+
+      if (ans.includes('2')) d2 = ans.replace('2', '4');
+      else if (ans.includes('3')) d2 = ans.replace('3', '6');
+      else if (ans.includes('\\frac{')) d2 = ans.replace('\\frac{', '\\frac{1}{2}\\frac{');
+      else d2 = '2' + ans;
+
+      if (ans.includes('\\sin')) d3 = ans.replace('\\sin', '\\cos');
+      else if (ans.includes('\\cos')) d3 = ans.replace('\\cos', '\\sin');
+      else if (ans.includes('t^3')) d3 = ans.replace('t^3', 't^2');
+      else if (ans.includes('x^2')) d3 = ans.replace('x^2', 'x');
+      else d3 = ans + ' + 1';
+
+      const candidates = [ans, d1, d2, d3];
+      const unique = [];
+      candidates.forEach(c => { if (!unique.includes(c)) unique.push(c); });
+      let extra = 1;
+      while (unique.length < 4) {
+        const fallback = ans + ' + ' + extra;
+        if (!unique.includes(fallback)) unique.push(fallback);
+        extra++;
+      }
+      return [
+        { id: 'A', text: unique[0] },
+        { id: 'B', text: unique[1] },
+        { id: 'C', text: unique[2] },
+        { id: 'D', text: unique[3] }
+      ];
+    }
+
     function initExamBank() {
-      const localQs = [];
+      const qMap = new Map();
+
+      // First load local syllabus chapter questions
       CHAPTERS.forEach(ch => {
         (ch.topics || []).forEach(t => {
           (t.questions || []).forEach(q => {
-            localQs.push({
+            const opts = q.options && q.options.length === 4 ? q.options : synthesizeLocalOptions(q.answer);
+            qMap.set(q.id, {
               id: q.id,
               co: ch.id,
               chapterTitle: ch.title,
@@ -571,43 +611,50 @@
               level: q.level || 'Standard',
               prompt: q.prompt,
               promptMath: q.promptMath || '',
-              hint: q.hint || '',
-              solution: q.steps ? q.steps.map(s => s.text + (s.math ? ' \n\n' + s.math : '')).join('\n\n') : '',
+              hint: q.hint || 'Review the core method or theorem for this chapter.',
+              solution: q.steps ? q.steps.map(s => s.text + (s.math ? ' \n\n' + s.math : '')).join('\n\n') : (q.solution || ''),
               steps: q.steps || [],
               answer: q.answer || '',
+              options: opts,
+              correctOption: q.correctOption || 'A',
+              sillyTrap: q.sillyTrap || 'Watch for algebraic signs (+/-) and constant factors.',
               tag: q.tag || (ch.co + ' · ' + q.marks)
             });
           });
         });
       });
 
-      EXAM_BANK = localQs;
+      EXAM_BANK = Array.from(qMap.values());
 
+      // Fetch comprehensive enriched question bank (318+ items with 4 options and KaTeX math)
       fetch('/exam_questions_bank.json')
         .then(res => res.ok ? res.json() : [])
         .then(data => {
           if (Array.isArray(data) && data.length > 0) {
-            const idSet = new Set(localQs.map(q => q.id));
             data.forEach(q => {
-              if (!idSet.has(q.id)) {
-                EXAM_BANK.push({
-                  id: q.id,
-                  co: q.co || 'co1',
-                  chapterTitle: q.chapterTitle || 'University Engineering Mathematics',
-                  marks: Number(q.marks) || (q.marksLabel === '1M' ? 1 : q.marksLabel === '6M' ? 6 : 4),
-                  marksLabel: q.marksLabel || (q.marks + 'M'),
-                  level: q.marks === 1 ? 'Rapid' : q.marks === 6 ? 'Comprehensive' : 'Standard',
-                  prompt: q.prompt,
-                  promptMath: q.promptMath || '',
-                  hint: q.hint || 'Review the core theorem, substitution method, or standard recurrence.',
-                  solution: q.solution || '',
-                  steps: q.steps || [{ text: q.solution || '', math: '' }],
-                  answer: q.answer || 'Refer to model solution above.',
-                  tag: q.tag || ('Exam Paper · ' + (q.marksLabel || '4M'))
-                });
-                idSet.add(q.id);
-              }
+              qMap.set(q.id, {
+                id: q.id,
+                co: q.co || 'co1',
+                chapterTitle: q.chapterTitle || 'University Engineering Mathematics',
+                chNum: q.chNum || 1,
+                marks: Number(q.marks) || (q.marksLabel === '1M' ? 1 : q.marksLabel === '6M' ? 6 : 4),
+                marksLabel: q.marksLabel || (q.marks + 'M'),
+                level: q.level || (q.marks === 1 ? 'Rapid' : q.marks === 6 ? 'Comprehensive' : 'Standard'),
+                topic: q.topic || '',
+                prompt: q.prompt,
+                promptMath: q.promptMath || '',
+                options: q.options && q.options.length === 4 ? q.options : synthesizeLocalOptions(q.answer),
+                correctOption: q.correctOption || 'A',
+                hint: q.hint || 'Review the core theorem, substitution method, or standard recurrence.',
+                solution: q.solution || '',
+                steps: q.steps || [{ text: q.solution || '', math: '' }],
+                answer: q.answer || '',
+                sillyTrap: q.sillyTrap || 'Watch for algebraic signs (+/-) and power indices in the denominator.',
+                tag: q.tag || ('Exam Paper · ' + (q.marksLabel || '4M'))
+              });
             });
+            EXAM_BANK = Array.from(qMap.values());
+            window.EXAM_BANK = EXAM_BANK;
           }
         })
         .catch(() => {});
@@ -1920,6 +1967,7 @@
       questions.forEach((q, idx) => {
         state.testAnswers[q.id] = {
           status: idx === 0 ? 'not_answered' : 'not_visited',
+          selectedOption: null,
           answerText: '',
           solvedOnPaper: false,
           confidence: '',
@@ -1932,8 +1980,14 @@
       state.testView = 'exam';
 
       if (state.testTimerInterval) clearInterval(state.testTimerInterval);
-      if (mode === 'test' && estSeconds > 0) {
-        state.testTimerInterval = setInterval(() => {
+      state.testTimerInterval = setInterval(() => {
+        if (state.activeTest && state.testAnswers) {
+          const curQ = state.activeTest.questions[state.testCurrentIndex];
+          if (curQ && state.testAnswers[curQ.id]) {
+            state.testAnswers[curQ.id].timeSpent = (state.testAnswers[curQ.id].timeSpent || 0) + 1;
+          }
+        }
+        if (mode === 'test' && estSeconds > 0) {
           if (state.testRemainingSeconds > 0) {
             state.testRemainingSeconds--;
             updateTimerDisplay();
@@ -1941,8 +1995,8 @@
             clearInterval(state.testTimerInterval);
             finishExam();
           }
-        }, 1000);
-      }
+        }
+      }, 1000);
 
       renderApp();
       window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -1990,6 +2044,7 @@
       questions.forEach((q, idx) => {
         state.testAnswers[q.id] = {
           status: idx === 0 ? 'not_answered' : 'not_visited',
+          selectedOption: null,
           answerText: '',
           solvedOnPaper: false,
           confidence: '',
@@ -2003,6 +2058,12 @@
 
       if (state.testTimerInterval) clearInterval(state.testTimerInterval);
       state.testTimerInterval = setInterval(() => {
+        if (state.activeTest && state.testAnswers) {
+          const curQ = state.activeTest.questions[state.testCurrentIndex];
+          if (curQ && state.testAnswers[curQ.id]) {
+            state.testAnswers[curQ.id].timeSpent = (state.testAnswers[curQ.id].timeSpent || 0) + 1;
+          }
+        }
         if (state.testRemainingSeconds > 0) {
           state.testRemainingSeconds--;
           updateTimerDisplay();
@@ -2082,17 +2143,31 @@
       const totalMarks = state.activeTest.totalMarks || 50;
 
       let earnedScore = 0;
-      let answeredCount = 0;
+      let correctCount = 0;
+      let incorrectCount = 0;
+      let unattemptedCount = 0;
       let reviewCount = 0;
-      let unansweredCount = 0;
       const chapterStats = {};
       const typeStats = { '1M': { total: 0, got: 0 }, '4M': { total: 0, got: 0 }, '6M': { total: 0, got: 0 } };
+      const sillyMistakes = [];
 
-      questions.forEach(q => {
+      let timeSpentOnCorrect = 0;
+      let timeSpentOnIncorrect = 0;
+      let timeSpentOnSkipped = 0;
+
+      const totalTimeSec = state.activeTest.durationSec > 0 
+        ? Math.max(10, state.activeTest.durationSec - state.testRemainingSeconds)
+        : Math.round(Math.max(10, (Date.now() - state.activeTest.startedAt) / 1000));
+
+      const avgPerQ = Math.round(totalTimeSec / Math.max(1, questions.length));
+
+      questions.forEach((q, idx) => {
         const userA = state.testAnswers[q.id] || {};
-        const isSolved = userA.status === 'answered' || userA.status === 'answered_review' || userA.solvedOnPaper || (userA.answerText && userA.answerText.trim().length > 0);
+        const selectedOpt = userA.selectedOption;
+        const correctOpt = q.correctOption || 'A';
         const marks = q.marks || 4;
         const mKey = q.marks === 1 ? '1M' : q.marks === 6 ? '6M' : '4M';
+        const qTime = userA.timeSpent || avgPerQ;
 
         if (!chapterStats[q.co]) chapterStats[q.co] = { total: 0, scored: 0, totalMarks: 0, scoredMarks: 0 };
         chapterStats[q.co].total++;
@@ -2100,21 +2175,38 @@
 
         typeStats[mKey].total++;
 
-        if (isSolved) {
-          earnedScore += marks;
-          answeredCount++;
-          chapterStats[q.co].scored++;
-          chapterStats[q.co].scoredMarks += marks;
-          typeStats[mKey].got++;
-        } else if (userA.status === 'review') {
-          reviewCount++;
+        if (selectedOpt) {
+          if (selectedOpt === correctOpt) {
+            earnedScore += marks;
+            correctCount++;
+            chapterStats[q.co].scored++;
+            chapterStats[q.co].scoredMarks += marks;
+            typeStats[mKey].got++;
+            timeSpentOnCorrect += qTime;
+          } else {
+            incorrectCount++;
+            timeSpentOnIncorrect += qTime;
+            sillyMistakes.push({
+              qid: q.id,
+              qNum: idx + 1,
+              marks: marks,
+              co: q.co,
+              topic: q.topic || q.chapterTitle,
+              prompt: q.prompt,
+              promptMath: q.promptMath || '',
+              userOption: selectedOpt,
+              correctOption: correctOpt,
+              trap: q.sillyTrap || 'Watch for algebraic sign inversion or power denominator omission.'
+            });
+          }
         } else {
-          unansweredCount++;
+          unattemptedCount++;
+          timeSpentOnSkipped += qTime;
+          if (userA.status === 'review') reviewCount++;
         }
       });
 
       const percentage = Math.round((earnedScore / totalMarks) * 100);
-      const timeTakenSec = state.activeTest.durationSec > 0 ? (state.activeTest.durationSec - state.testRemainingSeconds) : Math.round((Date.now() - state.activeTest.startedAt) / 1000);
 
       const scorecard = {
         testId: state.activeTest.id,
@@ -2124,16 +2216,23 @@
         score: earnedScore,
         totalMarks: totalMarks,
         percentage: percentage,
-        timeTakenSec: Math.max(10, timeTakenSec),
-        avgTimePerQ: Math.round(Math.max(10, timeTakenSec) / questions.length),
+        timeTakenSec: totalTimeSec,
+        avgTimePerQ: Math.round(totalTimeSec / questions.length),
         totalQuestions: questions.length,
-        answeredCount: answeredCount,
+        answeredCount: correctCount + incorrectCount,
+        correctCount: correctCount,
+        incorrectCount: incorrectCount,
+        unattemptedCount: unattemptedCount,
         reviewCount: reviewCount,
-        unansweredCount: unansweredCount,
+        timeSpentOnCorrect: timeSpentOnCorrect,
+        timeSpentOnIncorrect: timeSpentOnIncorrect,
+        timeSpentOnSkipped: timeSpentOnSkipped,
+        sillyMistakes: sillyMistakes,
         chapterStats: chapterStats,
         typeStats: typeStats,
-        questions: questions.map(q => ({
+        questions: questions.map((q, idx) => ({
           ...q,
+          qNum: idx + 1,
           userAnswer: state.testAnswers[q.id] || {}
         }))
       };
@@ -2142,8 +2241,8 @@
       state.testHistory.unshift(scorecard);
       if (state.testHistory.length > 20) state.testHistory.pop();
 
-      // Record daily streak activity
-      recordActivity('exam', Math.max(1, answeredCount));
+      // Record daily streak activity only for actual correct answers or attempts
+      recordActivity('exam', Math.max(1, correctCount));
 
       saveState();
       state.testView = 'scorecard';
@@ -2151,9 +2250,6 @@
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
-    // =========================================================================
-    // VIEW: CBT TEST STUDIO & UNIVERSITY EXAM SIMULATOR
-    // =========================================================================
     function renderTestStudioView(container) {
       if (state.testView === 'exam' && state.activeTest) {
         renderCbtExamEnvironment(container);
@@ -2468,7 +2564,7 @@
       const qIndex = state.testCurrentIndex;
       const q = test.questions[qIndex] || test.questions[0];
       const totalQs = test.questions.length;
-      const ans = state.testAnswers[q.id] || { status: 'not_answered', answerText: '', solvedOnPaper: false, confidence: '' };
+      const ans = state.testAnswers[q.id] || { status: 'not_answered', selectedOption: null, answerText: '', solvedOnPaper: false, confidence: '', timeSpent: 0 };
 
       // If status was not_visited, mark as not_answered when loaded
       if (ans.status === 'not_visited') {
@@ -2489,6 +2585,7 @@
 
       const qBucket = (state.questionBuckets && state.questionBuckets[q.id]) || '';
       const isPractice = test.mode === 'practice';
+      const qOptions = q.options && q.options.length === 4 ? q.options : synthesizeLocalOptions(q.answer);
 
       container.innerHTML = `
         <div class="space-y-4 animate-in fade-in duration-200">
@@ -2536,7 +2633,7 @@
             </div>
           ` : ''}
 
-          <!-- Main Layout: Workspace (Left) + MARKS Question Palette (Right) -->
+          <!-- Main Layout: Workspace (Left 8 Cols) + MARKS Question Palette (Right 4 Cols) -->
           <div class="grid grid-cols-1 lg:grid-cols-12 gap-5">
             <!-- Left Workspace: Question Card & Scratchpad (8 Cols) -->
             <div class="lg:col-span-8 space-y-4">
@@ -2559,25 +2656,71 @@
                 </div>
 
                 <!-- Question Prompt -->
-                <div class="space-y-2">
+                <div class="space-y-2.5">
                   <div class="text-sm sm:text-base font-medium leading-relaxed">${fmtMathProse(q.prompt)}</div>
                   ${q.promptMath ? `<div class="math-well my-2">${texNode(q.promptMath, true)}</div>` : ''}
                 </div>
 
-                <!-- Student Working & Scratchpad Area -->
-                <div class="space-y-2 pt-2 border-t border-slate-200 dark:border-slate-800">
-                  <div class="flex items-center justify-between text-xs font-bold text-slate-600 dark:text-slate-300">
-                    <span class="flex items-center gap-1.5"><i data-lucide="edit-3" class="w-3.5 h-3.5 text-indigo-500"></i>Student Working & Solution Notes:</span>
-                    <span class="text-[10px] font-normal text-slate-400">Record final result or key intermediate formulas</span>
+                <!-- 4 Interactive MCQ Option Cards (MARKS App Style) -->
+                <div class="space-y-2.5 pt-3 border-t border-slate-200 dark:border-slate-800">
+                  <div class="flex items-center justify-between text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">
+                    <span class="flex items-center gap-1.5">
+                      <i data-lucide="check-circle-2" class="w-4 h-4 text-indigo-500"></i>
+                      <span>Select Correct Option:</span>
+                    </span>
+                    <span class="text-[10px] font-mono text-slate-400">Single Choice Correct</span>
                   </div>
-                  <textarea data-cbt-answer="${q.id}" rows="3" placeholder="Enter your working, final answer, or key substitution here..." class="w-full text-xs sm:text-sm p-3 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-950/40 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 resize-y">${escHtml(ans.answerText || '')}</textarea>
+
+                  <div class="grid grid-cols-1 gap-2.5">
+                    ${qOptions.map(opt => {
+                      const isSelected = ans.selectedOption === opt.id;
+                      return `
+                        <div data-cbt-option="${opt.id}" data-qid="${q.id}" class="group flex items-start gap-3 p-3.5 rounded-xl border cursor-pointer transition-all ${
+                          isSelected
+                            ? 'bg-indigo-50/90 dark:bg-indigo-950/40 border-indigo-600 dark:border-indigo-500 shadow-md ring-2 ring-indigo-500/30'
+                            : 'bg-white dark:bg-slate-900/60 border-slate-200 dark:border-slate-800 hover:border-indigo-400 dark:hover:border-indigo-600 hover:bg-slate-50/60 dark:hover:bg-slate-800/40'
+                        }">
+                          <div class="w-7 h-7 rounded-lg flex items-center justify-center font-mono font-bold text-xs shrink-0 transition-colors ${
+                            isSelected
+                              ? 'bg-indigo-600 text-white'
+                              : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 group-hover:bg-indigo-500/15 group-hover:text-indigo-600'
+                          }">
+                            ${opt.id}
+                          </div>
+                          <div class="flex-1 min-w-0 pt-0.5 text-xs sm:text-sm font-medium leading-relaxed">
+                            ${fmtMathProse(opt.text)}
+                          </div>
+                          <div class="w-5 h-5 rounded-full border flex items-center justify-center shrink-0 mt-0.5 ${
+                            isSelected
+                              ? 'border-indigo-600 bg-indigo-600 text-white'
+                              : 'border-slate-300 dark:border-slate-700'
+                          }">
+                            ${isSelected ? '<div class="w-2 h-2 rounded-full bg-white"></div>' : ''}
+                          </div>
+                        </div>
+                      `;
+                    }).join('')}
+                  </div>
+                </div>
+
+                <!-- Collapsible Scratchpad / Rough Notes Area -->
+                <div class="pt-2 border-t border-slate-200 dark:border-slate-800">
+                  <details class="group rounded-xl border border-slate-200 dark:border-slate-800 overflow-hidden bg-slate-50/50 dark:bg-slate-900/40">
+                    <summary class="px-3.5 py-2 text-xs font-bold text-slate-500 dark:text-slate-400 flex items-center justify-between cursor-pointer select-none hover:text-slate-700 dark:hover:text-slate-200">
+                      <span class="flex items-center gap-1.5"><i data-lucide="edit-3" class="w-3.5 h-3.5 text-indigo-500"></i>Digital Scratchpad & Rough Notes (Optional)</span>
+                      <span class="text-[10px] text-slate-400 group-open:rotate-180 transition-transform">▼</span>
+                    </summary>
+                    <div class="p-3 pt-0">
+                      <textarea data-cbt-answer="${q.id}" rows="3" placeholder="Jot down rough calculations, intermediate substitutions, or notes here..." class="w-full text-xs sm:text-sm p-3 rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-950 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 resize-y">${escHtml(ans.answerText || '')}</textarea>
+                    </div>
+                  </details>
                 </div>
 
                 <!-- Self-Evaluation & Confidence -->
                 <div class="flex flex-wrap items-center justify-between gap-3 p-3 rounded-xl bg-slate-100/70 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800 text-xs">
                   <label class="flex items-center gap-2 cursor-pointer select-none">
                     <input type="checkbox" data-cbt-paper-solved="${q.id}" ${ans.solvedOnPaper ? 'checked' : ''} class="w-4 h-4 rounded text-emerald-600 focus:ring-emerald-500">
-                    <span class="font-bold text-slate-700 dark:text-slate-200">I have fully solved this on paper ✓</span>
+                    <span class="font-bold text-slate-700 dark:text-slate-200">I solved this on paper ✓</span>
                   </label>
 
                   <div class="flex items-center gap-1.5">
@@ -2588,43 +2731,23 @@
                   </div>
                 </div>
 
-                <!-- Practice Mode: Instant Hint & Solution Accordions -->
+                <!-- Practice Mode: Instant Hint Trigger (Step-by-Step KaTeX Solution shown on Scorecard!) -->
                 ${isPractice ? `
                   <div class="space-y-2 pt-2 border-t border-slate-200 dark:border-slate-800">
                     <div class="flex items-center gap-2">
-                      <button data-acc-toggle="practice_hint_${q.id}" class="px-3 py-1.5 rounded-lg text-xs font-bold bg-amber-500/12 text-amber-700 dark:text-amber-300 border border-amber-500/25 hover:bg-amber-500/20 flex items-center gap-1.5">
-                        <i data-lucide="lightbulb" class="w-3.5 h-3.5"></i><span>Show Method Hint</span>
-                      </button>
-                      <button data-acc-toggle="practice_sol_${q.id}" class="px-3 py-1.5 rounded-lg text-xs font-bold bg-indigo-600/12 text-indigo-700 dark:text-indigo-300 border border-indigo-500/25 hover:bg-indigo-600/20 flex items-center gap-1.5">
-                        <i data-lucide="eye" class="w-3.5 h-3.5"></i><span>Step-by-Step KaTeX Solution</span>
+                      <button data-acc-toggle="practice_hint_${q.id}" class="px-3.5 py-2 rounded-xl text-xs font-bold bg-amber-500/15 text-amber-700 dark:text-amber-300 border border-amber-500/30 hover:bg-amber-500/25 flex items-center gap-1.5 transition-all shadow-sm">
+                        <i data-lucide="lightbulb" class="w-4 h-4 text-amber-500"></i>
+                        <span>Show Method Hint</span>
                       </button>
                     </div>
 
                     <div id="practice_hint_${q.id}" class="accordion-body">
                       <div class="accordion-inner">
-                        <div class="callout-trap rounded-xl p-3 text-xs">
-                          <strong>Method Trigger:</strong> ${fmtMathProse(q.hint || 'Analyze the governing pattern.')}
-                        </div>
-                      </div>
-                    </div>
-
-                    <div id="practice_sol_${q.id}" class="accordion-body">
-                      <div class="accordion-inner">
-                        <div class="rounded-xl bg-slate-50 dark:bg-slate-950/75 border border-slate-200 dark:border-slate-800 p-4 space-y-3">
-                          <div class="text-[10px] font-mono uppercase tracking-wider text-indigo-600 dark:text-indigo-400 font-bold">Model Solution</div>
-                          ${q.steps && q.steps.length > 0 ? `
-                            <ol class="space-y-2 list-decimal list-inside text-xs sm:text-sm">
-                              ${q.steps.map(st => `<li class="space-y-1"><span>${fmtMathProse(st.text)}</span>${st.math ? `<div class="math-well mt-1">${texNode(st.math, true)}</div>` : ''}</li>`).join('')}
-                            </ol>
-                          ` : `
-                            <div class="text-xs sm:text-sm leading-relaxed whitespace-pre-line">${fmtMathProse(q.solution)}</div>
-                          `}
-                          ${q.answer ? `
-                            <div class="callout-shortcut rounded-xl px-3 py-2 text-xs sm:text-sm">
-                              <span class="font-bold text-teal-700 dark:text-teal-300 mr-1.5">Final Answer:</span>
-                              ${texNode(q.answer, true, 'mt-1')}
-                            </div>
-                          ` : ''}
+                        <div class="callout-trap rounded-xl p-3.5 text-xs sm:text-sm space-y-1">
+                          <div class="font-bold text-amber-700 dark:text-amber-300 flex items-center gap-1.5">
+                            <span>💡 Method Strategy:</span>
+                          </div>
+                          <div>${fmtMathProse(q.hint || 'Identify the governing structure of the differential/transform relation.')}</div>
                         </div>
                       </div>
                     </div>
@@ -2644,10 +2767,10 @@
 
                   <div class="flex items-center gap-2">
                     <button data-cbt-action="review" class="px-3.5 py-2 rounded-xl text-xs font-bold bg-purple-600 hover:bg-purple-700 text-white shadow-sm transition-all active:scale-95">
-                      🟣 Mark for Review & Next
+                      Mark for Review & Next
                     </button>
                     <button data-cbt-action="next" class="px-4 py-2 rounded-xl text-xs font-bold bg-emerald-600 hover:bg-emerald-700 text-white shadow-sm transition-all active:scale-95">
-                      🟢 Save & Next →
+                      ${qIndex === totalQs - 1 ? 'Save & Complete' : 'Save & Next →'}
                     </button>
                   </div>
                 </div>
@@ -2724,9 +2847,7 @@
       }
     }
 
-    // =========================================================================
-    // POST-EXAM SCORECARD & COMPREHENSIVE SOLUTIONS REVIEW
-    // =========================================================================
+
     function renderCbtScorecard(container) {
       const sc = state.testScorecard;
       if (!sc) return;
@@ -2745,12 +2866,22 @@
         return m > 0 ? (m + 'm ' + s + 's') : (s + 's');
       };
 
+      const accuracy = sc.answeredCount > 0 ? Math.round((sc.correctCount / sc.answeredCount) * 100) : 0;
+
+      // Pacing calculation for Time Analysis
+      const totalTime = Math.max(1, sc.timeTakenSec);
+      const pctCorrectTime = Math.round((sc.timeSpentOnCorrect / totalTime) * 100);
+      const pctIncorrectTime = Math.round((sc.timeSpentOnIncorrect / totalTime) * 100);
+      const pctSkippedTime = Math.max(0, 100 - pctCorrectTime - pctIncorrectTime);
+
       const reviewFilter = state.testReviewFilter || 'all';
       const filteredQuestions = sc.questions.filter(q => {
-        const isSolved = q.userAnswer.status === 'answered' || q.userAnswer.status === 'answered_review' || q.userAnswer.solvedOnPaper || (q.userAnswer.answerText && q.userAnswer.answerText.trim().length > 0);
-        if (reviewFilter === 'answered') return isSolved;
-        if (reviewFilter === 'review') return q.userAnswer.status === 'review';
-        if (reviewFilter === 'unanswered') return !isSolved && q.userAnswer.status !== 'review';
+        const userA = q.userAnswer || {};
+        const isSelected = Boolean(userA.selectedOption);
+        const isCorrect = isSelected && (userA.selectedOption === q.correctOption);
+        if (reviewFilter === 'correct') return isCorrect;
+        if (reviewFilter === 'incorrect') return isSelected && !isCorrect;
+        if (reviewFilter === 'unanswered') return !isSelected;
         return true;
       });
 
@@ -2781,7 +2912,7 @@
                 </div>
                 <div>
                   <div class="text-2xl font-mono font-extrabold text-indigo-600 dark:text-indigo-400">${sc.score} <span class="text-sm font-normal text-slate-400">/ ${sc.totalMarks} Marks</span></div>
-                  <div class="text-xs text-slate-500 font-medium mt-0.5">${sc.answeredCount} of ${sc.totalQuestions} Solved</div>
+                  <div class="text-xs text-slate-500 font-medium mt-0.5">${sc.correctCount} Correct · ${sc.incorrectCount} Incorrect · ${sc.unattemptedCount} Skipped</div>
                 </div>
               </div>
             </div>
@@ -2798,12 +2929,84 @@
               </div>
               <div class="p-3 rounded-xl bg-slate-50 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800">
                 <div class="text-xs text-slate-400 font-medium">🎯 Attempt Accuracy</div>
-                <div class="text-base sm:text-lg font-mono font-bold mt-0.5 text-emerald-600 dark:text-emerald-400">${sc.answeredCount > 0 ? Math.round((sc.score / (sc.answeredCount * 3)) * 100) : 0}%</div>
+                <div class="text-base sm:text-lg font-mono font-bold mt-0.5 ${accuracy >= 70 ? 'text-emerald-600 dark:text-emerald-400' : 'text-amber-500'}">${accuracy}%</div>
               </div>
               <div class="p-3 rounded-xl bg-slate-50 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800">
                 <div class="text-xs text-slate-400 font-medium">🟣 Marked for Review</div>
                 <div class="text-base sm:text-lg font-mono font-bold mt-0.5 text-purple-600 dark:text-purple-400">${sc.reviewCount}</div>
               </div>
+            </div>
+
+            <!-- MARKS App Style: Real-Time Time Analysis Graph -->
+            <div class="p-4 sm:p-5 rounded-2xl bg-slate-50 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800 space-y-3 mt-6">
+              <div class="flex flex-wrap items-center justify-between gap-2">
+                <div class="flex items-center gap-2">
+                  <span class="text-sm font-bold flex items-center gap-1.5 text-slate-800 dark:text-slate-100">
+                    <i data-lucide="bar-chart-2" class="w-4 h-4 text-indigo-500"></i>
+                    <span>Pacing & Time Distribution Graph (MARKS App Model)</span>
+                  </span>
+                </div>
+                <div class="text-xs font-mono text-slate-400">Total: ${formatTime(totalTime)}</div>
+              </div>
+
+              <!-- Multi-Segment Comparative Bar -->
+              <div class="h-3.5 w-full rounded-full bg-slate-200 dark:bg-slate-800 overflow-hidden flex shadow-inner">
+                <div class="bg-emerald-500 transition-all duration-700" style="width: ${pctCorrectTime}%" title="Correct Questions: ${formatTime(sc.timeSpentOnCorrect)} (${pctCorrectTime}%)"></div>
+                <div class="bg-rose-500 transition-all duration-700" style="width: ${pctIncorrectTime}%" title="Incorrect Questions: ${formatTime(sc.timeSpentOnIncorrect)} (${pctIncorrectTime}%)"></div>
+                <div class="bg-slate-400 dark:bg-slate-600 transition-all duration-700" style="width: ${pctSkippedTime}%" title="Skipped Questions: ${formatTime(sc.timeSpentOnSkipped)} (${pctSkippedTime}%)"></div>
+              </div>
+
+              <!-- Legend -->
+              <div class="grid grid-cols-3 gap-2 text-xs font-mono pt-1 text-center">
+                <div class="p-2 rounded-lg bg-emerald-500/10 border border-emerald-500/20 text-emerald-700 dark:text-emerald-300">
+                  <div class="font-bold">🟢 Correct (${pctCorrectTime}%)</div>
+                  <div class="text-[11px] font-normal text-slate-500">${formatTime(sc.timeSpentOnCorrect)}</div>
+                </div>
+                <div class="p-2 rounded-lg bg-rose-500/10 border border-rose-500/20 text-rose-700 dark:text-rose-300">
+                  <div class="font-bold">🔴 Incorrect (${pctIncorrectTime}%)</div>
+                  <div class="text-[11px] font-normal text-slate-500">${formatTime(sc.timeSpentOnIncorrect)}</div>
+                </div>
+                <div class="p-2 rounded-lg bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400">
+                  <div class="font-bold">⚪ Skipped (${pctSkippedTime}%)</div>
+                  <div class="text-[11px] font-normal text-slate-500">${formatTime(sc.timeSpentOnSkipped)}</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- MARKS App Style: Silly Mistakes & Pitfalls Diagnosis -->
+            <div class="p-4 sm:p-5 rounded-2xl bg-amber-500/10 border border-amber-500/25 space-y-3 mt-6">
+              <div class="flex items-center justify-between">
+                <h3 class="text-sm font-bold text-amber-800 dark:text-amber-300 flex items-center gap-1.5">
+                  <i data-lucide="alert-triangle" class="w-4 h-4 text-amber-500"></i>
+                  <span>Pitfalls & Silly Mistakes Diagnosis</span>
+                </h3>
+                <span class="text-xs font-mono font-bold text-amber-700 dark:text-amber-300">${sc.sillyMistakes.length} Identified</span>
+              </div>
+
+              ${sc.sillyMistakes.length > 0 ? `
+                <div class="space-y-2.5">
+                  ${sc.sillyMistakes.map(item => `
+                    <div class="p-3 rounded-xl bg-white/80 dark:bg-slate-900/80 border border-amber-500/20 text-xs space-y-1.5">
+                      <div class="flex items-center justify-between font-bold">
+                        <span class="text-slate-800 dark:text-slate-200">Q.${item.qNum} · +${item.marks}M (${item.co.toUpperCase()})</span>
+                        <div class="flex items-center gap-2">
+                          <span class="px-2 py-0.5 rounded bg-rose-500/15 text-rose-600 dark:text-rose-400 font-mono">Your Choice: ${item.userOption}</span>
+                          <span class="px-2 py-0.5 rounded bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 font-mono">Correct: ${item.correctOption}</span>
+                        </div>
+                      </div>
+                      <div class="text-slate-600 dark:text-slate-300 font-medium leading-relaxed">${fmtMathProse(item.prompt.slice(0, 110))}...</div>
+                      <div class="text-amber-700 dark:text-amber-300 font-medium bg-amber-500/10 p-2 rounded-lg border border-amber-500/15">
+                        <strong>⚠️ Trap Analysis:</strong> ${fmtMathProse(item.trap)}
+                      </div>
+                    </div>
+                  `).join('')}
+                </div>
+              ` : `
+                <div class="p-3.5 rounded-xl bg-emerald-500/15 border border-emerald-500/25 text-emerald-800 dark:text-emerald-300 text-xs font-medium flex items-center gap-2">
+                  <i data-lucide="check-circle" class="w-4 h-4 text-emerald-500"></i>
+                  <span>Zero Silly Mistakes Detected! Flawless conceptual execution and sign discipline.</span>
+                </div>
+              `}
             </div>
 
             <!-- Chapter Mastery Breakdown -->
@@ -2853,16 +3056,16 @@
             <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
               <div>
                 <h2 class="text-lg font-bold">Comprehensive Question Review & Solutions</h2>
-                <p class="text-xs text-slate-500">Every problem with LaTeX worked steps, your recorded scratchpad notes, and smart notebook tags.</p>
+                <p class="text-xs text-slate-500">Every problem with LaTeX worked steps, rendered MCQ choices, and trap diagnosis.</p>
               </div>
 
               <!-- Filter Pills -->
               <div class="flex items-center gap-1.5 overflow-x-auto no-scrollbar">
                 ${[
                   { id: 'all', label: 'All Qs (' + sc.totalQuestions + ')' },
-                  { id: 'answered', label: 'Solved (' + sc.answeredCount + ')' },
-                  { id: 'review', label: 'Review (' + sc.reviewCount + ')' },
-                  { id: 'unanswered', label: 'Unsolved (' + sc.unansweredCount + ')' }
+                  { id: 'correct', label: '🟢 Correct (' + sc.correctCount + ')' },
+                  { id: 'incorrect', label: '🔴 Incorrect (' + sc.incorrectCount + ')' },
+                  { id: 'unanswered', label: '⚪ Skipped (' + sc.unattemptedCount + ')' }
                 ].map(f => `
                   <button data-set-scorecard-filter="${f.id}" class="px-3 py-1 rounded-lg text-xs font-bold border transition-all ${reviewFilter === f.id ? 'bg-indigo-600 text-white border-indigo-700 shadow-sm' : 'ed-card text-slate-500 hover:text-slate-700'}">
                     ${f.label}
@@ -2875,11 +3078,15 @@
             <div class="space-y-4">
               ${filteredQuestions.map((q, qIdx) => {
                 const userA = q.userAnswer || {};
-                const isSolved = userA.status === 'answered' || userA.status === 'answered_review' || userA.solvedOnPaper || (userA.answerText && userA.answerText.trim().length > 0);
+                const selectedOpt = userA.selectedOption;
+                const correctOpt = q.correctOption || 'A';
+                const isAttempted = Boolean(selectedOpt);
+                const isCorrect = isAttempted && (selectedOpt === correctOpt);
                 const qBucket = (state.questionBuckets && state.questionBuckets[q.id]) || '';
+                const qOptions = q.options && q.options.length === 4 ? q.options : synthesizeLocalOptions(q.answer);
 
                 return `
-                  <div class="ed-card rounded-2xl p-5 sm:p-6 space-y-4 border-l-4 ${isSolved ? 'border-l-emerald-500' : userA.status === 'review' ? 'border-l-purple-500' : 'border-l-rose-500'} shadow-sm">
+                  <div class="ed-card rounded-2xl p-5 sm:p-6 space-y-4 border-l-4 ${isCorrect ? 'border-l-emerald-500' : isAttempted ? 'border-l-rose-500' : 'border-l-slate-400'} shadow-sm">
                     <!-- Card Top -->
                     <div class="flex flex-wrap items-center justify-between gap-2 border-b border-slate-200 dark:border-slate-800 pb-3">
                       <div class="flex flex-wrap items-center gap-2">
@@ -2890,8 +3097,8 @@
                       </div>
 
                       <div class="flex items-center gap-1.5">
-                        <span class="px-2.5 py-0.5 rounded-md text-[10px] font-bold ${isSolved ? 'bg-emerald-500/15 text-emerald-600 border border-emerald-500/30' : 'bg-rose-500/15 text-rose-600 border border-rose-500/30'}">
-                          ${isSolved ? 'Solved ✓' : 'Unsolved'}
+                        <span class="px-2.5 py-0.5 rounded-md text-[10px] font-bold ${isCorrect ? 'bg-emerald-500/15 text-emerald-600 border border-emerald-500/30' : isAttempted ? 'bg-rose-500/15 text-rose-600 border border-rose-500/30' : 'bg-slate-100 dark:bg-slate-800 text-slate-500 border border-slate-300 dark:border-slate-700'}">
+                          ${isCorrect ? 'Correct ✓' : isAttempted ? 'Incorrect ✕' : 'Skipped'}
                         </span>
                         <!-- Quick Notebook Bucket Toggle -->
                         <button data-bucket-toggle="tricky" data-qid="${q.id}" class="px-2 py-0.5 rounded text-[10px] font-bold border transition-all ${qBucket === 'tricky' ? 'bg-rose-500 text-white border-rose-600' : 'border-slate-200 dark:border-slate-700 text-slate-400 hover:text-rose-500'}" title="Trap">🔴 Trap</button>
@@ -2906,11 +3113,44 @@
                       ${q.promptMath ? `<div class="math-well my-1.5">${texNode(q.promptMath, true)}</div>` : ''}
                     </div>
 
-                    <!-- Student's Scratchpad Answer If Any -->
-                    ${userA.answerText ? `
-                      <div class="p-3 rounded-xl bg-indigo-50/50 dark:bg-indigo-950/25 border border-indigo-200 dark:border-indigo-800/60 text-xs space-y-1">
-                        <span class="text-[10px] font-mono font-bold uppercase tracking-wider text-indigo-600 dark:text-indigo-400">Your Recorded Working:</span>
-                        <div class="whitespace-pre-line font-mono text-slate-700 dark:text-slate-200">${escHtml(userA.answerText)}</div>
+                    <!-- 4 Rendered Options Review -->
+                    <div class="space-y-2 pt-2 border-t border-slate-200 dark:border-slate-800">
+                      <div class="text-[11px] font-bold uppercase tracking-wider text-slate-500">MCQ Options Evaluation:</div>
+                      <div class="grid grid-cols-1 gap-2">
+                        ${qOptions.map(opt => {
+                          const isThisCorrect = opt.id === correctOpt;
+                          const isUserPick = selectedOpt === opt.id;
+                          let optStyle = 'border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/30';
+                          let badgeText = '';
+
+                          if (isThisCorrect && isUserPick) {
+                            optStyle = 'border-emerald-500 bg-emerald-50/90 dark:bg-emerald-950/40 text-emerald-800 dark:text-emerald-200 font-bold';
+                            badgeText = '<span class="px-2 py-0.5 rounded bg-emerald-600 text-white text-[10px] font-bold shrink-0">✓ Your Selection (Correct)</span>';
+                          } else if (isThisCorrect) {
+                            optStyle = 'border-emerald-500 bg-emerald-50/70 dark:bg-emerald-950/30 text-emerald-800 dark:text-emerald-200 font-bold';
+                            badgeText = '<span class="px-2 py-0.5 rounded bg-emerald-600 text-white text-[10px] font-bold shrink-0">✓ Correct Option</span>';
+                          } else if (isUserPick) {
+                            optStyle = 'border-rose-500 bg-rose-50/80 dark:bg-rose-950/40 text-rose-800 dark:text-rose-200';
+                            badgeText = '<span class="px-2 py-0.5 rounded bg-rose-600 text-white text-[10px] font-bold shrink-0">✕ Your Selection (Wrong)</span>';
+                          }
+
+                          return `
+                            <div class="flex items-start justify-between gap-3 p-3 rounded-xl border ${optStyle} text-xs sm:text-sm">
+                              <div class="flex items-start gap-2.5 min-w-0">
+                                <span class="w-6 h-6 rounded-md font-mono font-bold flex items-center justify-center shrink-0 ${isThisCorrect ? 'bg-emerald-600 text-white' : isUserPick ? 'bg-rose-600 text-white' : 'bg-slate-200 dark:bg-slate-800 text-slate-600 dark:text-slate-400'}">${opt.id}</span>
+                                <div class="pt-0.5 leading-relaxed">${fmtMathProse(opt.text)}</div>
+                              </div>
+                              ${badgeText}
+                            </div>
+                          `;
+                        }).join('')}
+                      </div>
+                    </div>
+
+                    <!-- Pitfall Alert -->
+                    ${q.sillyTrap ? `
+                      <div class="p-3 rounded-xl bg-amber-500/10 border border-amber-500/20 text-xs text-amber-800 dark:text-amber-300">
+                        <strong>⚠️ Silly Mistake Alert:</strong> ${fmtMathProse(q.sillyTrap)}
                       </div>
                     ` : ''}
 
@@ -2939,10 +3179,6 @@
         </div>
       `;
     }
-
-
-
-
 
 
     function renderLabsView(container) {
@@ -4346,14 +4582,39 @@
         return;
       }
 
-      // CBT Navigation Actions
+      // CBT MCQ Option Selection (MARKS App Style)
+      const cbtOption = e.target.closest('[data-cbt-option]');
+      if (cbtOption && state.activeTest) {
+        const qid = cbtOption.dataset.qid;
+        const optId = cbtOption.dataset.cbtOption;
+        if (!state.testAnswers[qid]) state.testAnswers[qid] = {};
+        state.testAnswers[qid].selectedOption = optId;
+        const currentSt = state.testAnswers[qid].status;
+        if (currentSt === 'review' || currentSt === 'answered_review') {
+          state.testAnswers[qid].status = 'answered_review';
+        } else {
+          state.testAnswers[qid].status = 'answered';
+        }
+        renderApp();
+        return;
+      }
+
+      // Scorecard Filter Pills
+      const scFilterBtn = e.target.closest('[data-set-scorecard-filter]');
+      if (scFilterBtn) {
+        state.testReviewFilter = scFilterBtn.dataset.setScorecardFilter;
+        renderApp();
+        return;
+      }
+
+// CBT Navigation Actions
       const cbtAction = e.target.closest('[data-cbt-action]');
       if (cbtAction && state.activeTest) {
         const act = cbtAction.dataset.cbtAction;
         const qIndex = state.testCurrentIndex;
         const q = state.activeTest.questions[qIndex];
         const ans = state.testAnswers[q.id] || {};
-        const isAnswered = ans.solvedOnPaper || (ans.answerText && ans.answerText.trim().length > 0) || ans.confidence;
+        const isAnswered = Boolean(ans.selectedOption);
 
         if (act === 'prev') {
           if (qIndex > 0) {
@@ -4362,6 +4623,7 @@
             window.scrollTo({ top: 0, behavior: 'smooth' });
           }
         } else if (act === 'clear') {
+          ans.selectedOption = null;
           ans.answerText = '';
           ans.solvedOnPaper = false;
           ans.confidence = '';
@@ -4475,6 +4737,13 @@
         navigator.serviceWorker.register('/sw.js').catch(() => {});
       }
     });
+
+    // Expose for testing & debug
+    window.appState = state;
+    window.EXAM_BANK = EXAM_BANK;
+    window.renderApp = renderApp;
+    window.startCustomTest = startCustomTest;
+    window.finishExam = finishExam;
   })();
   </script>
 
