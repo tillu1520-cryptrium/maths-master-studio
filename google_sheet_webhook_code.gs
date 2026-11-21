@@ -24,7 +24,7 @@
  */
 
 // Define the matching secret expected from your Vercel serverless function
-var WEBHOOK_SECRET = "mms_secure_secret_2026";
+var WEBHOOK_SECRET = "mms_2026";
 
 function doPost(e) {
   try {
