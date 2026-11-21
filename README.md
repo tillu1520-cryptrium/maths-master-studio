@@ -5,6 +5,7 @@
 
 [![Live Production Site](https://img.shields.io/badge/Live-maths--master--studio.vercel.app-00dfa2?logo=vercel)](https://maths-master-studio.vercel.app)
 [![Vercel Deployment](https://img.shields.io/badge/Deployed%20with-Vercel-black?logo=vercel)](https://maths-master-studio.vercel.app)
+[![Git Continuous Integration](https://img.shields.io/badge/Vercel%20Git-Connected-blue?logo=github)](https://github.com/tillu1520-cryptrium/maths-master-studio)
 [![KaTeX Rendered](https://img.shields.io/badge/Math-KaTeX-312e81)](https://katex.org/)
 [![License](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 
