@@ -961,6 +961,39 @@
       return `<${tag} class="${extraClass}" data-tex="${escHtml(tex)}" data-display="${display ? 'true' : 'false'}"></${tag}>`;
     }
 
+    // Render mathematical MCQ option with high-fidelity KaTeX typesetting
+    function renderOptionContent(raw) {
+      if (!raw) return '';
+      let s = String(raw).trim();
+      // Strip outer LaTeX delimiters if already present
+      if (/^\\\(.*\\\)$/.test(s)) s = s.replace(/^\\\(|\\\)$/g, '').trim();
+      if (/^\$\$.*\$\$$/.test(s)) s = s.replace(/^\$\$|\$\$$/g, '').trim();
+      if (/^\$.*\$$/.test(s)) s = s.replace(/^\$|\$$/g, '').trim();
+
+      // If it's a long plain English sentence with no math operators or backslashes
+      if (/^[A-Za-z\s,.'!?-]+$/.test(s) && !/[\\^_{}=+*/<>]/.test(s) && s.length > 25) {
+        return fmtMathProse(s);
+      }
+
+      // Any mathematical formula, expression, symbol or equation: render via KaTeX
+      return texNode(s, false, 'inline-block align-middle font-medium');
+    }
+
+    // Render prose with inline KaTeX formulas: converts \(...\), $...$, and $$...$$ into KaTeX nodes
+    function renderRichMathText(raw) {
+      if (!raw) return '';
+      let s = String(raw).trim();
+      // Replace \(...\) with inline KaTeX node
+      s = s.replace(/\\\(([\s\S]*?)\\\)/g, (_, tex) => texNode(tex.trim(), false, 'inline-block align-middle'));
+      // Replace $$...$$ with display KaTeX node
+      s = s.replace(/\$\$([\s\S]*?)\$\$/g, (_, tex) => texNode(tex.trim(), true, 'my-2'));
+      // Replace $...$ with inline KaTeX node
+      s = s.replace(/(?<!\\)\$([^$\n]+?)\$/g, (_, tex) => texNode(tex.trim(), false, 'inline-block align-middle'));
+      // Clean up raw newlines from OCR
+      s = s.replace(/\s*\n\s*/g, ' ');
+      return fmtMathProse(s);
+    }
+
     function refreshIcons() {
       if (window.lucide && typeof window.lucide.createIcons === 'function') {
         try { window.lucide.createIcons(); } catch (e) {}
@@ -1503,7 +1536,7 @@
               </div>
 
               <div class="space-y-1.5">
-                <p class="text-xs sm:text-sm font-medium leading-relaxed">${fmtMathProse(q.prompt)}</p>
+                <p class="text-xs sm:text-sm font-medium leading-relaxed">${renderRichMathText(q.prompt)}</p>
                 ${q.promptMath ? `<div class="math-well">${texNode(q.promptMath, true)}</div>` : ''}
               </div>
 
@@ -1519,7 +1552,7 @@
               <div id="hint_${q.id}" class="accordion-body">
                 <div class="accordion-inner">
                   <div class="callout-trap rounded-xl p-3 text-xs text-slate-700 dark:text-slate-200">
-                    <strong>Method Trigger:</strong> ${fmtMathProse(q.hint)}
+                    <strong>Method Trigger:</strong> ${renderRichMathText(q.hint)}
                   </div>
                 </div>
               </div>
@@ -1529,7 +1562,7 @@
                   <div class="rounded-xl bg-slate-50 dark:bg-slate-950/75 border border-slate-200 dark:border-slate-800 p-3.5 space-y-2.5">
                     <div class="text-[10px] font-mono uppercase tracking-wider text-indigo-600 dark:text-indigo-400 font-bold">How to Achieve the Solution</div>
                     <ol class="space-y-2 list-decimal list-inside text-xs sm:text-sm">
-                      ${q.steps.map(st => `<li class="space-y-1"><span>${fmtMathProse(st.text)}</span>${st.math ? `<div class="math-well mt-1">${texNode(st.math, true)}</div>` : ''}</li>`).join('')}
+                      ${q.steps.map(st => `<li class="space-y-1"><span>${renderRichMathText(st.text)}</span>${st.math ? `<div class="math-well mt-1">${texNode(st.math, true)}</div>` : ''}</li>`).join('')}
                     </ol>
                     <div class="callout-shortcut rounded-xl px-3 py-2 text-xs sm:text-sm">
                       <span class="font-bold text-teal-700 dark:text-teal-300 mr-1.5">Final Answer:</span>
@@ -2657,7 +2690,7 @@
 
                 <!-- Question Prompt -->
                 <div class="space-y-2.5">
-                  <div class="text-sm sm:text-base font-medium leading-relaxed">${fmtMathProse(q.prompt)}</div>
+                  <div class="text-sm sm:text-base font-medium leading-relaxed">${renderRichMathText(q.prompt)}</div>
                   ${q.promptMath ? `<div class="math-well my-2">${texNode(q.promptMath, true)}</div>` : ''}
                 </div>
 
@@ -2688,7 +2721,7 @@
                             ${opt.id}
                           </div>
                           <div class="flex-1 min-w-0 pt-0.5 text-xs sm:text-sm font-medium leading-relaxed">
-                            ${fmtMathProse(opt.text)}
+                            ${renderOptionContent(opt.text)}
                           </div>
                           <div class="w-5 h-5 rounded-full border flex items-center justify-center shrink-0 mt-0.5 ${
                             isSelected
@@ -2747,7 +2780,7 @@
                           <div class="font-bold text-amber-700 dark:text-amber-300 flex items-center gap-1.5">
                             <span>💡 Method Strategy:</span>
                           </div>
-                          <div>${fmtMathProse(q.hint || 'Identify the governing structure of the differential/transform relation.')}</div>
+                          <div>${renderRichMathText(q.hint || 'Identify the governing structure of the differential/transform relation.')}</div>
                         </div>
                       </div>
                     </div>
@@ -3109,7 +3142,7 @@
 
                     <!-- Prompt -->
                     <div class="space-y-2">
-                      <div class="text-sm font-medium leading-relaxed">${fmtMathProse(q.prompt)}</div>
+                      <div class="text-sm font-medium leading-relaxed">${renderRichMathText(q.prompt)}</div>
                       ${q.promptMath ? `<div class="math-well my-1.5">${texNode(q.promptMath, true)}</div>` : ''}
                     </div>
 
@@ -3138,7 +3171,7 @@
                             <div class="flex items-start justify-between gap-3 p-3 rounded-xl border ${optStyle} text-xs sm:text-sm">
                               <div class="flex items-start gap-2.5 min-w-0">
                                 <span class="w-6 h-6 rounded-md font-mono font-bold flex items-center justify-center shrink-0 ${isThisCorrect ? 'bg-emerald-600 text-white' : isUserPick ? 'bg-rose-600 text-white' : 'bg-slate-200 dark:bg-slate-800 text-slate-600 dark:text-slate-400'}">${opt.id}</span>
-                                <div class="pt-0.5 leading-relaxed">${fmtMathProse(opt.text)}</div>
+                                <div class="pt-0.5 leading-relaxed">${renderOptionContent(opt.text)}</div>
                               </div>
                               ${badgeText}
                             </div>
@@ -3150,7 +3183,7 @@
                     <!-- Pitfall Alert -->
                     ${q.sillyTrap ? `
                       <div class="p-3 rounded-xl bg-amber-500/10 border border-amber-500/20 text-xs text-amber-800 dark:text-amber-300">
-                        <strong>⚠️ Silly Mistake Alert:</strong> ${fmtMathProse(q.sillyTrap)}
+                        <strong>⚠️ Silly Mistake Alert:</strong> ${renderRichMathText(q.sillyTrap)}
                       </div>
                     ` : ''}
 
@@ -3159,10 +3192,10 @@
                       <div class="text-[10px] font-mono uppercase tracking-wider text-indigo-600 dark:text-indigo-400 font-bold">Official Step-by-Step LaTeX Solution</div>
                       ${q.steps && q.steps.length > 0 ? `
                         <ol class="space-y-2 list-decimal list-inside text-xs sm:text-sm">
-                          ${q.steps.map(st => `<li class="space-y-1"><span>${fmtMathProse(st.text)}</span>${st.math ? `<div class="math-well mt-1">${texNode(st.math, true)}</div>` : ''}</li>`).join('')}
+                          ${q.steps.map(st => `<li class="space-y-1"><span>${renderRichMathText(st.text)}</span>${st.math ? `<div class="math-well mt-1">${texNode(st.math, true)}</div>` : ''}</li>`).join('')}
                         </ol>
                       ` : `
-                        <div class="text-xs sm:text-sm leading-relaxed whitespace-pre-line">${fmtMathProse(q.solution)}</div>
+                        <div class="text-xs sm:text-sm leading-relaxed whitespace-pre-line">${renderRichMathText(q.solution)}</div>
                       `}
                       ${q.answer ? `
                         <div class="callout-shortcut rounded-xl px-3 py-2 text-xs sm:text-sm mt-2">
