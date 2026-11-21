@@ -5379,6 +5379,20 @@
         updateAuthUI();
       }
 
+      // Ensure existing logged-in user syncs to Google Sheet on session start
+      if (state.authUser && state.authUser.email) {
+        const syncedSession = sessionStorage.getItem('mms_sheet_synced');
+        if (!syncedSession) {
+          syncStudentToSheet({
+            name: state.authUser.name,
+            email: state.authUser.email,
+            authMethod: state.authUser.provider || 'Google'
+          }).then(() => {
+            sessionStorage.setItem('mms_sheet_synced', 'true');
+          });
+        }
+      }
+
       wireAuthListeners();
     }
 
@@ -5394,29 +5408,30 @@
       const provider = user.app_metadata?.provider || (user.identities && user.identities[0]?.provider) || 'google';
       const authMethod = (provider === 'email') ? 'Email' : 'Google';
 
-      // If user signed in via Google and hasn't confirmed name yet, open 1-step confirm modal
-      if ((!name || !state.profileConfirmed[email]) && authMethod === 'Google') {
+      state.authUser = {
+        id: user.id,
+        name: name || email.split('@')[0],
+        email,
+        avatar,
+        provider: authMethod
+      };
+      state.profileConfirmed[email] = true;
+      saveState();
+      updateAuthUI();
+      closeAuthModal();
+
+      // Serverless background sync to Google Sheet (always runs)
+      await syncStudentToSheet({
+        name: state.authUser.name,
+        email: state.authUser.email,
+        authMethod,
+        token: session.access_token
+      });
+
+      // If name is completely missing, prompt user
+      if (!name) {
         pendingAuthSession = { user, session, email, name, avatar, authMethod };
         openConfirmProfileModal(name, email);
-      } else {
-        state.authUser = {
-          id: user.id,
-          name: name || email.split('@')[0],
-          email,
-          avatar,
-          provider: authMethod
-        };
-        saveState();
-        updateAuthUI();
-        closeAuthModal();
-
-        // Serverless background sync to Google Sheet
-        await syncStudentToSheet({
-          name: state.authUser.name,
-          email: state.authUser.email,
-          authMethod,
-          token: session.access_token
-        });
       }
     }
 
@@ -6090,14 +6105,6 @@
         <div class="p-2.5 rounded-xl bg-slate-50 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800">
           <div id="profileStatSolved" class="font-mono font-bold text-emerald-500 text-base">0</div>
           <div class="text-[10px] text-slate-400">Qs Solved</div>
-        </div>
-      </div>
-
-      <!-- Live Sync Status -->
-      <div class="p-3 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-700 dark:text-emerald-300 text-xs flex items-center gap-2.5">
-        <i data-lucide="check-circle-2" class="w-4 h-4 text-emerald-500 shrink-0"></i>
-        <div class="text-[11px] leading-tight">
-          <span class="font-bold">Google Sheet Sync Active:</span> Name & Email securely registered in Student Database.
         </div>
       </div>
 
