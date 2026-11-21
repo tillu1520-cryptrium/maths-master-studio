@@ -25,6 +25,7 @@
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" />
   <script src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
   <script src="https://unpkg.com/lucide@0.460.0/dist/umd/lucide.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script>
     tailwind.config = {
       darkMode: 'class',
@@ -425,6 +426,14 @@
             <i data-lucide="sun" class="w-4 h-4 hidden dark:block text-amber-400"></i>
             <i data-lucide="moon" class="w-4 h-4 block dark:hidden text-indigo-600"></i>
           </button>
+
+          <!-- Supabase Auth / Student Profile Trigger -->
+          <div id="authNavCluster" class="flex items-center">
+            <button id="openAuthModalBtn" class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold shadow-md shadow-indigo-500/25 transition-all active:scale-95 cursor-pointer" title="Sign In or Create Account">
+              <i data-lucide="user" class="w-3.5 h-3.5"></i>
+              <span>Sign In</span>
+            </button>
+          </div>
         </div>
       </div>
 
@@ -574,7 +583,10 @@
       testTimerInterval: null,
       testScorecard: null,
       testReviewFilter: 'all',
-      testHistory: []
+      testHistory: [],
+      // User Authentication & Student Identity
+      authUser: null,
+      profileConfirmed: {}
     };
 
     
@@ -819,6 +831,8 @@
           state.studentNotes = parsed.studentNotes || {};
           state.questionBuckets = parsed.questionBuckets || {};
           state.testHistory = parsed.testHistory || [];
+          state.authUser = parsed.authUser || null;
+          state.profileConfirmed = parsed.profileConfirmed || {};
           try {
             const extraRecords = JSON.parse(localStorage.getItem('mms_test_records') || '[]');
             if (Array.isArray(extraRecords) && extraRecords.length > state.testHistory.length) {
@@ -856,7 +870,9 @@
           streak: state.streak,
           studentNotes: state.studentNotes,
           questionBuckets: state.questionBuckets,
-          testHistory: state.testHistory
+          testHistory: state.testHistory,
+          authUser: state.authUser,
+          profileConfirmed: state.profileConfirmed
         }));
         if (state.testHistory && state.testHistory.length > 0) {
           localStorage.setItem('mms_test_records', JSON.stringify(state.testHistory));
@@ -5311,10 +5327,455 @@
     });
 
 
+    // =========================================================================
+    // SUPABASE USER AUTHENTICATION & GOOGLE SHEET SYNC ENGINE
+    // =========================================================================
+    let supabaseClient = null;
+    let authMode = 'signin'; // 'signin' or 'signup'
+    let pendingAuthSession = null;
+
+    async function initAuth() {
+      let supabaseUrl = '';
+      let supabaseAnonKey = '';
+
+      try {
+        const cfgRes = await fetch('/api/auth-config');
+        if (cfgRes.ok) {
+          const cfg = await cfgRes.json();
+          supabaseUrl = cfg.supabaseUrl;
+          supabaseAnonKey = cfg.supabaseAnonKey;
+        }
+      } catch (err) {
+        console.warn('Could not fetch /api/auth-config:', err);
+      }
+
+      if (supabaseUrl && supabaseAnonKey && window.supabase && typeof window.supabase.createClient === 'function') {
+        try {
+          supabaseClient = window.supabase.createClient(supabaseUrl, supabaseAnonKey);
+
+          // Handle Supabase Auth state changes (OAuth redirects, login, logout)
+          supabaseClient.auth.onAuthStateChange(async (event, session) => {
+            if (session && session.user) {
+              await handleSessionDetected(session);
+            } else if (event === 'SIGNED_OUT') {
+              state.authUser = null;
+              saveState();
+              updateAuthUI();
+            }
+          });
+
+          // Check current active session
+          const { data } = await supabaseClient.auth.getSession();
+          if (data && data.session && data.session.user) {
+            await handleSessionDetected(data.session);
+          } else {
+            updateAuthUI();
+          }
+        } catch (e) {
+          console.error('Supabase initialization error:', e);
+          updateAuthUI();
+        }
+      } else {
+        updateAuthUI();
+      }
+
+      wireAuthListeners();
+    }
+
+    async function handleSessionDetected(session) {
+      if (!session || !session.user) return;
+      const user = session.user;
+      const email = (user.email || '').trim().toLowerCase();
+      let name = user.user_metadata?.full_name || user.user_metadata?.name || '';
+      const avatar = user.user_metadata?.avatar_url || '';
+      const provider = user.app_metadata?.provider || (user.identities && user.identities[0]?.provider) || 'google';
+      const authMethod = (provider === 'email') ? 'Email' : 'Google';
+
+      // If user signed in via Google and hasn't confirmed name yet, open 1-step confirm modal
+      if ((!name || !state.profileConfirmed[email]) && authMethod === 'Google') {
+        pendingAuthSession = { user, session, email, name, avatar, authMethod };
+        openConfirmProfileModal(name, email);
+      } else {
+        state.authUser = {
+          id: user.id,
+          name: name || email.split('@')[0],
+          email,
+          avatar,
+          provider: authMethod
+        };
+        saveState();
+        updateAuthUI();
+        closeAuthModal();
+
+        // Serverless background sync to Google Sheet
+        await syncStudentToSheet({
+          name: state.authUser.name,
+          email: state.authUser.email,
+          authMethod,
+          token: session.access_token
+        });
+      }
+    }
+
+    async function syncStudentToSheet({ name, email, authMethod, token }) {
+      try {
+        const headers = { 'Content-Type': 'application/json' };
+        if (token) headers['Authorization'] = `Bearer ${token}`;
+
+        const res = await fetch('/api/log-student', {
+          method: 'POST',
+          headers,
+          body: JSON.stringify({ name, email, authMethod })
+        });
+        const data = await res.json();
+        return data;
+      } catch (err) {
+        console.warn('Student sync request error:', err);
+      }
+    }
+
+    function updateAuthUI() {
+      const container = document.getElementById('authNavCluster');
+      if (!container) return;
+
+      if (state.authUser && state.authUser.email) {
+        const u = state.authUser;
+        const initials = (u.name || u.email || 'U').split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase();
+        const shortName = (u.name || u.email.split('@')[0]).split(' ')[0];
+
+        container.innerHTML = `
+          <button id="openProfileBtn" class="flex items-center gap-1.5 p-1 sm:px-2.5 sm:py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200/80 dark:bg-slate-800/90 dark:hover:bg-slate-700/80 border border-slate-200 dark:border-slate-700 transition-all cursor-pointer" title="View Student Profile (${escHtml(u.email)})">
+            ${u.avatar ? `
+              <img src="${escHtml(u.avatar)}" alt="${escHtml(u.name)}" class="w-6 h-6 rounded-lg object-cover ring-1 ring-indigo-500/30" />
+            ` : `
+              <div class="w-6 h-6 rounded-lg bg-gradient-to-tr from-indigo-600 to-purple-600 text-white font-bold text-[11px] flex items-center justify-center shadow-xs">
+                ${initials}
+              </div>
+            `}
+            <span class="text-xs font-semibold text-slate-700 dark:text-slate-200 hidden sm:inline max-w-[100px] truncate">${escHtml(shortName)}</span>
+          </button>
+        `;
+        const pBtn = document.getElementById('openProfileBtn');
+        if (pBtn) pBtn.onclick = openProfileModal;
+      } else {
+        container.innerHTML = `
+          <button id="openAuthModalBtn" class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold shadow-md shadow-indigo-500/25 transition-all active:scale-95 cursor-pointer" title="Sign In or Create Account">
+            <i data-lucide="user" class="w-3.5 h-3.5"></i>
+            <span>Sign In</span>
+          </button>
+        `;
+        const aBtn = document.getElementById('openAuthModalBtn');
+        if (aBtn) aBtn.onclick = openAuthModal;
+      }
+      refreshIcons();
+    }
+
+    function openAuthModal() {
+      const m = document.getElementById('authModal');
+      if (m) {
+        m.classList.remove('hidden');
+        m.classList.add('flex');
+        setAuthAlert('', '');
+        refreshIcons();
+      }
+    }
+
+    function closeAuthModal() {
+      const m = document.getElementById('authModal');
+      if (m) {
+        m.classList.remove('flex');
+        m.classList.add('hidden');
+      }
+    }
+
+    function openConfirmProfileModal(defaultName, email) {
+      const m = document.getElementById('confirmProfileModal');
+      if (m) {
+        const nameInp = document.getElementById('confirmProfileNameInput');
+        const emailInp = document.getElementById('confirmProfileEmailInput');
+        if (nameInp) nameInp.value = defaultName || '';
+        if (emailInp) emailInp.value = email || '';
+        m.classList.remove('hidden');
+        m.classList.add('flex');
+        refreshIcons();
+      }
+    }
+
+    function closeConfirmProfileModal() {
+      const m = document.getElementById('confirmProfileModal');
+      if (m) {
+        m.classList.remove('flex');
+        m.classList.add('hidden');
+      }
+    }
+
+    function openProfileModal() {
+      const m = document.getElementById('profileModal');
+      if (!m || !state.authUser) return;
+
+      const u = state.authUser;
+      const initials = (u.name || u.email || 'U').split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase();
+
+      const nameEl = document.getElementById('profileDisplayName');
+      const emailEl = document.getElementById('profileDisplayEmail');
+      const badgeEl = document.getElementById('profileProviderBadge');
+      const avatarEl = document.getElementById('profileAvatarEl');
+
+      if (nameEl) nameEl.textContent = u.name || 'Student';
+      if (emailEl) emailEl.textContent = u.email || '';
+      if (badgeEl) badgeEl.textContent = u.provider === 'Email' ? 'Email Account' : 'Google Account';
+
+      if (avatarEl) {
+        if (u.avatar) {
+          avatarEl.innerHTML = `<img src="${escHtml(u.avatar)}" alt="${escHtml(u.name)}" class="w-full h-full object-cover" />`;
+        } else {
+          avatarEl.innerHTML = initials;
+        }
+      }
+
+      // Stats
+      const sStreak = document.getElementById('profileStatStreak');
+      if (sStreak) sStreak.textContent = state.streak?.count || 0;
+      const sTests = document.getElementById('profileStatTests');
+      if (sTests) sTests.textContent = state.testHistory?.length || 0;
+      const sSolved = document.getElementById('profileStatSolved');
+      if (sSolved) {
+        const solvedCount = Object.keys(state.solvedQs || {}).filter(k => state.solvedQs[k] === 'got').length;
+        sSolved.textContent = solvedCount;
+      }
+
+      m.classList.remove('hidden');
+      m.classList.add('flex');
+      refreshIcons();
+    }
+
+    function closeProfileModal() {
+      const m = document.getElementById('profileModal');
+      if (m) {
+        m.classList.remove('flex');
+        m.classList.add('hidden');
+      }
+    }
+
+    function setAuthAlert(msg, type = 'error') {
+      const el = document.getElementById('authAlert');
+      if (!el) return;
+      if (!msg) {
+        el.className = 'hidden';
+        el.textContent = '';
+        return;
+      }
+      el.className = `text-xs p-3 rounded-xl border ${
+        type === 'success'
+          ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-600 dark:text-emerald-400'
+          : 'bg-rose-500/10 border-rose-500/30 text-rose-600 dark:text-rose-400'
+      }`;
+      el.textContent = msg;
+    }
+
+    function wireAuthListeners() {
+      const tabIn = document.getElementById('authTabSignIn');
+      const tabUp = document.getElementById('authTabSignUp');
+      const nameField = document.getElementById('authNameField');
+      const submitText = document.getElementById('authEmailSubmitText');
+      const pwdHint = document.getElementById('authPasswordHint');
+
+      const setMode = mode => {
+        authMode = mode;
+        setAuthAlert('', '');
+        if (mode === 'signup') {
+          if (tabUp) tabUp.className = 'py-1.5 rounded-lg font-bold transition-all bg-white dark:bg-slate-800 text-indigo-600 dark:text-indigo-400 shadow-sm cursor-pointer';
+          if (tabIn) tabIn.className = 'py-1.5 rounded-lg font-bold transition-all text-slate-500 hover:text-slate-800 dark:hover:text-slate-200 cursor-pointer';
+          if (nameField) nameField.classList.remove('hidden');
+          if (pwdHint) pwdHint.classList.remove('hidden');
+          if (submitText) submitText.textContent = 'Create Student Account';
+        } else {
+          if (tabIn) tabIn.className = 'py-1.5 rounded-lg font-bold transition-all bg-white dark:bg-slate-800 text-indigo-600 dark:text-indigo-400 shadow-sm cursor-pointer';
+          if (tabUp) tabUp.className = 'py-1.5 rounded-lg font-bold transition-all text-slate-500 hover:text-slate-800 dark:hover:text-slate-200 cursor-pointer';
+          if (nameField) nameField.classList.add('hidden');
+          if (pwdHint) pwdHint.classList.add('hidden');
+          if (submitText) submitText.textContent = 'Sign In';
+        }
+      };
+
+      if (tabIn) tabIn.onclick = () => setMode('signin');
+      if (tabUp) tabUp.onclick = () => setMode('signup');
+
+      const closeAuthBtn = document.getElementById('closeAuthModalBtn');
+      if (closeAuthBtn) closeAuthBtn.onclick = closeAuthModal;
+      const authM = document.getElementById('authModal');
+      if (authM) authM.onclick = e => { if (e.target.id === 'authModal') closeAuthModal(); };
+
+      const closeProfBtn = document.getElementById('closeProfileModalBtn');
+      if (closeProfBtn) closeProfBtn.onclick = closeProfileModal;
+      const profDoneBtn = document.getElementById('profileCloseBtn');
+      if (profDoneBtn) profDoneBtn.onclick = closeProfileModal;
+      const profM = document.getElementById('profileModal');
+      if (profM) profM.onclick = e => { if (e.target.id === 'profileModal') closeProfileModal(); };
+
+      // Google Sign-In via Supabase OAuth
+      const googleBtn = document.getElementById('googleSignInBtn');
+      if (googleBtn) {
+        googleBtn.onclick = async () => {
+          if (!supabaseClient) {
+            setAuthAlert('Supabase configuration is loading or not yet configured in environment variables.', 'error');
+            return;
+          }
+          try {
+            googleBtn.disabled = true;
+            googleBtn.innerHTML = `<span class="inline-block animate-spin mr-2">⏳</span> Redirecting to Google...`;
+            const { error } = await supabaseClient.auth.signInWithOAuth({
+              provider: 'google',
+              options: {
+                redirectTo: window.location.origin
+              }
+            });
+            if (error) {
+              setAuthAlert(error.message, 'error');
+              googleBtn.disabled = false;
+              googleBtn.innerHTML = `<span>Continue with Google</span>`;
+            }
+          } catch (e) {
+            setAuthAlert(e.message || 'Error redirecting to Google Sign-In', 'error');
+            googleBtn.disabled = false;
+          }
+        };
+      }
+
+      // Email Sign-In / Sign-Up Form
+      const emailForm = document.getElementById('authEmailForm');
+      if (emailForm) {
+        emailForm.onsubmit = async e => {
+          e.preventDefault();
+          if (!supabaseClient) {
+            setAuthAlert('Supabase is initializing or credentials are being configured in Vercel.', 'error');
+            return;
+          }
+
+          const emailInp = document.getElementById('authEmailInput');
+          const pwdInp = document.getElementById('authPasswordInput');
+          const nameInp = document.getElementById('authNameInput');
+
+          const email = (emailInp?.value || '').trim();
+          const password = pwdInp?.value || '';
+          const name = (nameInp?.value || '').trim();
+
+          if (!email || !password) {
+            setAuthAlert('Please fill in both email and password.', 'error');
+            return;
+          }
+
+          const submitBtn = document.getElementById('authEmailSubmitBtn');
+          if (submitBtn) submitBtn.disabled = true;
+
+          try {
+            if (authMode === 'signup') {
+              if (!name) {
+                setAuthAlert('Please enter your full name for student verification.', 'error');
+                if (submitBtn) submitBtn.disabled = false;
+                return;
+              }
+              const { data, error } = await supabaseClient.auth.signUp({
+                email,
+                password,
+                options: {
+                  data: { full_name: name, name: name }
+                }
+              });
+              if (error) {
+                setAuthAlert(error.message, 'error');
+              } else if (data && data.user) {
+                if (data.session) {
+                  showToast(`Welcome to Maths Master Studio, ${name}!`, 'success');
+                  await handleSessionDetected(data.session);
+                } else {
+                  setAuthAlert('Registration successful! If confirmation is required, please check your inbox, then sign in.', 'success');
+                }
+              }
+            } else {
+              const { data, error } = await supabaseClient.auth.signInWithPassword({
+                email,
+                password
+              });
+              if (error) {
+                setAuthAlert(error.message, 'error');
+              } else if (data && data.session) {
+                showToast('Signed in successfully!', 'success');
+                await handleSessionDetected(data.session);
+              }
+            }
+          } catch (err) {
+            setAuthAlert(err.message || 'Authentication error', 'error');
+          } finally {
+            if (submitBtn) submitBtn.disabled = false;
+          }
+        };
+      }
+
+      // Profile Confirmation (Name Verification)
+      const confBtn = document.getElementById('confirmProfileSubmitBtn');
+      if (confBtn) {
+        confBtn.onclick = async () => {
+          const nameInp = document.getElementById('confirmProfileNameInput');
+          const confirmedName = (nameInp?.value || '').trim();
+          if (!confirmedName) {
+            const al = document.getElementById('confirmProfileAlert');
+            if (al) {
+              al.className = 'text-xs p-3 rounded-xl border bg-rose-500/10 border-rose-500/30 text-rose-600 dark:text-rose-400';
+              al.textContent = 'Please enter your full name before continuing.';
+            }
+            return;
+          }
+
+          if (pendingAuthSession) {
+            const p = pendingAuthSession;
+            state.profileConfirmed[p.email] = true;
+            state.authUser = {
+              id: p.user.id,
+              name: confirmedName,
+              email: p.email,
+              avatar: p.avatar,
+              provider: p.authMethod
+            };
+            saveState();
+            updateAuthUI();
+            closeConfirmProfileModal();
+            closeAuthModal();
+            showToast(`Welcome, ${confirmedName}!`, 'success');
+
+            // Log to Google Sheet
+            await syncStudentToSheet({
+              name: confirmedName,
+              email: p.email,
+              authMethod: p.authMethod,
+              token: p.session.access_token
+            });
+            pendingAuthSession = null;
+          }
+        };
+      }
+
+      // Profile Modal Sign Out
+      const signOutBtn = document.getElementById('profileSignOutBtn');
+      if (signOutBtn) {
+        signOutBtn.onclick = async () => {
+          if (supabaseClient) {
+            try { await supabaseClient.auth.signOut(); } catch (e) {}
+          }
+          state.authUser = null;
+          saveState();
+          updateAuthUI();
+          closeProfileModal();
+          showToast('Signed out of Maths Master Studio.', 'info');
+        };
+      }
+    }
+
     initExamBank();
     loadState();
     renderApp();
     updateStreakUI();
+    initAuth();
     window.addEventListener('load', () => {
       renderAllTex(document.getElementById('appMain'));
       refreshIcons();
@@ -5335,6 +5796,9 @@
     window.renderApp = renderApp;
     window.startCustomTest = startCustomTest;
     window.finishExam = finishExam;
+    window.initAuth = initAuth;
+    window.openAuthModal = openAuthModal;
+    window.openProfileModal = openProfileModal;
   })();
   </script>
 
@@ -5447,6 +5911,202 @@
       <div class="flex items-center justify-end gap-2 pt-2 border-t border-slate-200 dark:border-slate-800">
         <button id="cancelSubmitExamBtn" data-cancel-submit-exam class="px-4 py-2 rounded-xl text-xs font-semibold border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">Return to Test</button>
         <button id="confirmSubmitExamBtn" data-confirm-submit-exam class="px-4 py-2 rounded-xl text-xs font-bold bg-indigo-600 hover:bg-indigo-700 text-white shadow-sm transition-all active:scale-95">Yes, Submit Now</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- SUPABASE USER AUTHENTICATION MODAL (GOOGLE + EMAIL) -->
+  <div id="authModal" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm hidden items-center justify-center p-3 sm:p-5" role="dialog" aria-modal="true" aria-labelledby="authModalTitle">
+    <div class="ed-card rounded-2xl max-w-md w-full shadow-2xl border border-slate-200 dark:border-slate-800 flex flex-col p-5 sm:p-6 space-y-4 animate-in fade-in zoom-in duration-200 relative">
+      <div class="flex items-start justify-between gap-3">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-xl bg-indigo-500/15 border border-indigo-500/30 flex items-center justify-center text-indigo-600 dark:text-indigo-400">
+            <i data-lucide="user-check" class="w-5 h-5"></i>
+          </div>
+          <div>
+            <h3 id="authModalTitle" class="text-base font-bold text-slate-800 dark:text-slate-100">Student Portal Access</h3>
+            <p id="authModalSub" class="text-xs text-slate-500">Sign in to sync your practice exams, streaks, and scores.</p>
+          </div>
+        </div>
+        <button id="closeAuthModalBtn" class="p-2 rounded-xl border border-slate-200 dark:border-slate-700 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 cursor-pointer" title="Close">
+          <i data-lucide="x" class="w-4 h-4"></i>
+        </button>
+      </div>
+
+      <!-- Auth Alert / Feedback Box -->
+      <div id="authAlert" class="hidden text-xs p-3 rounded-xl border"></div>
+
+      <!-- One-Click Google Sign-In Button -->
+      <button id="googleSignInBtn" type="button" class="w-full flex items-center justify-center gap-3 py-2.5 px-4 rounded-xl bg-white dark:bg-slate-800/90 hover:bg-slate-50 dark:hover:bg-slate-700/80 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-100 text-xs sm:text-sm font-semibold shadow-sm transition-all active:scale-[0.98] cursor-pointer">
+        <svg class="w-4 h-4" viewBox="0 0 24 24">
+          <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+          <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+          <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"/>
+          <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"/>
+        </svg>
+        <span>Continue with Google</span>
+      </button>
+
+      <!-- Divider -->
+      <div class="relative flex py-1 items-center">
+        <div class="flex-grow border-t border-slate-200 dark:border-slate-800"></div>
+        <span class="flex-shrink mx-3 text-[11px] font-mono text-slate-400 uppercase tracking-wider">or email access</span>
+        <div class="flex-grow border-t border-slate-200 dark:border-slate-800"></div>
+      </div>
+
+      <!-- Mode Tabs (Sign In vs Sign Up) -->
+      <div class="grid grid-cols-2 p-1 bg-slate-100 dark:bg-slate-900/80 rounded-xl border border-slate-200 dark:border-slate-800 text-xs">
+        <button id="authTabSignIn" type="button" class="py-1.5 rounded-lg font-bold transition-all bg-white dark:bg-slate-800 text-indigo-600 dark:text-indigo-400 shadow-sm cursor-pointer">Sign In</button>
+        <button id="authTabSignUp" type="button" class="py-1.5 rounded-lg font-bold transition-all text-slate-500 hover:text-slate-800 dark:hover:text-slate-200 cursor-pointer">Create Account</button>
+      </div>
+
+      <!-- Email Form -->
+      <form id="authEmailForm" class="space-y-3" onsubmit="return false;">
+        <div id="authNameField" class="space-y-1 hidden">
+          <label class="text-[11px] font-semibold text-slate-600 dark:text-slate-300">Full Name</label>
+          <div class="relative">
+            <i data-lucide="user" class="w-4 h-4 text-slate-400 absolute left-3 top-2.5"></i>
+            <input id="authNameInput" type="text" placeholder="e.g. John Doe" class="w-full pl-9 pr-3 py-2 rounded-xl text-xs bg-slate-50 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-700/80 text-slate-800 dark:text-slate-100 placeholder-slate-400 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-all">
+          </div>
+        </div>
+
+        <div class="space-y-1">
+          <label class="text-[11px] font-semibold text-slate-600 dark:text-slate-300">Email Address</label>
+          <div class="relative">
+            <i data-lucide="mail" class="w-4 h-4 text-slate-400 absolute left-3 top-2.5"></i>
+            <input id="authEmailInput" type="email" required placeholder="student@example.com" class="w-full pl-9 pr-3 py-2 rounded-xl text-xs bg-slate-50 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-700/80 text-slate-800 dark:text-slate-100 placeholder-slate-400 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-all">
+          </div>
+        </div>
+
+        <div class="space-y-1">
+          <label class="text-[11px] font-semibold text-slate-600 dark:text-slate-300">Password</label>
+          <div class="relative">
+            <i data-lucide="lock" class="w-4 h-4 text-slate-400 absolute left-3 top-2.5"></i>
+            <input id="authPasswordInput" type="password" required minlength="6" placeholder="••••••••" class="w-full pl-9 pr-3 py-2 rounded-xl text-xs bg-slate-50 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-700/80 text-slate-800 dark:text-slate-100 placeholder-slate-400 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-all">
+          </div>
+          <p id="authPasswordHint" class="text-[10px] text-slate-400 hidden">Minimum 6 characters.</p>
+        </div>
+
+        <button id="authEmailSubmitBtn" type="submit" class="w-full py-2.5 px-4 rounded-xl text-xs font-bold bg-indigo-600 hover:bg-indigo-500 text-white shadow-md shadow-indigo-500/25 transition-all active:scale-95 cursor-pointer flex items-center justify-center gap-1.5">
+          <span id="authEmailSubmitText">Sign In</span>
+          <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+        </button>
+      </form>
+
+      <div class="pt-2 text-center text-[11px] text-slate-400 border-t border-slate-200 dark:border-slate-800/80">
+        <span class="flex items-center justify-center gap-1"><i data-lucide="shield-check" class="w-3.5 h-3.5 text-emerald-500"></i> Encrypted authentication via Supabase Auth</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- 1-STEP CONFIRM PROFILE MODAL (FOR GOOGLE SIGN-IN OR FIRST LOGIN) -->
+  <div id="confirmProfileModal" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm hidden items-center justify-center p-3 sm:p-5" role="dialog" aria-modal="true" aria-labelledby="confirmProfileTitle">
+    <div class="ed-card rounded-2xl max-w-md w-full shadow-2xl border border-slate-200 dark:border-slate-800 flex flex-col p-5 sm:p-6 space-y-4 animate-in fade-in zoom-in duration-200">
+      <div class="flex items-start justify-between gap-3">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-xl bg-emerald-500/15 border border-emerald-500/30 flex items-center justify-center text-emerald-600 dark:text-emerald-400">
+            <i data-lucide="sparkles" class="w-5 h-5"></i>
+          </div>
+          <div>
+            <h3 id="confirmProfileTitle" class="text-base font-bold text-slate-800 dark:text-slate-100">Confirm Your Student Profile</h3>
+            <p class="text-xs text-slate-500">Verify your display name for your exam reports and certificate.</p>
+          </div>
+        </div>
+      </div>
+
+      <div id="confirmProfileAlert" class="hidden text-xs p-3 rounded-xl border"></div>
+
+      <div class="space-y-3">
+        <div class="space-y-1">
+          <label class="text-[11px] font-semibold text-slate-600 dark:text-slate-300">Full Name</label>
+          <div class="relative">
+            <i data-lucide="user" class="w-4 h-4 text-slate-400 absolute left-3 top-2.5"></i>
+            <input id="confirmProfileNameInput" type="text" required placeholder="Your full name" class="w-full pl-9 pr-3 py-2 rounded-xl text-xs bg-slate-50 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-700/80 text-slate-800 dark:text-slate-100 placeholder-slate-400 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-all font-semibold">
+          </div>
+        </div>
+
+        <div class="space-y-1">
+          <label class="text-[11px] font-semibold text-slate-600 dark:text-slate-300">Verified Email Address</label>
+          <div class="relative">
+            <i data-lucide="mail" class="w-4 h-4 text-slate-400 absolute left-3 top-2.5"></i>
+            <input id="confirmProfileEmailInput" type="email" readonly disabled class="w-full pl-9 pr-3 py-2 rounded-xl text-xs bg-slate-100 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700/60 text-slate-500 dark:text-slate-400 cursor-not-allowed">
+          </div>
+        </div>
+      </div>
+
+      <p class="text-[11px] text-slate-500 leading-relaxed">
+        Your email is recorded in the student registry to sync your exam simulations and test history.
+      </p>
+
+      <div class="flex items-center justify-end gap-2 pt-2 border-t border-slate-200 dark:border-slate-800">
+        <button id="confirmProfileSubmitBtn" type="button" class="w-full py-2.5 px-4 rounded-xl text-xs font-bold bg-emerald-600 hover:bg-emerald-500 text-white shadow-md shadow-emerald-500/25 transition-all active:scale-95 cursor-pointer flex items-center justify-center gap-1.5">
+          <span>Enter Maths Master Studio</span>
+          <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- STUDENT PROFILE & ACCOUNT MODAL -->
+  <div id="profileModal" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm hidden items-center justify-center p-3 sm:p-5" role="dialog" aria-modal="true" aria-labelledby="profileModalTitle">
+    <div class="ed-card rounded-2xl max-w-md w-full shadow-2xl border border-slate-200 dark:border-slate-800 flex flex-col p-5 sm:p-6 space-y-4 animate-in fade-in zoom-in duration-200">
+      <div class="flex items-start justify-between gap-3">
+        <h3 id="profileModalTitle" class="text-base font-bold text-slate-800 dark:text-slate-100 flex items-center gap-2">
+          <i data-lucide="user" class="w-4 h-4 text-indigo-500"></i>
+          <span>Student Profile</span>
+        </h3>
+        <button id="closeProfileModalBtn" class="p-2 rounded-xl border border-slate-200 dark:border-slate-700 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 cursor-pointer" title="Close">
+          <i data-lucide="x" class="w-4 h-4"></i>
+        </button>
+      </div>
+
+      <!-- Avatar & Name Card -->
+      <div class="flex items-center gap-3 p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800">
+        <div id="profileAvatarEl" class="w-12 h-12 rounded-2xl bg-indigo-600 text-white font-bold text-lg flex items-center justify-center shadow-md shadow-indigo-500/20 shrink-0 overflow-hidden">
+          U
+        </div>
+        <div class="min-w-0 flex-1">
+          <div class="flex items-center gap-2">
+            <h4 id="profileDisplayName" class="font-bold text-sm text-slate-800 dark:text-slate-100 truncate">Student Name</h4>
+            <span id="profileProviderBadge" class="px-2 py-0.5 rounded-full text-[10px] font-mono font-bold bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 border border-indigo-500/20">Google</span>
+          </div>
+          <p id="profileDisplayEmail" class="text-xs text-slate-500 truncate font-mono">student@example.com</p>
+        </div>
+      </div>
+
+      <!-- Student Stats -->
+      <div class="grid grid-cols-3 gap-2 text-center text-xs">
+        <div class="p-2.5 rounded-xl bg-slate-50 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800">
+          <div id="profileStatStreak" class="font-mono font-bold text-amber-500 text-base">0</div>
+          <div class="text-[10px] text-slate-400">Day Streak</div>
+        </div>
+        <div class="p-2.5 rounded-xl bg-slate-50 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800">
+          <div id="profileStatTests" class="font-mono font-bold text-indigo-500 text-base">0</div>
+          <div class="text-[10px] text-slate-400">Tests Taken</div>
+        </div>
+        <div class="p-2.5 rounded-xl bg-slate-50 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800">
+          <div id="profileStatSolved" class="font-mono font-bold text-emerald-500 text-base">0</div>
+          <div class="text-[10px] text-slate-400">Qs Solved</div>
+        </div>
+      </div>
+
+      <!-- Live Sync Status -->
+      <div class="p-3 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-700 dark:text-emerald-300 text-xs flex items-center gap-2.5">
+        <i data-lucide="check-circle-2" class="w-4 h-4 text-emerald-500 shrink-0"></i>
+        <div class="text-[11px] leading-tight">
+          <span class="font-bold">Google Sheet Sync Active:</span> Name & Email securely registered in Student Database.
+        </div>
+      </div>
+
+      <!-- Actions -->
+      <div class="flex items-center justify-between pt-2 border-t border-slate-200 dark:border-slate-800">
+        <button id="profileSignOutBtn" type="button" class="px-4 py-2 rounded-xl text-xs font-bold text-rose-600 hover:text-rose-700 hover:bg-rose-500/10 border border-rose-500/20 transition-all flex items-center gap-1.5 cursor-pointer">
+          <i data-lucide="log-out" class="w-3.5 h-3.5"></i>
+          <span>Sign Out</span>
+        </button>
+        <button id="profileCloseBtn" type="button" class="px-4 py-2 rounded-xl text-xs font-semibold border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer">
+          Done
+        </button>
       </div>
     </div>
   </div>
