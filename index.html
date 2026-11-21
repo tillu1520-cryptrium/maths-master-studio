@@ -258,13 +258,13 @@
             <i data-lucide="search" class="w-3.5 h-3.5 text-indigo-500"></i>
             <span class="hidden lg:inline">Search...</span>
           </button>
-          <div class="flex items-center gap-1.5 px-2.5 py-1 rounded-xl bg-emerald-500/10 border border-emerald-500/25 text-xs font-bold text-emerald-600 dark:text-emerald-400" title="Overall Mastery">
+          <button id="openProgressBtn" class="flex items-center gap-1.5 px-2.5 py-1 rounded-xl bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/25 text-xs font-bold text-emerald-600 dark:text-emerald-400 cursor-pointer transition-all active:scale-95" title="View Study Progress &amp; Analytics">
             <svg class="w-4 h-4 -rotate-90 shrink-0" viewBox="0 0 24 24">
               <circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-opacity="0.2" stroke-width="3"></circle>
               <circle id="masteryRing" cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-dasharray="56.55" stroke-dashoffset="56.55" style="transition: stroke-dashoffset 0.5s ease;"></circle>
             </svg>
             <span id="masteryPct" class="font-mono text-[11px]">0%</span>
-          </div>
+          </button>
           <button id="themeToggleBtn" class="p-2 rounded-xl bg-slate-100 dark:bg-slate-800/90 border border-slate-200 dark:border-slate-700 hover:border-indigo-500 transition-colors" title="Switch Light / Dark Mode" aria-label="Toggle Theme">
             <i data-lucide="sun" class="w-4 h-4 hidden dark:block text-amber-400"></i>
             <i data-lucide="moon" class="w-4 h-4 block dark:hidden text-indigo-600"></i>
@@ -310,6 +310,41 @@
     </div>
   </div>
 
+  <!-- Study Progress & Analytics Modal -->
+  <div id="progressModal" class="fixed inset-0 z-50 hidden items-start justify-center pt-8 sm:pt-14 px-3 bg-slate-950/75 backdrop-blur-sm overflow-y-auto">
+    <div class="w-full max-w-2xl ed-card rounded-3xl overflow-hidden border border-indigo-500/30 shadow-2xl my-6">
+      <div class="flex items-center justify-between px-5 py-4 border-b border-slate-200 dark:border-slate-800 bg-slate-50/80 dark:bg-slate-900/80">
+        <div class="flex items-center gap-2.5">
+          <div class="w-9 h-9 rounded-xl bg-indigo-600/15 text-indigo-600 dark:text-indigo-400 flex items-center justify-center font-bold">
+            <i data-lucide="award" class="w-5 h-5"></i>
+          </div>
+          <div>
+            <h3 class="text-base font-extrabold text-slate-900 dark:text-white">Student Study Progress &amp; Analytics</h3>
+            <p class="text-xs text-slate-500 dark:text-slate-400">Real-time local study tracking across 7 chapters</p>
+          </div>
+        </div>
+        <button id="closeProgressModalBtn" class="px-2.5 py-1.5 rounded-xl text-xs font-mono bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 transition-colors">ESC</button>
+      </div>
+
+      <div id="progressModalContent" class="p-5 sm:p-6 space-y-5 max-h-[72vh] overflow-y-auto"></div>
+
+      <div class="flex flex-wrap items-center justify-between gap-2.5 px-5 py-3.5 border-t border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/50 text-xs">
+        <div class="flex flex-wrap items-center gap-2">
+          <button id="exportProgressBtn" class="px-3 py-1.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 font-semibold text-slate-700 dark:text-slate-200 hover:border-indigo-500 flex items-center gap-1.5 transition-colors cursor-pointer">
+            <i data-lucide="download" class="w-3.5 h-3.5"></i><span>Export Backup</span>
+          </button>
+          <button id="importProgressBtn" class="px-3 py-1.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 font-semibold text-slate-700 dark:text-slate-200 hover:border-indigo-500 flex items-center gap-1.5 transition-colors cursor-pointer">
+            <i data-lucide="upload" class="w-3.5 h-3.5"></i><span>Import Backup</span>
+          </button>
+        </div>
+        <button id="resetProgressBtn" class="px-3 py-1.5 rounded-xl border border-rose-300 dark:border-rose-900/60 bg-rose-50 dark:bg-rose-950/30 text-rose-600 dark:text-rose-400 font-semibold hover:bg-rose-100 dark:hover:bg-rose-900/50 flex items-center gap-1.5 transition-colors cursor-pointer">
+          <i data-lucide="trash-2" class="w-3.5 h-3.5"></i><span>Reset Progress</span>
+        </button>
+      </div>
+    </div>
+  </div>
+  <input type="file" id="importProgressInput" accept=".json" class="hidden" />
+
   <div id="toastContainer" class="fixed bottom-4 right-4 z-50 flex flex-col gap-2 pointer-events-none"></div>
 
   <script>
@@ -342,6 +377,9 @@
       mastered: {},
       bookmarks: {},
       solvedQs: {},
+      completedTopics: {},
+      completedLabs: {},
+      lastStudied: null,
       fcCoFilter: 'all',
       fcLevelFilter: 'all',
       fcDeckIds: FLASHCARDS.map(c => c.id),
@@ -362,6 +400,9 @@
           state.mastered = parsed.mastered || {};
           state.bookmarks = parsed.bookmarks || {};
           state.solvedQs = parsed.solvedQs || {};
+          state.completedTopics = parsed.completedTopics || {};
+          state.completedLabs = parsed.completedLabs || {};
+          state.lastStudied = parsed.lastStudied || null;
           state.fcKnown = parsed.fcKnown || {};
         }
       } catch (e) {}
@@ -375,6 +416,9 @@
           mastered: state.mastered,
           bookmarks: state.bookmarks,
           solvedQs: state.solvedQs,
+          completedTopics: state.completedTopics,
+          completedLabs: state.completedLabs,
+          lastStudied: state.lastStudied,
           fcKnown: state.fcKnown
         }));
       } catch (e) {}
@@ -532,25 +576,110 @@
     }
 
     // =========================================================================
-    // MASTERY STATS
+    // STUDENT PROGRESS & MASTERY ENGINE
     // =========================================================================
-    function getAllCounts() {
-      let total = 0, done = 0;
-      CHAPTERS.forEach(ch => ch.topics.forEach(t => {
-        t.formulas.forEach(f => { total++; if (state.mastered[f.id]) done++; });
-        t.questions.forEach(q => { total++; if (state.solvedQs[q.id] === 'got') done++; });
-      }));
-      FLASHCARDS.forEach(fc => { total++; if (state.fcKnown[fc.id]) done++; });
-      return { total, done, pct: total ? Math.round((done / total) * 100) : 0 };
+    function getTopicStats(t) {
+      const totalF = t.formulas ? t.formulas.length : 0;
+      const doneF = t.formulas ? t.formulas.filter(f => !!state.mastered[f.id]).length : 0;
+      const totalQ = t.questions ? t.questions.length : 0;
+      const doneQ = t.questions ? t.questions.filter(q => state.solvedQs[q.id] === 'got').length : 0;
+      const reviewQ = t.questions ? t.questions.filter(q => state.solvedQs[q.id] === 'review').length : 0;
+      const isManuallyCompleted = !!state.completedTopics[t.id];
+      const allItemsCompleted = (totalF + totalQ > 0) && (doneF === totalF && doneQ === totalQ);
+      const isCompleted = isManuallyCompleted || allItemsCompleted;
+      const totalItems = totalF + totalQ;
+      const doneItems = doneF + doneQ;
+      const pct = isCompleted ? 100 : (totalItems > 0 ? Math.round((doneItems / totalItems) * 100) : 0);
+      return { totalF, doneF, totalQ, doneQ, reviewQ, isCompleted, isManuallyCompleted, allItemsCompleted, totalItems, doneItems, pct };
+    }
+
+    function getChapterStats(ch) {
+      const topics = ch.topics || [];
+      const totalTopics = topics.length;
+      let doneTopics = 0;
+      let totalF = 0, doneF = 0;
+      let totalQ = 0, doneQ = 0, reviewQ = 0;
+
+      topics.forEach(t => {
+        const ts = getTopicStats(t);
+        if (ts.isCompleted) doneTopics++;
+        totalF += ts.totalF;
+        doneF += ts.doneF;
+        totalQ += ts.totalQ;
+        doneQ += ts.doneQ;
+        reviewQ += ts.reviewQ;
+      });
+
+      const chLabs = LAB_CONCEPTS.filter(l => l.co === ch.id);
+      const totalLabs = chLabs.length;
+      const doneLabs = chLabs.filter(l => !!state.completedLabs[l.id]).length;
+
+      const topicRatio = totalTopics > 0 ? (doneTopics / totalTopics) * 50 : 0;
+      const qRatio = totalQ > 0 ? (doneQ / totalQ) * 30 : 0;
+      const fRatio = totalF > 0 ? (doneF / totalF) * 20 : 0;
+      const pct = Math.min(100, Math.round(topicRatio + qRatio + fRatio));
+
+      return {
+        pct,
+        totalTopics,
+        doneTopics,
+        totalF,
+        doneF,
+        totalQ,
+        doneQ,
+        reviewQ,
+        totalLabs,
+        doneLabs,
+        isComplete: pct === 100 || (totalTopics > 0 && doneTopics === totalTopics)
+      };
     }
 
     function getChapterProgress(ch) {
-      let total = 0, done = 0;
-      ch.topics.forEach(t => {
-        t.formulas.forEach(f => { total++; if (state.mastered[f.id]) done++; });
-        t.questions.forEach(q => { total++; if (state.solvedQs[q.id] === 'got') done++; });
+      return getChapterStats(ch).pct;
+    }
+
+    function getAllCounts() {
+      let totalTopics = 0, doneTopics = 0;
+      let totalF = 0, doneF = 0;
+      let totalQ = 0, doneQ = 0, reviewQ = 0;
+      let totalLabs = LAB_CONCEPTS.length;
+      let doneLabs = 0;
+      let totalCards = FLASHCARDS.length;
+      let doneCards = 0;
+
+      CHAPTERS.forEach(ch => {
+        const cs = getChapterStats(ch);
+        totalTopics += cs.totalTopics;
+        doneTopics += cs.doneTopics;
+        totalF += cs.totalF;
+        doneF += cs.doneF;
+        totalQ += cs.totalQ;
+        doneQ += cs.doneQ;
+        reviewQ += cs.reviewQ;
+        doneLabs += cs.doneLabs;
       });
-      return total ? Math.round((done / total) * 100) : 0;
+
+      FLASHCARDS.forEach(fc => {
+        if (state.fcKnown[fc.id]) doneCards++;
+      });
+
+      const topicRatio = totalTopics ? (doneTopics / totalTopics) : 0;
+      const qRatio = totalQ ? (doneQ / totalQ) : 0;
+      const fcRatio = totalCards ? (doneCards / totalCards) : 0;
+      const labRatio = totalLabs ? (doneLabs / totalLabs) : 0;
+
+      const pct = Math.min(100, Math.round((topicRatio * 40) + (qRatio * 30) + (fcRatio * 15) + (labRatio * 15)));
+
+      return {
+        pct,
+        total: totalTopics + totalQ + totalCards + totalLabs,
+        done: doneTopics + doneQ + doneCards + doneLabs,
+        totalTopics, doneTopics,
+        totalF, doneF,
+        totalQ, doneQ, reviewQ,
+        totalCards, doneCards,
+        totalLabs, doneLabs
+      };
     }
 
     function updateMasteryUI() {
@@ -558,12 +687,226 @@
       const pctEl = document.getElementById('masteryPct'), ringEl = document.getElementById('masteryRing');
       if (pctEl) pctEl.textContent = s.pct + '%';
       if (ringEl) ringEl.style.strokeDashoffset = (56.55 * (1 - s.pct / 100)).toFixed(2);
+
+      // Dashboard on Homepage
+      const dashPct = document.getElementById('dashOverallPct');
+      if (dashPct) dashPct.textContent = s.pct + '%';
+      const dashRing = document.getElementById('dashRingCircle');
+      if (dashRing) dashRing.style.strokeDashoffset = (100 - s.pct);
+
+      const dTop = document.getElementById('dashTopicsRatio');
+      if (dTop) dTop.textContent = `${s.doneTopics}/${s.totalTopics}`;
+      const dTopBar = document.getElementById('dashTopicsBar');
+      if (dTopBar) dTopBar.style.width = (s.totalTopics ? Math.round((s.doneTopics / s.totalTopics) * 100) : 0) + '%';
+
+      const dQ = document.getElementById('dashQsRatio');
+      if (dQ) dQ.textContent = `${s.doneQ}/${s.totalQ}`;
+      const dQBar = document.getElementById('dashQsBar');
+      if (dQBar) dQBar.style.width = (s.totalQ ? Math.round((s.doneQ / s.totalQ) * 100) : 0) + '%';
+
+      const dCard = document.getElementById('dashCardsRatio');
+      if (dCard) dCard.textContent = `${s.doneCards}/${s.totalCards}`;
+      const dCardBar = document.getElementById('dashCardsBar');
+      if (dCardBar) dCardBar.style.width = (s.totalCards ? Math.round((s.doneCards / s.totalCards) * 100) : 0) + '%';
+
+      const dLab = document.getElementById('dashLabsRatio');
+      if (dLab) dLab.textContent = `${s.doneLabs}/${s.totalLabs}`;
+      const dLabBar = document.getElementById('dashLabsBar');
+      if (dLabBar) dLabBar.style.width = (s.totalLabs ? Math.round((s.doneLabs / s.totalLabs) * 100) : 0) + '%';
+
+      // Chapters progress updates
       CHAPTERS.forEach(c => {
-        const p = getChapterProgress(c);
+        const cs = getChapterStats(c);
         const pn = document.getElementById('chPct_' + c.id), bn = document.getElementById('chBar_' + c.id);
-        if (pn) pn.textContent = p + '%';
-        if (bn) bn.style.width = p + '%';
+        if (pn) pn.textContent = cs.pct + '%';
+        if (bn) bn.style.width = cs.pct + '%';
+
+        const banPct = document.getElementById('chBannerPct_' + c.id), banBar = document.getElementById('chBannerBar_' + c.id);
+        if (banPct) banPct.textContent = cs.pct + '%';
+        if (banBar) banBar.style.width = cs.pct + '%';
+
+        const rmPct = document.getElementById('chRoadmapPct_' + c.id), rmBar = document.getElementById('chRoadmapBar_' + c.id), rmTop = document.getElementById('chRoadmapTopics_' + c.id);
+        if (rmPct) rmPct.textContent = cs.pct + '%';
+        if (rmBar) rmBar.style.width = cs.pct + '%';
+        if (rmTop) rmTop.textContent = `${cs.doneTopics}/${cs.totalTopics} Topics`;
       });
+
+      // Update topic buttons on screen
+      document.querySelectorAll('[data-toggle-topic]').forEach(btn => {
+        const tid = btn.dataset.toggleTopic;
+        const topic = findTopicById(tid);
+        if (topic) {
+          const ts = getTopicStats(topic);
+          btn.className = `topic-complete-btn px-3 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 active:scale-95 ${ts.isCompleted ? 'bg-emerald-600 hover:bg-emerald-500 text-white shadow-md' : 'ed-card hover:border-emerald-500 text-slate-700 dark:text-slate-200'}`;
+          btn.innerHTML = `<i data-lucide="${ts.isCompleted ? 'check-check' : 'check'}" class="w-3.5 h-3.5"></i><span>${ts.isCompleted ? 'Topic Completed ✓' : 'Mark Topic Done'}</span>`;
+          const tpBadge = document.getElementById('topicBadge_' + tid);
+          if (tpBadge) {
+            tpBadge.className = `font-mono text-xs font-bold ${ts.isCompleted ? 'text-emerald-600 dark:text-emerald-400' : 'text-indigo-600 dark:text-indigo-400'}`;
+            tpBadge.textContent = `${ts.pct}% Done`;
+          }
+        }
+      });
+
+      // If progress modal is visible, re-render its content
+      const modal = document.getElementById('progressModal');
+      if (modal && !modal.classList.contains('hidden')) {
+        renderProgressModalContent();
+      }
+      refreshIcons();
+    }
+
+    function findTopicById(tid) {
+      for (const ch of CHAPTERS) {
+        for (const t of ch.topics) {
+          if (t.id === tid) return t;
+        }
+      }
+      return null;
+    }
+
+    function exportProgress() {
+      const data = {
+        app: 'MathsMasterStudio',
+        version: 3,
+        exportedAt: new Date().toISOString(),
+        completedTopics: state.completedTopics,
+        completedLabs: state.completedLabs,
+        mastered: state.mastered,
+        bookmarks: state.bookmarks,
+        solvedQs: state.solvedQs,
+        fcKnown: state.fcKnown,
+        lastStudied: state.lastStudied
+      };
+      const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `maths_master_progress_${new Date().toISOString().slice(0, 10)}.json`;
+      document.body.appendChild(a);
+      a.click();
+      setTimeout(() => { document.body.removeChild(a); URL.revokeObjectURL(url); }, 200);
+      showToast('Progress exported successfully! 📁', 'success');
+    }
+
+    function importProgress(jsonString) {
+      try {
+        const data = JSON.parse(jsonString);
+        state.completedTopics = data.completedTopics || {};
+        state.completedLabs = data.completedLabs || {};
+        state.mastered = data.mastered || {};
+        state.bookmarks = data.bookmarks || {};
+        state.solvedQs = data.solvedQs || {};
+        state.fcKnown = data.fcKnown || {};
+        state.lastStudied = data.lastStudied || null;
+        saveState();
+        updateMasteryUI();
+        renderApp();
+        showToast('Progress imported successfully! 🚀', 'success');
+      } catch (err) {
+        showToast('Invalid progress backup file.', 'error');
+      }
+    }
+
+    function resetProgress() {
+      if (confirm('Are you sure you want to reset all your study progress, solved questions, and flashcard mastery? This cannot be undone.')) {
+        state.completedTopics = {};
+        state.completedLabs = {};
+        state.mastered = {};
+        state.bookmarks = {};
+        state.solvedQs = {};
+        state.fcKnown = {};
+        state.lastStudied = null;
+        saveState();
+        updateMasteryUI();
+        renderApp();
+        closeProgressModal();
+        showToast('Study progress reset to 0%.', 'info');
+      }
+    }
+
+    function openProgressModal() {
+      renderProgressModalContent();
+      const m = document.getElementById('progressModal');
+      if (m) {
+        m.classList.remove('hidden');
+        m.classList.add('flex');
+        refreshIcons();
+      }
+    }
+
+    function closeProgressModal() {
+      const m = document.getElementById('progressModal');
+      if (m) {
+        m.classList.add('hidden');
+        m.classList.remove('flex');
+      }
+    }
+
+    function renderProgressModalContent() {
+      const cont = document.getElementById('progressModalContent');
+      if (!cont) return;
+      const s = getAllCounts();
+
+      const lastStudiedBanner = state.lastStudied ? `
+        <div class="p-3.5 rounded-2xl bg-indigo-50 dark:bg-indigo-950/40 border border-indigo-200 dark:border-indigo-800/60 flex flex-col sm:flex-row sm:items-center justify-between gap-2.5">
+          <div class="min-w-0">
+            <span class="text-[10px] font-mono font-bold uppercase tracking-wider text-indigo-600 dark:text-indigo-400">Continue Where You Left Off</span>
+            <div class="text-xs font-bold truncate text-slate-800 dark:text-slate-100">${escHtml(state.lastStudied.title || 'In Progress')}</div>
+          </div>
+          <button data-jump-chapter="${state.lastStudied.chapterId}" class="px-3 py-1.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs shadow-sm shrink-0 flex items-center gap-1 cursor-pointer">
+            <span>Resume Chapter</span><i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+          </button>
+        </div>` : '';
+
+      cont.innerHTML = `
+        <div class="space-y-4">
+          <!-- Big Ring Overview -->
+          <div class="p-4 rounded-2xl bg-gradient-to-br from-indigo-50/80 to-cyan-50/60 dark:from-slate-900 dark:to-indigo-950/40 border border-indigo-500/20 flex items-center gap-4">
+            <div class="relative w-16 h-16 shrink-0 flex items-center justify-center">
+              <svg class="w-16 h-16 -rotate-90" viewBox="0 0 36 36">
+                <circle cx="18" cy="18" r="15.9155" fill="none" class="stroke-slate-200 dark:stroke-slate-800" stroke-width="3"></circle>
+                <circle cx="18" cy="18" r="15.9155" fill="none" class="stroke-indigo-600 dark:stroke-indigo-400" stroke-width="3" stroke-linecap="round" stroke-dasharray="100" stroke-dashoffset="${100 - s.pct}"></circle>
+              </svg>
+              <span class="absolute font-mono font-extrabold text-sm text-slate-900 dark:text-white">${s.pct}%</span>
+            </div>
+            <div class="min-w-0">
+              <h4 class="font-extrabold text-sm sm:text-base text-slate-900 dark:text-white">Overall Calculus &amp; DE Syllabus Progress</h4>
+              <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">${s.doneTopics} of ${s.totalTopics} topics studied · ${s.doneQ} of ${s.totalQ} practice questions solved</p>
+            </div>
+          </div>
+
+          ${lastStudiedBanner}
+
+          <!-- Chapter Breakdown Grid -->
+          <div class="space-y-2">
+            <h5 class="text-xs font-mono font-bold uppercase tracking-wider text-slate-500">Chapter-by-Chapter Study Progress</h5>
+            <div class="space-y-2">
+              ${CHAPTERS.map(c => {
+                const cs = getChapterStats(c);
+                return `
+                  <div class="p-3 rounded-2xl bg-slate-50 dark:bg-slate-900/60 border border-slate-200/80 dark:border-slate-800 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                    <div class="flex items-center gap-2.5 min-w-0">
+                      <span class="px-2.5 py-1 rounded-lg text-[10px] font-mono font-extrabold text-white shrink-0" style="background:${c.gradCss}">${c.co}</span>
+                      <div class="min-w-0">
+                        <div class="text-xs font-bold truncate text-slate-800 dark:text-slate-200">${escHtml(c.shortTitle)}</div>
+                        <div class="text-[10px] text-slate-400 font-mono">${cs.doneTopics}/${cs.totalTopics} Topics · ${cs.doneQ}/${cs.totalQ} Qs · ${cs.doneLabs}/${cs.totalLabs} Labs</div>
+                      </div>
+                    </div>
+                    <div class="flex items-center gap-3 shrink-0">
+                      <div class="w-24 sm:w-28 space-y-1">
+                        <div class="flex justify-between text-[10px] font-mono font-bold"><span>Progress</span><span>${cs.pct}%</span></div>
+                        <div class="h-1.5 rounded-full bg-slate-200 dark:bg-slate-700 overflow-hidden">
+                          <div class="h-full rounded-full" style="width:${cs.pct}%; background:${c.accentHex}"></div>
+                        </div>
+                      </div>
+                      <button data-jump-chapter="${c.id}" class="px-2.5 py-1 rounded-lg text-xs font-bold bg-indigo-600/10 hover:bg-indigo-600 text-indigo-700 dark:text-indigo-300 hover:text-white transition-colors cursor-pointer">Study →</button>
+                    </div>
+                  </div>`;
+              }).join('')}
+            </div>
+          </div>
+        </div>
+      `;
     }
 
     const LEVEL_BADGE = {
@@ -643,6 +986,7 @@
     // =========================================================================
     function renderStudioView(container) {
       const ch = CHAPTERS.find(c => c.id === state.chapterId) || CHAPTERS[1];
+      const chStats = getChapterStats(ch);
       const topicsToShow = state.topicFilter === 'all' ? ch.topics : ch.topics.filter(t => t.id === state.topicFilter);
 
       const sidebarItems = CHAPTERS.map(c => {
@@ -679,6 +1023,7 @@
       }).join('');
 
       const topicsHtml = topicsToShow.map((t, tIdx) => {
+        const topicStats = getTopicStats(t);
         const formulasHtml = t.formulas.map(f => {
           const isM = !!state.mastered[f.id], isB = !!state.bookmarks[f.id];
           return `
@@ -778,9 +1123,26 @@
 
         return `
           <section class="space-y-4 anim-in" style="animation-delay:${tIdx * 40}ms">
-            <div class="flex items-center gap-2.5 rounded-xl px-3.5 py-2 bg-slate-100/90 dark:bg-slate-800/70 border-l-4" style="border-left-color:${ch.accentHex}">
-              <span class="font-mono text-xs font-extrabold" style="color:${ch.accentHex}">${t.code}</span>
-              <h3 class="text-sm sm:text-base font-extrabold tracking-tight">${escHtml(t.title)}</h3>
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 rounded-2xl p-3.5 sm:p-4 bg-slate-100/90 dark:bg-slate-800/70 border border-slate-200/80 dark:border-slate-700/80 border-l-4 transition-all" style="border-left-color:${ch.accentHex}">
+              <div class="min-w-0">
+                <div class="flex items-center gap-2">
+                  <span class="font-mono text-xs font-extrabold px-2 py-0.5 rounded-md text-white shadow-sm shrink-0" style="background:${ch.accentHex}">${t.code}</span>
+                  <h3 class="text-sm sm:text-base font-extrabold tracking-tight truncate">${escHtml(t.title)}</h3>
+                </div>
+                <div class="flex flex-wrap items-center gap-2 mt-1.5 text-[11px] text-slate-500 dark:text-slate-400 font-mono">
+                  <span>${topicStats.doneF}/${topicStats.totalF} Formulas</span>
+                  <span>·</span>
+                  <span>${topicStats.doneQ}/${topicStats.totalQ} Qs Solved</span>
+                  <span>·</span>
+                  <span id="topicBadge_${t.id}" class="font-bold ${topicStats.isCompleted ? 'text-emerald-600 dark:text-emerald-400' : 'text-indigo-600 dark:text-indigo-400'}">${topicStats.pct}% Done</span>
+                </div>
+              </div>
+              <div class="flex items-center gap-2 shrink-0">
+                <button data-toggle-topic="${t.id}" id="topicBtn_${t.id}" class="topic-complete-btn px-3.5 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 active:scale-95 cursor-pointer ${topicStats.isCompleted ? 'bg-emerald-600 hover:bg-emerald-500 text-white shadow-md' : 'ed-card hover:border-emerald-500 text-slate-700 dark:text-slate-200'}">
+                  <i data-lucide="${topicStats.isCompleted ? 'check-check' : 'check'}" class="w-4 h-4"></i>
+                  <span>${topicStats.isCompleted ? 'Topic Completed ✓' : 'Mark Topic Done'}</span>
+                </button>
+              </div>
             </div>
 
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-3.5">${formulasHtml}</div>
@@ -838,6 +1200,16 @@
                   <button data-launch-lab="${ch.id === 'ch0' ? 'co1' : ch.id}" class="px-3.5 py-2 rounded-xl text-xs font-bold bg-white text-slate-900 hover:bg-slate-100 shadow-lg flex items-center gap-1.5 transition-all">
                     <i data-lucide="play" class="w-3.5 h-3.5"></i><span>Launch Live Lab</span>
                   </button>
+                </div>
+              </div>
+              <div class="mt-4 pt-3 border-t border-white/20 flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs">
+                <div class="flex items-center gap-2">
+                  <span class="font-bold">Chapter Study Progress:</span>
+                  <span id="chBannerPct_${ch.id}" class="font-mono font-extrabold text-sm">${chStats.pct}%</span>
+                  <span class="text-white/80 font-mono">(${chStats.doneTopics}/${chStats.totalTopics} Topics Completed)</span>
+                </div>
+                <div class="w-full sm:w-48 h-2 rounded-full bg-black/25 overflow-hidden">
+                  <div id="chBannerBar_${ch.id}" class="h-full rounded-full bg-white transition-all duration-500" style="width:${chStats.pct}%"></div>
                 </div>
               </div>
             </div>
@@ -1150,12 +1522,14 @@
                 const ch = getChapterForCo(c.co);
                 const act = c.id === state.activeLabId;
                 const num = c.id.replace('L', '#');
+                const isExp = !!state.completedLabs[c.id];
                 return `<button data-select-lab-id="${c.id}" class="lab-item-btn w-full text-left px-2.5 py-2 rounded-xl border transition-all flex items-start gap-2 ${act ? 'bg-indigo-50 dark:bg-indigo-950/60 border-indigo-400/70 shadow-sm' : 'border-transparent hover:bg-slate-100 dark:hover:bg-slate-800/60'}">
                   <span class="px-1.5 py-0.5 rounded text-[10px] font-mono font-bold text-white shrink-0 mt-0.5" style="background:${ch.accentHex}">${num}</span>
-                  <div class="min-w-0">
+                  <div class="min-w-0 flex-1">
                     <div class="text-xs font-bold leading-snug line-clamp-2">${fmtMathProse(c.title)}</div>
                     <div class="text-[10px] font-mono text-slate-400 mt-0.5">${ch.co} · ${c.engine}</div>
                   </div>
+                  ${isExp ? '<span class="text-emerald-500 font-extrabold text-xs shrink-0 mt-0.5" title="Explored">✓</span>' : ''}
                 </button>`;
               }).join('') : `<div class="p-4 text-center text-xs text-slate-400">No concepts match "${escHtml(state.labSearch)}".</div>`}
             </aside>
@@ -1172,6 +1546,10 @@
                     <h3 id="labTitleEl" class="text-base sm:text-xl font-extrabold tracking-tight"></h3>
                   </div>
                   <div class="flex items-center gap-1.5 shrink-0">
+                    <button id="labExploreBtn" data-toggle-lab="${state.activeLabId}" class="px-2.5 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1 border ${state.completedLabs[state.activeLabId] ? 'bg-emerald-600 text-white border-transparent' : 'ed-card hover:border-emerald-500 text-slate-700 dark:text-slate-200'}">
+                      <i data-lucide="${state.completedLabs[state.activeLabId] ? 'check-check' : 'check'}" class="w-3.5 h-3.5"></i>
+                      <span>${state.completedLabs[state.activeLabId] ? 'Explored ✓' : 'Mark Explored'}</span>
+                    </button>
                     <div id="labLiveBadge" class="px-2.5 py-1 rounded-xl text-[11px] font-mono font-bold bg-slate-900 text-cyan-300 border border-cyan-500/30">Live 60 FPS</div>
                     <button id="labPlayPauseBtn" class="px-2.5 py-1.5 rounded-xl text-xs font-bold bg-indigo-600 text-white flex items-center gap-1 shadow-sm"><i data-lucide="pause" class="w-3.5 h-3.5"></i><span>Pause</span></button>
                     <button id="labResetBtn" class="p-1.5 rounded-xl ed-card" title="Reset"><i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i></button>
@@ -1240,6 +1618,12 @@
       const concept = LAB_CONCEPTS.find(x => x.id === state.activeLabId) || LAB_CONCEPTS[0];
       const ch = getChapterForCo(concept.co);
 
+      if (!state.completedLabs[concept.id]) {
+        state.completedLabs[concept.id] = true;
+        saveState();
+        updateMasteryUI();
+      }
+
       // Highlight active button in rail without rebuilding whole view
       document.querySelectorAll('.lab-item-btn').forEach(btn => {
         const act = btn.dataset.selectLabId === concept.id;
@@ -1256,6 +1640,15 @@
       if (titleEl) titleEl.innerHTML = fmtMathProse(concept.title);
       if (fBox) { fBox.innerHTML = texNode(concept.formula, true); renderAllTex(fBox); }
       if (dEl) dEl.innerHTML = fmtMathProse(concept.desc);
+
+      const expBtn = document.getElementById('labExploreBtn');
+      if (expBtn) {
+        expBtn.dataset.toggleLab = concept.id;
+        const isExp = !!state.completedLabs[concept.id];
+        expBtn.className = `px-2.5 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1 border ${isExp ? 'bg-emerald-600 text-white border-transparent' : 'ed-card hover:border-emerald-500 text-slate-700 dark:text-slate-200'}`;
+        expBtn.innerHTML = `<i data-lucide="${isExp ? 'check-check' : 'check'}" class="w-3.5 h-3.5"></i><span>${isExp ? 'Explored ✓' : 'Mark Explored'}</span>`;
+        refreshIcons();
+      }
 
       runLabEngine(concept);
     }
@@ -1855,6 +2248,7 @@
     // VIEW 5: SYLLABUS ROADMAP & EXAM-DAY PRE-FLIGHT (MATCHING PAGES 1 & 12)
     // =========================================================================
     function renderSyllabusView(container) {
+      const stats = getAllCounts();
       container.innerHTML = `
         <div class="space-y-6 anim-in">
           <!-- Page 1 Midnight Hero Banner with Live Animated Wave Backdrop -->
@@ -1873,50 +2267,132 @@
                 <span class="px-3 py-1.5 rounded-xl bg-white/10 border border-white/15">Active Recall: <strong class="text-fuchsia-300">150 Flashcards + 150 Worked Qs</strong></span>
               </div>
               <div class="flex flex-wrap gap-2.5 pt-1">
-                <button data-view="studio" class="px-4 py-2 rounded-xl text-xs font-bold bg-indigo-600 hover:bg-indigo-500 text-white shadow-lg shadow-indigo-500/30 flex items-center gap-1.5 transition-transform active:scale-95">
+                <button data-view="studio" class="px-4 py-2 rounded-xl text-xs font-bold bg-indigo-600 hover:bg-indigo-500 text-white shadow-lg shadow-indigo-500/30 flex items-center gap-1.5 transition-transform active:scale-95 cursor-pointer">
                   <i data-lucide="book-open" class="w-3.5 h-3.5"></i><span>Open Formula Studio</span>
                 </button>
-                <button data-view="flashcards" class="px-4 py-2 rounded-xl text-xs font-bold bg-white/15 hover:bg-white/25 text-white border border-white/25 flex items-center gap-1.5 transition-transform active:scale-95">
+                <button data-view="flashcards" class="px-4 py-2 rounded-xl text-xs font-bold bg-white/15 hover:bg-white/25 text-white border border-white/25 flex items-center gap-1.5 transition-transform active:scale-95 cursor-pointer">
                   <i data-lucide="layers" class="w-3.5 h-3.5"></i><span>Practice 150 Flashcards</span>
                 </button>
-                <button data-view="labs" class="px-4 py-2 rounded-xl text-xs font-bold bg-cyan-500/20 hover:bg-cyan-500/30 text-cyan-200 border border-cyan-400/35 flex items-center gap-1.5 transition-transform active:scale-95">
+                <button data-view="labs" class="px-4 py-2 rounded-xl text-xs font-bold bg-cyan-500/20 hover:bg-cyan-500/30 text-cyan-200 border border-cyan-400/35 flex items-center gap-1.5 transition-transform active:scale-95 cursor-pointer">
                   <i data-lucide="activity" class="w-3.5 h-3.5"></i><span>Explore 100 Live Labs</span>
                 </button>
               </div>
             </div>
           </div>
 
-          <!-- 4 Metric Stat Cards (Matching Page 1) -->
-          <div class="grid grid-cols-2 md:grid-cols-4 gap-3.5">
-            <div class="ed-card rounded-2xl p-4 text-center"><div class="text-2xl font-extrabold text-indigo-600 dark:text-indigo-400">Ch. 0–6</div><div class="text-xs text-slate-500 mt-0.5">Complete Syllabus</div></div>
-            <div class="ed-card rounded-2xl p-4 text-center"><div class="text-2xl font-extrabold text-teal-600 dark:text-teal-400">150 Qs</div><div class="text-xs text-slate-500 mt-0.5">Worked Practice Bank</div></div>
-            <div class="ed-card rounded-2xl p-4 text-center"><div class="text-2xl font-extrabold text-violet-600 dark:text-violet-400">100 Labs</div><div class="text-xs text-slate-500 mt-0.5">Live Animated Visuals</div></div>
-            <div class="ed-card rounded-2xl p-4 text-center"><div class="text-2xl font-extrabold text-fuchsia-600 dark:text-fuchsia-400">150</div><div class="text-xs text-slate-500 mt-0.5">Color-Coded Flashcards</div></div>
+          <!-- Student Live Study & Completion Tracker Dashboard -->
+          <div class="ed-card rounded-3xl p-5 sm:p-6 border-2 border-indigo-500/25 bg-gradient-to-br from-indigo-50/70 via-white to-cyan-50/50 dark:from-indigo-950/40 dark:via-slate-900 dark:to-cyan-950/30 space-y-4 shadow-lg">
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+              <div class="flex items-center gap-4">
+                <div class="relative w-16 h-16 shrink-0 flex items-center justify-center">
+                  <svg class="w-16 h-16 -rotate-90" viewBox="0 0 36 36">
+                    <circle cx="18" cy="18" r="15.9155" fill="none" class="stroke-slate-200 dark:stroke-slate-800" stroke-width="3.2"></circle>
+                    <circle id="dashRingCircle" cx="18" cy="18" r="15.9155" fill="none" class="stroke-indigo-600 dark:stroke-indigo-400" stroke-width="3.2" stroke-linecap="round" stroke-dasharray="100" stroke-dashoffset="${100 - stats.pct}" style="transition: stroke-dashoffset 0.6s ease;"></circle>
+                  </svg>
+                  <div class="absolute inset-0 flex flex-col items-center justify-center">
+                    <span id="dashOverallPct" class="text-base font-extrabold font-mono text-slate-900 dark:text-white">${stats.pct}%</span>
+                    <span class="text-[8px] font-bold uppercase text-slate-400 tracking-wider">Done</span>
+                  </div>
+                </div>
+                <div>
+                  <div class="flex items-center gap-2">
+                    <span class="px-2 py-0.5 rounded-full text-[10px] font-mono font-bold bg-indigo-600/15 text-indigo-700 dark:text-indigo-300 border border-indigo-500/25">STUDENT STUDY PROFILE</span>
+                    <span class="text-xs text-slate-500 dark:text-slate-400 font-mono">Progress Auto-Saved</span>
+                  </div>
+                  <h3 class="text-base sm:text-lg font-extrabold text-slate-900 dark:text-white mt-0.5">Your Active Syllabus Mastery</h3>
+                  <p class="text-xs text-slate-500 dark:text-slate-400">${stats.doneTopics} of ${stats.totalTopics} Topics Completed · ${stats.doneQ} of ${stats.totalQ} Practice Qs Solved</p>
+                </div>
+              </div>
+
+              <div class="flex flex-wrap items-center gap-2">
+                ${state.lastStudied ? `
+                  <button data-jump-chapter="${state.lastStudied.chapterId}" class="px-3.5 py-2 rounded-xl text-xs font-bold bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700 hover:border-indigo-500 text-slate-800 dark:text-slate-200 shadow-sm flex items-center gap-1.5 transition-transform active:scale-95 cursor-pointer">
+                    <i data-lucide="play-circle" class="w-3.5 h-3.5 text-indigo-500"></i>
+                    <span>Resume: ${escHtml(state.lastStudied.title.split(':')[0].split(',')[0])}</span>
+                  </button>
+                ` : ''}
+                <button data-open-progress-modal class="px-3.5 py-2 rounded-xl text-xs font-bold bg-indigo-600 hover:bg-indigo-500 text-white shadow-md flex items-center gap-1.5 transition-transform active:scale-95 cursor-pointer">
+                  <i data-lucide="bar-chart-2" class="w-3.5 h-3.5"></i><span>Study Analytics</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- 4 Live Metric Stat Cards -->
+            <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 pt-1">
+              <div class="p-3 rounded-2xl bg-white/90 dark:bg-slate-800/80 border border-slate-200/80 dark:border-slate-700/80 space-y-1.5">
+                <div class="flex justify-between items-center text-[11px] font-semibold text-slate-600 dark:text-slate-300">
+                  <span class="flex items-center gap-1"><i data-lucide="book" class="w-3 h-3 text-indigo-500"></i>Topics Done</span>
+                  <span id="dashTopicsRatio" class="font-mono font-bold text-indigo-600 dark:text-indigo-400">${stats.doneTopics}/${stats.totalTopics}</span>
+                </div>
+                <div class="h-1.5 rounded-full bg-slate-200 dark:bg-slate-700 overflow-hidden">
+                  <div id="dashTopicsBar" class="h-full rounded-full bg-indigo-600 transition-all duration-500" style="width:${stats.totalTopics ? Math.round((stats.doneTopics / stats.totalTopics) * 100) : 0}%"></div>
+                </div>
+              </div>
+
+              <div class="p-3 rounded-2xl bg-white/90 dark:bg-slate-800/80 border border-slate-200/80 dark:border-slate-700/80 space-y-1.5">
+                <div class="flex justify-between items-center text-[11px] font-semibold text-slate-600 dark:text-slate-300">
+                  <span class="flex items-center gap-1"><i data-lucide="brain" class="w-3 h-3 text-emerald-500"></i>Qs Solved</span>
+                  <span id="dashQsRatio" class="font-mono font-bold text-emerald-600 dark:text-emerald-400">${stats.doneQ}/${stats.totalQ}</span>
+                </div>
+                <div class="h-1.5 rounded-full bg-slate-200 dark:bg-slate-700 overflow-hidden">
+                  <div id="dashQsBar" class="h-full rounded-full bg-emerald-600 transition-all duration-500" style="width:${stats.totalQ ? Math.round((stats.doneQ / stats.totalQ) * 100) : 0}%"></div>
+                </div>
+              </div>
+
+              <div class="p-3 rounded-2xl bg-white/90 dark:bg-slate-800/80 border border-slate-200/80 dark:border-slate-700/80 space-y-1.5">
+                <div class="flex justify-between items-center text-[11px] font-semibold text-slate-600 dark:text-slate-300">
+                  <span class="flex items-center gap-1"><i data-lucide="layers" class="w-3 h-3 text-fuchsia-500"></i>Cards Known</span>
+                  <span id="dashCardsRatio" class="font-mono font-bold text-fuchsia-600 dark:text-fuchsia-400">${stats.doneCards}/${stats.totalCards}</span>
+                </div>
+                <div class="h-1.5 rounded-full bg-slate-200 dark:bg-slate-700 overflow-hidden">
+                  <div id="dashCardsBar" class="h-full rounded-full bg-fuchsia-600 transition-all duration-500" style="width:${stats.totalCards ? Math.round((stats.doneCards / stats.totalCards) * 100) : 0}%"></div>
+                </div>
+              </div>
+
+              <div class="p-3 rounded-2xl bg-white/90 dark:bg-slate-800/80 border border-slate-200/80 dark:border-slate-700/80 space-y-1.5">
+                <div class="flex justify-between items-center text-[11px] font-semibold text-slate-600 dark:text-slate-300">
+                  <span class="flex items-center gap-1"><i data-lucide="activity" class="w-3 h-3 text-cyan-500"></i>Labs Explored</span>
+                  <span id="dashLabsRatio" class="font-mono font-bold text-cyan-600 dark:text-cyan-400">${stats.doneLabs}/${stats.totalLabs}</span>
+                </div>
+                <div class="h-1.5 rounded-full bg-slate-200 dark:bg-slate-700 overflow-hidden">
+                  <div id="dashLabsBar" class="h-full rounded-full bg-cyan-600 transition-all duration-500" style="width:${stats.totalLabs ? Math.round((stats.doneLabs / stats.totalLabs) * 100) : 0}%"></div>
+                </div>
+              </div>
+            </div>
           </div>
 
-          <!-- End-Semester Syllabus Roadmap & Weightage (Matching Page 1!) -->
+          <!-- End-Semester Syllabus Roadmap & Weightage -->
           <div class="ed-card rounded-3xl p-5 sm:p-6 space-y-4">
             <div class="flex flex-wrap items-center justify-between gap-2">
               <h3 class="text-base sm:text-lg font-extrabold">End-Semester Syllabus Roadmap &amp; Weightage</h3>
               <span class="px-3 py-1 rounded-full text-xs font-mono font-bold bg-indigo-600/10 text-indigo-700 dark:text-indigo-300 border border-indigo-500/25">CO4 &amp; CO6 = ~60% of Paper</span>
             </div>
             <div class="space-y-2.5">
-              ${CHAPTERS.map(c => `
-                <button data-jump-chapter="${c.id}" class="w-full text-left p-3 sm:p-3.5 rounded-2xl bg-slate-50/90 dark:bg-slate-900/60 hover:bg-indigo-50/70 dark:hover:bg-slate-800/80 border border-slate-200/80 dark:border-slate-800 transition-all flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+              ${CHAPTERS.map(c => {
+                const cs = getChapterStats(c);
+                return `
+                <button data-jump-chapter="${c.id}" class="w-full text-left p-3 sm:p-3.5 rounded-2xl bg-slate-50/90 dark:bg-slate-900/60 hover:bg-indigo-50/70 dark:hover:bg-slate-800/80 border border-slate-200/80 dark:border-slate-800 transition-all flex flex-col sm:flex-row sm:items-center justify-between gap-3 cursor-pointer">
                   <div class="flex items-center gap-3 min-w-0">
                     <span class="px-3 py-1.5 rounded-xl text-[11px] font-mono font-extrabold text-white shrink-0 w-24 text-center shadow-sm" style="background:${c.gradCss}">${c.co}</span>
                     <div class="min-w-0">
-                      <div class="text-xs sm:text-sm font-bold truncate">${escHtml(c.title)}</div>
+                      <div class="text-xs sm:text-sm font-bold truncate flex items-center gap-2">
+                        <span>${escHtml(c.title)}</span>
+                        ${cs.isComplete ? '<span class="px-1.5 py-0.5 rounded text-[9px] font-bold bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 border border-emerald-500/30">Mastered ✓</span>' : cs.pct > 0 ? '<span class="px-1.5 py-0.5 rounded text-[9px] font-bold bg-indigo-500/15 text-indigo-600 dark:text-indigo-400 border border-indigo-500/30">In Progress</span>' : ''}
+                      </div>
                       <div class="text-[11px] text-slate-500 dark:text-slate-400 truncate">${escHtml(c.refs)}</div>
                     </div>
                   </div>
-                  <div class="sm:w-44 shrink-0 space-y-1">
-                    <div class="flex justify-between text-[11px] font-mono font-bold"><span>${c.weightage}</span><span style="color:${c.accentHex}">Open →</span></div>
-                    <div class="h-1.5 rounded-full bg-slate-200 dark:bg-slate-800 overflow-hidden">
-                      <div class="h-full rounded-full" style="width:${c.weightPct}%; background:${c.accentHex}"></div>
+                  <div class="sm:w-52 shrink-0 space-y-1.5">
+                    <div class="flex justify-between items-center text-[11px] font-mono">
+                      <span id="chRoadmapTopics_${c.id}" class="text-slate-500 dark:text-slate-400 font-semibold">${cs.doneTopics}/${cs.totalTopics} Topics</span>
+                      <span id="chRoadmapPct_${c.id}" class="font-bold" style="color:${c.accentHex}">${cs.pct}% Done</span>
+                    </div>
+                    <div class="h-2 rounded-full bg-slate-200 dark:bg-slate-800 overflow-hidden">
+                      <div id="chRoadmapBar_${c.id}" class="h-full rounded-full transition-all duration-500" style="width:${cs.pct}%; background:${c.accentHex}"></div>
                     </div>
                   </div>
-                </button>`).join('')}
+                </button>`;
+              }).join('')}
             </div>
           </div>
 
@@ -1997,6 +2473,12 @@
     // EVENT DELEGATION (IN-PLACE ZERO-FLICKER UPDATES)
     // =========================================================================
     document.addEventListener('click', e => {
+      const opm = e.target.closest('[data-open-progress-modal]');
+      if (opm) { openProgressModal(); return; }
+
+      const cpm = e.target.closest('[data-close-progress-modal]');
+      if (cpm) { closeProgressModal(); return; }
+
       const nav = e.target.closest('[data-view]');
       if (nav) { state.view = nav.dataset.view; renderApp(); window.scrollTo({ top: 0, behavior: 'smooth' }); return; }
 
@@ -2004,7 +2486,48 @@
       if (selCh) { state.chapterId = selCh.dataset.selectChapter; state.topicFilter = 'all'; renderApp(); window.scrollTo({ top: 0, behavior: 'smooth' }); return; }
 
       const jumpCh = e.target.closest('[data-jump-chapter]');
-      if (jumpCh) { state.chapterId = jumpCh.dataset.jumpChapter; state.topicFilter = 'all'; state.view = 'studio'; renderApp(); window.scrollTo({ top: 0, behavior: 'smooth' }); return; }
+      if (jumpCh) {
+        state.chapterId = jumpCh.dataset.jumpChapter;
+        state.topicFilter = 'all';
+        state.view = 'studio';
+        closeProgressModal();
+        renderApp();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+        return;
+      }
+
+      const tt = e.target.closest('[data-toggle-topic]');
+      if (tt) {
+        const tid = tt.dataset.toggleTopic;
+        const ch = CHAPTERS.find(c => c.topics.some(t => t.id === tid));
+        const top = ch ? ch.topics.find(t => t.id === tid) : null;
+        state.completedTopics[tid] = !state.completedTopics[tid];
+        const isDone = !!state.completedTopics[tid];
+        if (isDone && top && ch) {
+          state.lastStudied = { topicId: tid, chapterId: ch.id, title: top.title, ts: Date.now() };
+        }
+        saveState();
+        updateMasteryUI();
+        tt.className = `topic-complete-btn px-3 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 active:scale-95 cursor-pointer ${isDone ? 'bg-emerald-600 hover:bg-emerald-500 text-white shadow-md' : 'ed-card hover:border-emerald-500 text-slate-700 dark:text-slate-200'}`;
+        tt.innerHTML = `<i data-lucide="${isDone ? 'check-check' : 'check'}" class="w-3.5 h-3.5"></i><span>${isDone ? 'Topic Completed ✓' : 'Mark Topic Done'}</span>`;
+        refreshIcons();
+        showToast(isDone ? `Topic marked completed! +100 XP` : `Topic marked in-progress`, isDone ? 'success' : 'info');
+        return;
+      }
+
+      const tl = e.target.closest('[data-toggle-lab]');
+      if (tl) {
+        const lid = tl.dataset.toggleLab;
+        state.completedLabs[lid] = !state.completedLabs[lid];
+        const isDone = !!state.completedLabs[lid];
+        saveState();
+        updateMasteryUI();
+        tl.className = `px-2.5 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1 border cursor-pointer ${isDone ? 'bg-emerald-600 text-white border-transparent' : 'ed-card hover:border-emerald-500 text-slate-700 dark:text-slate-200'}`;
+        tl.innerHTML = `<i data-lucide="${isDone ? 'check-check' : 'check'}" class="w-3.5 h-3.5"></i><span>${isDone ? 'Explored ✓' : 'Mark Explored'}</span>`;
+        refreshIcons();
+        showToast(isDone ? `Lab marked explored!` : `Lab unmarked`, isDone ? 'success' : 'info');
+        return;
+      }
 
       const tf = e.target.closest('[data-topic-filter]');
       if (tf) { state.topicFilter = tf.dataset.topicFilter; renderApp(); return; }
@@ -2127,13 +2650,42 @@
     document.getElementById('searchModal').onclick = e => { if (e.target.id === 'searchModal') closeSearchModal(); };
     document.getElementById('globalSearchInput').oninput = e => renderSearchResults(e.target.value);
 
+    // Progress Modal & Management Wiring
+    const openProgBtn = document.getElementById('openProgressBtn');
+    if (openProgBtn) openProgBtn.onclick = openProgressModal;
+    const closeProgModalBtn = document.getElementById('closeProgressModalBtn');
+    if (closeProgModalBtn) closeProgModalBtn.onclick = closeProgressModal;
+    const progModal = document.getElementById('progressModal');
+    if (progModal) progModal.onclick = e => { if (e.target.id === 'progressModal') closeProgressModal(); };
+    const expProgBtn = document.getElementById('exportProgressBtn');
+    if (expProgBtn) expProgBtn.onclick = exportProgress;
+    const impProgBtn = document.getElementById('importProgressBtn');
+    const impProgInput = document.getElementById('importProgressInput');
+    if (impProgBtn && impProgInput) {
+      impProgBtn.onclick = () => impProgInput.click();
+      impProgInput.onchange = e => {
+        const file = e.target.files && e.target.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = ev => importProgress(ev.target.result);
+        reader.readAsText(file);
+        impProgInput.value = '';
+      };
+    }
+    const resetProgBtn = document.getElementById('resetProgressBtn');
+    if (resetProgBtn) resetProgBtn.onclick = resetProgress;
+
     document.addEventListener('keydown', e => {
       const modalOpen = !document.getElementById('searchModal').classList.contains('hidden');
-      if (e.key === 'Escape' && modalOpen) { closeSearchModal(); return; }
+      const pModalOpen = !document.getElementById('progressModal').classList.contains('hidden');
+      if (e.key === 'Escape') {
+        if (pModalOpen) { closeProgressModal(); return; }
+        if (modalOpen) { closeSearchModal(); return; }
+      }
       if ((e.key === '/' || ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k')) && document.activeElement.tagName !== 'INPUT') {
         e.preventDefault(); openSearchModal(); return;
       }
-      if (state.view === 'flashcards' && !modalOpen && document.activeElement.tagName !== 'INPUT') {
+      if (state.view === 'flashcards' && !modalOpen && !pModalOpen && document.activeElement.tagName !== 'INPUT') {
         if (e.code === 'Space') { e.preventDefault(); const el = document.getElementById('flashcardEl'); if (el) el.click(); }
         else if (e.key === 'ArrowRight') { const b = document.getElementById('fcNextBtn'); if (b) b.click(); }
         else if (e.key === 'ArrowLeft') { const b = document.getElementById('fcPrevBtn'); if (b) b.click(); }
