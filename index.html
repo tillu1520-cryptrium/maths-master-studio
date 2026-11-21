@@ -2695,7 +2695,13 @@
 
     loadState();
     renderApp();
-    window.addEventListener('load', () => { renderAllTex(document.getElementById('appMain')); refreshIcons(); });
+    window.addEventListener('load', () => {
+      renderAllTex(document.getElementById('appMain'));
+      refreshIcons();
+      if ('serviceWorker' in navigator && (window.location.protocol === 'https:' || window.location.hostname === 'localhost')) {
+        navigator.serviceWorker.register('/sw.js').catch(() => {});
+      }
+    });
   })();
   </script>
 </body>
