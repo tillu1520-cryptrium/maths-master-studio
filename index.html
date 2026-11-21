@@ -5384,6 +5384,9 @@
 
     async function handleSessionDetected(session) {
       if (!session || !session.user) return;
+      if (window.location.hash && (window.location.hash.includes('access_token') || window.location.hash.includes('error'))) {
+        try { history.replaceState(null, '', window.location.pathname + window.location.search); } catch(e) {}
+      }
       const user = session.user;
       const email = (user.email || '').trim().toLowerCase();
       let name = user.user_metadata?.full_name || user.user_metadata?.name || '';
