@@ -564,10 +564,7 @@
               <sakuga-toggle id="headerSakugaToggle" label="VFX"></sakuga-toggle>
               <span id="vfxSwitchTrack"><span id="vfxSwitchThumb"></span></span>
             </div>
-            <button id="sfxToggleBtn" type="button" role="switch" aria-checked="true">
-              <span id="sfxIcon">🔊</span>
-              <span id="sfxLabel">SFX</span>
-            </button>
+            
           </div>
 
           <!-- Supabase Auth / Student Profile Trigger -->
@@ -688,7 +685,6 @@
       labSearch: '',
       theme: 'light',
       vfxEnabled: localStorage.getItem('mms_vfx_enabled') !== 'false' && !window.matchMedia('(prefers-reduced-motion: reduce)').matches,
-      sfxEnabled: localStorage.getItem('mms_sfx_enabled') !== 'false',
       mastered: {},
       bookmarks: {},
       solvedQs: {},
@@ -1420,264 +1416,10 @@
     }
 
     // =========================================================================
-    // PHASE 2: SYNTHESIZED WEB AUDIO SFX ENGINE (ZERO EXTERNAL ASSETS)
     // =========================================================================
-    class SoundEngine {
-      constructor() {
-        this.ctx = null;
-        this.gainNode = null;
-      }
-      init() {
-        if (!this.ctx && (window.AudioContext || window.webkitAudioContext)) {
-          const AudioCtx = window.AudioContext || window.webkitAudioContext;
-          this.ctx = new AudioCtx();
-          this.gainNode = this.ctx.createGain();
-          this.gainNode.gain.value = 0.12; // Pleasant UI volume
-          this.gainNode.connect(this.ctx.destination);
-        }
-        if (this.ctx && this.ctx.state === 'suspended') {
-          this.ctx.resume().catch(() => {});
-        }
-      }
-      canPlay() {
-        // Strict boundary: Zero sound during active exam, and zero if SFX disabled
-        if (!state.sfxEnabled) return false;
-        if (state.activeTest && state.view === 'test' && state.testView === 'exam') return false;
-        return true;
-      }
-      // 1. Tab Switch (Airy smooth frequency sweep)
-      playTabSwitch() {
-        if (!this.canPlay()) return;
-        this.init();
-        if (!this.ctx) return;
-        try {
-          const now = this.ctx.currentTime;
-          const osc = this.ctx.createOscillator();
-          const g = this.ctx.createGain();
-          osc.type = 'sine';
-          osc.frequency.setValueAtTime(280, now);
-          osc.frequency.exponentialRampToValueAtTime(440, now + 0.08);
-          g.gain.setValueAtTime(0.08, now);
-          g.gain.exponentialRampToValueAtTime(0.001, now + 0.08);
-          osc.connect(g);
-          g.connect(this.gainNode);
-          osc.start(now);
-          osc.stop(now + 0.09); osc.onended = () => { try { osc.disconnect(); g.disconnect(); } catch(e) {} };
-        } catch(e) {}
-      }
-      // 2. UI Click (Crisp subtle blip)
-      playClick() {
-        if (!this.canPlay()) return;
-        this.init();
-        if (!this.ctx) return;
-        try {
-          const now = this.ctx.currentTime;
-          const osc = this.ctx.createOscillator();
-          const g = this.ctx.createGain();
-          osc.type = 'sine';
-          osc.frequency.setValueAtTime(560, now);
-          osc.frequency.exponentialRampToValueAtTime(320, now + 0.04);
-          g.gain.setValueAtTime(0.06, now);
-          g.gain.exponentialRampToValueAtTime(0.001, now + 0.04);
-          osc.connect(g);
-          g.connect(this.gainNode);
-          osc.start(now);
-          osc.stop(now + 0.05); osc.onended = () => { try { osc.disconnect(); g.disconnect(); } catch(e) {} };
-        } catch(e) {}
-      }
-      // 3. Toggle switch sound (two-tone tactile chirp)
-      playToggle(isOn) {
-        if (!this.canPlay()) return;
-        this.init();
-        if (!this.ctx) return;
-        try {
-          const now = this.ctx.currentTime;
-          const osc = this.ctx.createOscillator();
-          const g = this.ctx.createGain();
-          osc.type = 'triangle';
-          const startFreq = isOn ? 360 : 540;
-          const endFreq = isOn ? 540 : 360;
-          osc.frequency.setValueAtTime(startFreq, now);
-          osc.frequency.setValueAtTime(endFreq, now + 0.04);
-          g.gain.setValueAtTime(0.07, now);
-          g.gain.exponentialRampToValueAtTime(0.001, now + 0.09);
-          osc.connect(g);
-          g.connect(this.gainNode);
-          osc.start(now);
-          osc.stop(now + 0.1); osc.onended = () => { try { osc.disconnect(); g.disconnect(); } catch(e) {} };
-        } catch(e) {}
-      }
-      // 4. Celebratory Mastered chime (Emerald crystal arpeggio: C5, E5, G5, C6)
-      playMastered() {
-        if (!this.canPlay()) return;
-        this.init();
-        if (!this.ctx) return;
-        try {
-          const notes = [523.25, 659.25, 783.99, 1046.50];
-          const now = this.ctx.currentTime;
-          notes.forEach((freq, idx) => {
-            const osc = this.ctx.createOscillator();
-            const g = this.ctx.createGain();
-            osc.type = 'sine';
-            osc.frequency.setValueAtTime(freq, now + idx * 0.05);
-            g.gain.setValueAtTime(0.001, now + idx * 0.05);
-            g.gain.linearRampToValueAtTime(0.1, now + idx * 0.05 + 0.02);
-            g.gain.exponentialRampToValueAtTime(0.001, now + idx * 0.05 + 0.22);
-            osc.connect(g);
-            g.connect(this.gainNode);
-            osc.start(now + idx * 0.05);
-            osc.stop(now + idx * 0.05 + 0.25); osc.onended = () => { try { osc.disconnect(); g.disconnect(); } catch(e) {} };
-          });
-        } catch(e) {}
-      }
-      // 5. Unmark sound (Subtle descending tone)
-      playUnmark() {
-        if (!this.canPlay()) return;
-        this.init();
-        if (!this.ctx) return;
-        try {
-          const now = this.ctx.currentTime;
-          const osc = this.ctx.createOscillator();
-          const g = this.ctx.createGain();
-          osc.type = 'sine';
-          osc.frequency.setValueAtTime(340, now);
-          osc.frequency.exponentialRampToValueAtTime(180, now + 0.12);
-          g.gain.setValueAtTime(0.07, now);
-          g.gain.exponentialRampToValueAtTime(0.001, now + 0.12);
-          osc.connect(g);
-          g.connect(this.gainNode);
-          osc.start(now);
-          osc.stop(now + 0.13); osc.onended = () => { try { osc.disconnect(); g.disconnect(); } catch(e) {} };
-        } catch(e) {}
-      }
-      // 6. Card Flip (Quick textured flutter)
-      playCardFlip() {
-        if (!this.canPlay()) return;
-        this.init();
-        if (!this.ctx) return;
-        try {
-          const now = this.ctx.currentTime;
-          const osc = this.ctx.createOscillator();
-          const g = this.ctx.createGain();
-          osc.type = 'triangle';
-          osc.frequency.setValueAtTime(220, now);
-          osc.frequency.linearRampToValueAtTime(480, now + 0.03);
-          osc.frequency.linearRampToValueAtTime(180, now + 0.07);
-          g.gain.setValueAtTime(0.06, now);
-          g.gain.exponentialRampToValueAtTime(0.001, now + 0.08);
-          osc.connect(g);
-          g.connect(this.gainNode);
-          osc.start(now);
-          osc.stop(now + 0.09); osc.onended = () => { try { osc.disconnect(); g.disconnect(); } catch(e) {} };
-        } catch(e) {}
-      }
-      // 7. Slider Tick (Micro click)
-      playSliderTick() {
-        if (!this.canPlay()) return;
-        this.init();
-        if (!this.ctx) return;
-        try {
-          const now = this.ctx.currentTime;
-          const osc = this.ctx.createOscillator();
-          const g = this.ctx.createGain();
-          osc.type = 'sine';
-          osc.frequency.setValueAtTime(980, now);
-          g.gain.setValueAtTime(0.03, now);
-          g.gain.exponentialRampToValueAtTime(0.001, now + 0.02);
-          osc.connect(g);
-          g.connect(this.gainNode);
-          osc.start(now);
-          osc.stop(now + 0.025); osc.onended = () => { try { osc.disconnect(); g.disconnect(); } catch(e) {} };
-        } catch(e) {}
-      }
-      // 8. Action Done / Success Bell
-      playDone() {
-        if (!this.canPlay()) return;
-        this.init();
-        if (!this.ctx) return;
-        try {
-          const now = this.ctx.currentTime;
-          const osc = this.ctx.createOscillator();
-          const g = this.ctx.createGain();
-          osc.type = 'sine';
-          osc.frequency.setValueAtTime(880, now);
-          osc.frequency.exponentialRampToValueAtTime(1174.66, now + 0.08);
-          g.gain.setValueAtTime(0.09, now);
-          g.gain.exponentialRampToValueAtTime(0.001, now + 0.28);
-          osc.connect(g);
-          g.connect(this.gainNode);
-          osc.start(now);
-          osc.stop(now + 0.3); osc.onended = () => { try { osc.disconnect(); g.disconnect(); } catch(e) {} };
-        } catch(e) {}
-      }
-      // 9. Exam Finish & Submit Chime
-      playExamSubmit() {
-        if (!state.sfxEnabled) return; // allowed after submit completes
-        this.init();
-        if (!this.ctx) return;
-        try {
-          const now = this.ctx.currentTime;
-          [440, 554.37, 659.25, 880].forEach((freq, idx) => {
-            const osc = this.ctx.createOscillator();
-            const g = this.ctx.createGain();
-            osc.type = 'triangle';
-            osc.frequency.setValueAtTime(freq, now + idx * 0.08);
-            g.gain.setValueAtTime(0.001, now + idx * 0.08);
-            g.gain.linearRampToValueAtTime(0.12, now + idx * 0.08 + 0.03);
-            g.gain.exponentialRampToValueAtTime(0.001, now + idx * 0.08 + 0.45);
-            osc.connect(g);
-            g.connect(this.gainNode);
-            osc.start(now + idx * 0.08);
-            osc.stop(now + idx * 0.08 + 0.5); osc.onended = () => { try { osc.disconnect(); g.disconnect(); } catch(e) {} };
-          });
-        } catch(e) {}
-      }
-    }
-    const sfxEngine = new SoundEngine();
-    window.sfxEngine = sfxEngine;
-
-    function updateSfxUI() {
-      const btn = document.getElementById('sfxToggleBtn');
-      const profileBtn = document.getElementById('profileSfxToggleBtn');
-      const profileThumb = document.getElementById('profileSfxSwitchThumb');
-      const profileBadge = document.getElementById('profileSfxStatusBadge');
-
-      if (btn) {
-        btn.setAttribute('aria-checked', state.sfxEnabled ? 'true' : 'false');
-      }
-
-      if (profileBtn) {
-        profileBtn.setAttribute('aria-checked', state.sfxEnabled ? 'true' : 'false');
-        if (state.sfxEnabled) {
-          profileBtn.className = 'relative inline-flex h-6 w-11 shrink-0 items-center rounded-full bg-cyan-600 transition-colors duration-200 cursor-pointer focus:outline-none';
-          if (profileThumb) profileThumb.className = 'inline-block h-4 w-4 transform rounded-full bg-white shadow-md transition-transform duration-200 translate-x-6';
-          if (profileBadge) {
-            profileBadge.textContent = 'ACTIVE';
-            profileBadge.className = 'px-2 py-0.5 rounded-full text-[10px] font-mono font-bold bg-cyan-500/15 text-cyan-600 dark:text-cyan-300 border border-cyan-500/30';
-          }
-        } else {
-          profileBtn.className = 'relative inline-flex h-6 w-11 shrink-0 items-center rounded-full bg-slate-300 dark:bg-slate-700 transition-colors duration-200 cursor-pointer focus:outline-none';
-          if (profileThumb) profileThumb.className = 'inline-block h-4 w-4 transform rounded-full bg-white shadow-md transition-transform duration-200 translate-x-1';
-          if (profileBadge) {
-            profileBadge.textContent = 'MUTED';
-            profileBadge.className = 'px-2 py-0.5 rounded-full text-[10px] font-mono font-bold bg-slate-200 dark:bg-slate-800 text-slate-500 border border-slate-300 dark:border-slate-700';
-          }
-        }
-      }
-    }
-
-    function toggleSfx() {
-      state.sfxEnabled = !state.sfxEnabled;
-      localStorage.setItem('mms_sfx_enabled', state.sfxEnabled ? 'true' : 'false');
-      updateSfxUI();
-      if (state.sfxEnabled) {
-        sfxEngine.playToggle(true);
-        showToast('🔊 Web Audio SFX Enabled', 'info');
-      } else {
-        showToast('🔇 Web Audio SFX Muted', 'info');
-      }
-    }
-
+    // AUDIO ENGINE FULLY REMOVED: 100% SILENT ZERO-LAG VFX-ONLY OPERATION
+    // =========================================================================
+    window.sfxEngine = null;
 
     // Two-State Mastery & Completion Sakuga VFX
     function playMasteredVfx(targetEl) {
@@ -2240,7 +1982,6 @@
       if (!v) return;
       if (state.view === v && v !== 'test') return;
       if (v === 'test' && state.view === 'test' && state.testView === (state.testView || 'builder')) return;
-      if (typeof sfxEngine !== 'undefined') sfxEngine.playTabSwitch();
       state.view = v;
       if (v === 'test') {
         state.testView = state.testView || 'builder';
@@ -2803,7 +2544,7 @@
       populateFlashcardDOM(card, state.fcIndex, deck.length, knownCount);
 
       const flipEl = document.getElementById('flashcardEl');
-      flipEl.onclick = () => { state.fcFlipped = !state.fcFlipped; if (typeof sfxEngine !== "undefined") sfxEngine.playCardFlip(); flipEl.classList.toggle('flipped', state.fcFlipped); };
+      flipEl.onclick = () => { state.fcFlipped = !state.fcFlipped; flipEl.classList.toggle('flipped', state.fcFlipped); };
 
       const stepCard = dir => {
         const curDeck = getFilteredDeck();
@@ -3396,7 +3137,7 @@
       recordActivity('exam', Math.max(1, correctCount));
 
       saveState();
-      state.testView = "scorecard"; if (typeof sfxEngine !== "undefined") sfxEngine.playExamSubmit();
+      state.testView = "scorecard";
       try { history.pushState({ appView: 'test', testView: 'scorecard' }, '', '#scorecard'); } catch(e) {}
       renderApp();
       window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -5823,11 +5564,11 @@
         updateMasteryUI();
         if (state.vfxEnabled) {
           if (isDone) {
-            playMasteredVfx(tt); if (typeof sfxEngine !== "undefined") sfxEngine.playMastered();
+            playMasteredVfx(tt);
             if (typeof tt.done === 'function') tt.done(1.8);
             showToast('Topic Completed! +100 XP ⭐', 'success');
           } else {
-            playUnmarkedVfx(tt); if (typeof sfxEngine !== "undefined") sfxEngine.playUnmark();
+            playUnmarkedVfx(tt);
             showToast('Topic marked in-progress', 'info');
           }
         } else {
@@ -5898,13 +5639,13 @@
         updateMasteryUI();
         if (state.vfxEnabled) {
           if (nowMastered) {
-            playMasteredVfx(tm); if (typeof sfxEngine !== "undefined") sfxEngine.playMastered();
+            playMasteredVfx(tm);
             if (typeof tm.done === 'function') {
               tm.done(1.8);
             }
             showToast('Formula Mastered! ⭐', 'success');
           } else {
-            playUnmarkedVfx(tm); if (typeof sfxEngine !== "undefined") sfxEngine.playUnmark();
+            playUnmarkedVfx(tm);
             showToast('Formula unmarked', 'info');
           }
           if (state._masterReRenderTimer) clearTimeout(state._masterReRenderTimer);
@@ -5974,7 +5715,6 @@
       if (fcCo) {
         state.fcCoFilter = fcCo.dataset.fcCo;
         state.fcIndex = 0;
-        if (typeof sfxEngine !== 'undefined') sfxEngine.playTabSwitch();
         const appMain = document.getElementById('appMain');
         if (appMain && state.view === 'flashcards') {
           renderFlashcardsView(appMain);
@@ -5988,7 +5728,6 @@
       if (fcLv) {
         state.fcLevelFilter = fcLv.dataset.fcLvl;
         state.fcIndex = 0;
-        if (typeof sfxEngine !== 'undefined') sfxEngine.playTabSwitch();
         const appMain = document.getElementById('appMain');
         if (appMain && state.view === 'flashcards') {
           renderFlashcardsView(appMain);
@@ -6003,7 +5742,6 @@
         const tid = tPill.dataset.tableId;
         if (state.activeTableId !== tid) {
           state.activeTableId = tid;
-          if (typeof sfxEngine !== 'undefined') sfxEngine.playTabSwitch();
           const appMain = document.getElementById('appMain');
           if (appMain && state.view === 'tables') {
             renderTablesView(appMain);
@@ -6020,7 +5758,6 @@
         const targetTab = switchTestTab.dataset.switchTestTab;
         if (state.testTab !== targetTab) {
           state.testTab = targetTab;
-          if (typeof sfxEngine !== 'undefined') sfxEngine.playTabSwitch();
           const appMain = document.getElementById('appMain');
           if (appMain && state.view === 'test') {
             renderTestStudioView(appMain);
@@ -6208,12 +5945,6 @@
       setTimeout(wireTabsShadow, 200);
       setTimeout(wireTabsShadow, 600);
     }
-
-    const sfxBtn = document.getElementById('sfxToggleBtn');
-    if (sfxBtn) sfxBtn.onclick = toggleSfx;
-    const profSfx = document.getElementById('profileSfxToggleBtn');
-    if (profSfx) profSfx.onclick = toggleSfx;
-    updateSfxUI();
 
     // Progress Modal & Management Wiring
     const openProgBtn = document.getElementById('openProgressBtn');
@@ -6435,7 +6166,7 @@
         const idx = Number(viewHist.dataset.viewHistoryScorecard);
         if (state.testHistory && state.testHistory[idx]) {
           state.testScorecard = state.testHistory[idx];
-          state.testView = "scorecard"; if (typeof sfxEngine !== "undefined") sfxEngine.playExamSubmit();
+          state.testView = "scorecard";
           try { history.pushState({ appView: 'test', testView: 'scorecard' }, '', '#scorecard'); } catch(e) {}
           renderApp();
           window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -7751,7 +7482,7 @@
           console.log('New Service Worker controller activated. Reloading page...');
           window.location.reload();
         });
-        navigator.serviceWorker.register('/sw.js?v=20').then(reg => {
+        navigator.serviceWorker.register('/sw.js?v=21').then(reg => {
           if (reg) reg.update();
         }).catch(() => {});
       }
@@ -8086,21 +7817,6 @@
         </div>
         <button id="profileVfxToggleBtn" type="button" role="switch" aria-checked="true" class="relative inline-flex h-6 w-11 shrink-0 items-center rounded-full bg-purple-600 transition-colors duration-200 cursor-pointer focus:outline-none" title="Toggle VFX Micro-interactions">
           <span id="profileVfxSwitchThumb" class="inline-block h-4 w-4 transform rounded-full bg-white shadow-md transition-transform duration-200 translate-x-6"></span>
-        </button>
-      </div>
-
-      <!-- App Preferences: Web Audio SFX Toggle -->
-      <div class="flex items-center justify-between p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800">
-        <div class="space-y-0.5">
-          <div class="flex items-center gap-2">
-            <span class="text-sm">🔊</span>
-            <span class="text-xs font-bold text-slate-800 dark:text-slate-100">Synthesized Audio Effects (SFX)</span>
-            <span id="profileSfxStatusBadge" class="px-2 py-0.5 rounded-full text-[10px] font-mono font-bold bg-cyan-500/15 text-cyan-600 dark:text-cyan-300 border border-cyan-500/30">ACTIVE</span>
-          </div>
-          <p class="text-[11px] text-slate-500">Subtle UI blips, tab sweeps, and celebratory chimes</p>
-        </div>
-        <button id="profileSfxToggleBtn" type="button" role="switch" aria-checked="true" class="relative inline-flex h-6 w-11 shrink-0 items-center rounded-full bg-cyan-600 transition-colors duration-200 cursor-pointer focus:outline-none" title="Toggle SFX Audio">
-          <span id="profileSfxSwitchThumb" class="inline-block h-4 w-4 transform rounded-full bg-white shadow-md transition-transform duration-200 translate-x-6"></span>
         </button>
       </div>
 

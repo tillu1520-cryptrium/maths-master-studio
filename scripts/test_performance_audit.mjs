@@ -29,12 +29,12 @@ if (!html.includes('saveStateDebounceTimer = setTimeout(commitSaveState, 400)') 
 }
 console.log('PASS: 400ms debounced storage and Supabase writes verified');
 
-// 4. SoundEngine Audio Node Disconnection
-if (!html.includes('osc.onended = () => { try { osc.disconnect(); g.disconnect(); } catch(e) {} };')) {
-  console.error('FAIL: Audio nodes missing onended cleanup and disconnection');
+// 4. Zero Audio System Overhead (SFX Completely Removed as Instructed)
+if (html.includes('class SoundEngine') || html.includes('AudioContext')) {
+  console.error('FAIL: SoundEngine or AudioContext still found in index.html');
   process.exit(1);
 }
-console.log('PASS: Audio node leak prevention (osc.onended -> disconnect) verified');
+console.log('PASS: Zero audio overhead verified (complete removal of audio threads/nodes)');
 
 // 5. CSS GPU & Repaint Optimization
 if (!html.includes('content-visibility: auto') ||

@@ -4,38 +4,26 @@ console.log('--- EXECUTING PHASE 2 & PHASE 3 COMPREHENSIVE TEST SUITE ---');
 
 const html = fs.readFileSync('index.html', 'utf8');
 
-// 1. Verify SoundEngine implementation
-if (!html.includes('class SoundEngine') ||
-    !html.includes('playTabSwitch()') ||
-    !html.includes('playClick()') ||
-    !html.includes('playToggle(isOn)') ||
-    !html.includes('playMastered()') ||
-    !html.includes('playUnmark()') ||
-    !html.includes('playCardFlip()') ||
-    !html.includes('playSliderTick()') ||
-    !html.includes('playDone()') ||
-    !html.includes('playExamSubmit()')) {
-  console.error('FAIL: SoundEngine or one of its 9 audio synthesizer methods is missing');
+// 1. Verify Audio System Completely Removed (Zero Audio Thread Latency)
+if (html.includes('class SoundEngine') || html.includes('window.AudioContext') || html.includes('new AudioContext')) {
+  console.error('FAIL: SoundEngine or AudioContext still found in index.html');
   process.exit(1);
 }
-console.log('PASS: Pure Web Audio API SoundEngine with 9 synthesized audio methods verified');
+console.log('PASS: Audio system completely removed (zero audio device latency / 100% silent VFX-only operation)');
 
-// 2. Verify SFX Toggles (Header + Profile)
-if (!html.includes('id="sfxToggleBtn"') ||
-    !html.includes('id="profileSfxToggleBtn"') ||
-    !html.includes('function toggleSfx()') ||
-    !html.includes('function updateSfxUI()')) {
-  console.error('FAIL: SFX toggles or handler functions missing');
+// 2. Verify SFX Toggles Removed from Header & Profile
+if (html.includes('id="sfxToggleBtn"') || html.includes('id="profileSfxToggleBtn"') || html.includes('function toggleSfx()')) {
+  console.error('FAIL: SFX toggles or handler functions still exist in index.html');
   process.exit(1);
 }
-console.log('PASS: Accessible header and student profile SFX toggles verified');
+console.log('PASS: SFX toggles and handlers cleanly eliminated from header and student profile modal');
 
-// 3. Verify Strict Exam Silence Boundary
-if (!html.includes("if (state.activeTest && state.view === 'test' && state.testView === 'exam') return false;")) {
-  console.error('FAIL: Strict silence during active exam is missing in canPlay()');
+// 3. Verify Strict App Silence (Zero Audio Overheads Guaranteed)
+if (html.includes('sfxEngine.play')) {
+  console.error('FAIL: Found lingering sfxEngine.play calls');
   process.exit(1);
 }
-console.log('PASS: Strict silence during active CBT examination verified (exam focus guaranteed)');
+console.log('PASS: Strict silence verified (zero lingering sound engine invocations)');
 
 // 4. Verify ComposedPath Shadow-Piercing Navigation
 if (!html.includes('// ComposedPath shadow-piercing navigation for header tabs') ||
@@ -82,12 +70,12 @@ for (const b of banned) {
 }
 console.log('PASS: Zero banned words verified');
 
-// 9. Verify Service Worker v20
+// 9. Verify Service Worker v21
 const sw = fs.readFileSync('sw.js', 'utf8');
-if (!sw.includes("maths-master-studio-v20") || !html.includes("sw.js?v=20")) {
-  console.error('FAIL: Service Worker v20 cache busting missing');
+if (!sw.includes("maths-master-studio-v21") || !html.includes("sw.js?v=21")) {
+  console.error('FAIL: Service Worker v21 cache busting missing');
   process.exit(1);
 }
-console.log('PASS: Service Worker v20 cache busting verified');
+console.log('PASS: Service Worker v21 cache busting verified');
 
 console.log('\n>>> ALL PHASE 2 & PHASE 3 COMPREHENSIVE TESTS PASSED! <<<');

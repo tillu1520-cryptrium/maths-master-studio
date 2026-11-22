@@ -12,13 +12,13 @@ if (!headerBlockMatch) {
 }
 const headerHtml = headerBlockMatch[0];
 
-// Assert vfxToggleBtn and sfxToggleBtn are enclosed within sr-only container
+// Assert vfxToggleBtn is enclosed within sr-only container
 const srOnlyBlockMatch = headerHtml.match(/<div class="sr-only">[\s\S]*?<\/div>\s*<!-- Supabase Auth/);
-if (!srOnlyBlockMatch || !srOnlyBlockMatch[0].includes('id="vfxToggleBtn"') || !srOnlyBlockMatch[0].includes('id="sfxToggleBtn"')) {
-  console.error('FAIL: VFX/SFX toggles must be enclosed in sr-only container in header');
+if (!srOnlyBlockMatch || !srOnlyBlockMatch[0].includes('id="vfxToggleBtn"')) {
+  console.error('FAIL: VFX toggle must be enclosed in sr-only container in header');
   process.exit(1);
 }
-console.log('PASS: Header decluttered - VFX and SFX toggles removed from visible header bar');
+console.log('PASS: Header decluttered - VFX toggle removed from visible header bar');
 
 // Assert header navigation tabs exist
 if (!headerHtml.includes('id="headerNavTabs"') ||
@@ -47,14 +47,7 @@ if (!profileHtml.includes('id="profileVfxToggleBtn"') ||
   console.error('FAIL: Profile modal missing VFX toggle switch or status badge');
   process.exit(1);
 }
-
-if (!profileHtml.includes('id="profileSfxToggleBtn"') ||
-    !profileHtml.includes('id="profileSfxSwitchThumb"') ||
-    !profileHtml.includes('id="profileSfxStatusBadge"')) {
-  console.error('FAIL: Profile modal missing SFX toggle switch or status badge');
-  process.exit(1);
-}
-console.log('PASS: Student Profile modal contains animated VFX & SFX toggle switches with status badges');
+console.log('PASS: Student Profile modal contains animated VFX toggle switch with status badge');
 
 // 3. Flashcards Section Verification
 // Must NOT have visible Master button
