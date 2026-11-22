@@ -82,12 +82,12 @@ for (const b of banned) {
 }
 console.log('PASS: Zero banned words verified');
 
-// 9. Verify Service Worker v19
+// 9. Verify Service Worker v20
 const sw = fs.readFileSync('sw.js', 'utf8');
-if (!sw.includes("maths-master-studio-v19") || !html.includes("sw.js?v=19")) {
-  console.error('FAIL: Service Worker v19 cache busting missing');
+if (!sw.includes("maths-master-studio-v20") || !html.includes("sw.js?v=20")) {
+  console.error('FAIL: Service Worker v20 cache busting missing');
   process.exit(1);
 }
-console.log('PASS: Service Worker v19 cache busting verified');
+console.log('PASS: Service Worker v20 cache busting verified');
 
 console.log('\n>>> ALL PHASE 2 & PHASE 3 COMPREHENSIVE TESTS PASSED! <<<');

@@ -263,49 +263,15 @@
     .ed-card {
       background: var(--bg-card);
       border: 1px solid var(--border-card);
-      box-shadow: var(--shadow-card);
-      transition: transform 0.24s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.24s ease, border-color 0.24s ease;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+      transition: transform 0.18s ease, border-color 0.18s ease;
+      contain: content;
+      content-visibility: auto;
+      contain-intrinsic-size: 0 200px;
     }
     .ed-card:hover {
-      border-color: rgba(79, 70, 229, 0.32);
-      box-shadow: 0 14px 34px -12px rgba(79, 70, 229, 0.16);
-    }
-    .math-well, [id^="sol_"] .math-well, [id^="sol_"] ol li {
-      background: var(--bg-math);
-      border: 1px solid var(--border-card);
-      border-radius: 0.9rem;
-      padding: 0.75rem 0.95rem;
-      overflow-x: auto;
-      -webkit-overflow-scrolling: touch;
-      max-width: 100%;
-    }
-
-    /* PDF-Style Shortcut & Exam Trap Callouts */
-    .callout-shortcut {
-      background: linear-gradient(90deg, rgba(16, 185, 129, 0.10), rgba(6, 182, 212, 0.05));
-      border: 1px solid rgba(13, 148, 136, 0.26);
-      border-left: 4px solid #0d9488;
-    }
-    .callout-trap {
-      background: linear-gradient(90deg, rgba(245, 158, 11, 0.12), rgba(239, 68, 68, 0.05));
-      border: 1px solid rgba(234, 88, 12, 0.28);
-      border-left: 4px solid #ea580c;
-    }
-
-    /* Midnight Navy Hero Banner (Matching Page 1 of UI/UX PDF) */
-    .midnight-hero {
-      background: radial-gradient(circle at 18% 20%, rgba(56, 189, 248, 0.22), transparent 46%),
-                  radial-gradient(circle at 84% 25%, rgba(16, 185, 129, 0.20), transparent 42%),
-                  linear-gradient(135deg, #070b1a 0%, #0f172e 55%, #161b3a 100%);
-      color: #f8fafc;
-      position: relative;
-      overflow: hidden;
-    }
-
-    /* Staggered Entrance */
-    @keyframes cardIn {
-      from { opacity: 0; transform: translateY(10px) scale(0.99); }
-      to   { opacity: 1; transform: translateY(0) scale(1); }
+      border-color: rgba(99, 102, 241, 0.45);
+      transform: translateY(-1px);
     }
     .anim-in { animation: cardIn 0.34s cubic-bezier(0.22, 1, 0.36, 1) both; }
 
@@ -813,10 +779,92 @@
       ];
     }
 
+    let examBankLoadPromise = null;
+
+    function mergeIntoExamBank(data) {
+      if (!Array.isArray(data) || data.length === 0) return;
+      const qMap = new Map();
+      EXAM_BANK.forEach(q => qMap.set(q.id, q));
+      data.forEach(q => {
+        let opts = [];
+        if (Array.isArray(q.options) && q.options.length === 4) {
+          opts = typeof q.options[0] === 'string'
+            ? q.options.map((opt, i) => ({ id: ['A', 'B', 'C', 'D'][i], text: opt }))
+            : q.options;
+        } else {
+          opts = synthesizeLocalOptions(q.finalAnswerLatex || q.answer);
+        }
+
+        const correctOptLetter = typeof q.correctOptionIndex === 'number'
+          ? ['A', 'B', 'C', 'D'][q.correctOptionIndex]
+          : (q.correctOption || 'A');
+
+        const solText = q.solution || (Array.isArray(q.detailedSolutionSteps)
+          ? q.detailedSolutionSteps.join('\n\n')
+          : '');
+
+        const stepsList = Array.isArray(q.steps) && q.steps.length > 0
+          ? q.steps
+          : (Array.isArray(q.detailedSolutionSteps)
+            ? q.detailedSolutionSteps.map(s => ({ text: s, math: '' }))
+            : [{ text: solText, math: '' }]);
+
+        qMap.set(q.id, {
+          id: q.id,
+          co: q.chapter || q.co || 'ch1',
+          chapterTitle: q.chapterTitle || 'University Engineering Mathematics',
+          chNum: q.chNum || 1,
+          marks: Number(q.marks) || (q.marksLabel === '1M' ? 1 : q.marksLabel === '6M' ? 6 : 4),
+          marksLabel: q.marksLabel || (q.marks + 'M'),
+          level: q.level || (q.marks === 1 ? 'Rapid' : q.marks === 6 ? 'Comprehensive' : 'Standard'),
+          topic: q.topic || '',
+          prompt: q.prompt || q.questionLatex,
+          promptMath: q.promptMath || '',
+          options: opts,
+          correctOption: correctOptLetter,
+          hint: q.hint || 'Review the core theorem, substitution method, or standard recurrence.',
+          solution: solText,
+          steps: stepsList,
+          answer: q.answer || q.finalAnswerLatex || '',
+          sillyTrap: q.sillyTrap || 'Watch for algebraic signs (+/-) and power indices in the denominator.',
+          tag: q.tag || ((q.chapter ? q.chapter.toUpperCase() : 'CO') + ' · ' + (q.marks || 4) + 'M')
+        });
+      });
+      EXAM_BANK = Array.from(qMap.values());
+      window.EXAM_BANK = EXAM_BANK;
+    }
+
+    async function ensureExamBankLoaded() {
+      if (window.EXAM_BANK && window.EXAM_BANK.length >= 318) return window.EXAM_BANK;
+      if (examBankLoadPromise) return examBankLoadPromise;
+
+      examBankLoadPromise = (async () => {
+        const bankUrls = [
+          '/exam_questions_bank_verified.json',
+          './exam_questions_bank_verified.json',
+          '/src/data/exam_questions_bank_verified.json',
+          '/exam_questions_bank.json'
+        ];
+        for (const url of bankUrls) {
+          try {
+            const res = await fetch(url);
+            if (res.ok) {
+              const data = await res.json();
+              if (Array.isArray(data) && data.length > 0) {
+                mergeIntoExamBank(data);
+                return EXAM_BANK;
+              }
+            }
+          } catch (e) {}
+        }
+        return EXAM_BANK;
+      })();
+      return examBankLoadPromise;
+    }
+    window.ensureExamBankLoaded = ensureExamBankLoaded;
+
     function initExamBank() {
       const qMap = new Map();
-
-      // First load local syllabus chapter questions
       CHAPTERS.forEach(ch => {
         (ch.topics || []).forEach(t => {
           (t.questions || []).forEach(q => {
@@ -842,86 +890,14 @@
           });
         });
       });
-
       EXAM_BANK = Array.from(qMap.values());
-
-      // Fetch verified master question bank (all 318 verified questions)
-      const bankUrls = [
-        './exam_questions_bank_verified.json?t=' + Date.now(),
-        '/exam_questions_bank_verified.json?t=' + Date.now(),
-        './src/data/exam_questions_bank_verified.json?t=' + Date.now(),
-        '/src/data/exam_questions_bank_verified.json?t=' + Date.now(),
-        './exam_questions_bank.json?t=' + Date.now(),
-        '/exam_questions_bank.json?t=' + Date.now(),
-        './src/data/verified_question_bank.json?t=' + Date.now(),
-        '/src/data/verified_question_bank.json?t=' + Date.now(),
-        './verified_question_bank.json?t=' + Date.now(),
-        '/verified_question_bank.json?t=' + Date.now()
-      ];
-
-      async function loadBankFromUrls() {
-        for (const url of bankUrls) {
-          try {
-            const res = await fetch(url);
-            if (res.ok) {
-              const data = await res.json();
-              if (Array.isArray(data) && data.length > 0) {
-                data.forEach(q => {
-                  let opts = [];
-                  if (Array.isArray(q.options) && q.options.length === 4) {
-                    opts = typeof q.options[0] === 'string'
-                      ? q.options.map((opt, i) => ({ id: ['A', 'B', 'C', 'D'][i], text: opt }))
-                      : q.options;
-                  } else {
-                    opts = synthesizeLocalOptions(q.finalAnswerLatex || q.answer);
-                  }
-
-                  const correctOptLetter = typeof q.correctOptionIndex === 'number'
-                    ? ['A', 'B', 'C', 'D'][q.correctOptionIndex]
-                    : (q.correctOption || 'A');
-
-                  const solText = q.solution || (Array.isArray(q.detailedSolutionSteps)
-                    ? q.detailedSolutionSteps.join('\n\n')
-                    : '');
-
-                  const stepsList = Array.isArray(q.steps) && q.steps.length > 0
-                    ? q.steps
-                    : (Array.isArray(q.detailedSolutionSteps)
-                      ? q.detailedSolutionSteps.map(s => ({ text: s, math: '' }))
-                      : [{ text: solText, math: '' }]);
-
-                  qMap.set(q.id, {
-                    id: q.id,
-                    co: q.chapter || q.co || 'ch1',
-                    chapterTitle: q.chapterTitle || 'University Engineering Mathematics',
-                    chNum: q.chNum || 1,
-                    marks: Number(q.marks) || (q.marksLabel === '1M' ? 1 : q.marksLabel === '6M' ? 6 : 4),
-                    marksLabel: q.marksLabel || (q.marks + 'M'),
-                    level: q.level || (q.marks === 1 ? 'Rapid' : q.marks === 6 ? 'Comprehensive' : 'Standard'),
-                    topic: q.topic || '',
-                    prompt: q.prompt || q.questionLatex,
-                    promptMath: q.promptMath || '',
-                    options: opts,
-                    correctOption: correctOptLetter,
-                    hint: q.hint || 'Review the core theorem, substitution method, or standard recurrence.',
-                    solution: solText,
-                    steps: stepsList,
-                    answer: q.answer || q.finalAnswerLatex || '',
-                    sillyTrap: q.sillyTrap || 'Watch for algebraic signs (+/-) and power indices in the denominator.',
-                    tag: q.tag || ((q.chapter ? q.chapter.toUpperCase() : 'CO') + ' · ' + (q.marks || 4) + 'M')
-                  });
-                });
-                EXAM_BANK = Array.from(qMap.values());
-                window.EXAM_BANK = EXAM_BANK;
-                return true;
-              }
-            }
-          } catch (e) {}
-        }
-        return false;
+      window.EXAM_BANK = EXAM_BANK;
+      // Pre-warm verified 318 question bank lazily after first paint
+      if (typeof requestIdleCallback === 'function') {
+        requestIdleCallback(() => ensureExamBankLoaded());
+      } else {
+        setTimeout(ensureExamBankLoaded, 1500);
       }
-
-      loadBankFromUrls();
     }
 
     function recordActivity(actionName, count = 1) {
@@ -1081,7 +1057,8 @@
       document.documentElement.classList.toggle('dark', state.theme === 'dark');
     }
 
-    function saveState() {
+    let saveStateDebounceTimer = null;
+    function commitSaveState() {
       try {
         localStorage.setItem(STORAGE_KEY, JSON.stringify({
           theme: state.theme,
@@ -1106,6 +1083,16 @@
       if (typeof scheduleLearningProgressSync === 'function') {
         scheduleLearningProgressSync();
       }
+    }
+
+    function saveState(immediate = false) {
+      if (immediate) {
+        if (saveStateDebounceTimer) clearTimeout(saveStateDebounceTimer);
+        commitSaveState();
+        return;
+      }
+      if (saveStateDebounceTimer) clearTimeout(saveStateDebounceTimer);
+      saveStateDebounceTimer = setTimeout(commitSaveState, 400);
     }
 
     // =========================================================================
@@ -1218,32 +1205,51 @@
       return `<span class="font-serif italic">${s}</span>`;
     }
 
+    const katexHtmlCache = new Map();
+
+    function getCachedKatexHtml(rawTex, display) {
+      if (!rawTex) return '';
+      let tex = String(rawTex).trim();
+      if (!tex) return '';
+      tex = tex.replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&quot;/g, '"');
+      if (!tex.includes('\\begin{')) {
+        tex = tex.replace(/(?<!\\)&/g, '\\&').replace(/(?<!\\)%/g, '\\%');
+      }
+      const cacheKey = `${display ? 'block' : 'inline'}:${tex}`;
+      let cached = katexHtmlCache.get(cacheKey);
+      if (cached !== undefined) return cached;
+
+      if (typeof window.katex !== 'undefined' && typeof window.katex.renderToString === 'function') {
+        try {
+          cached = window.katex.renderToString(tex, { displayMode: display, throwOnError: false, strict: false });
+          katexHtmlCache.set(cacheKey, cached);
+          return cached;
+        } catch (e) {
+          console.warn('KaTeX renderToString fallback for:', tex, e);
+        }
+      }
+      cached = prettyTexFallback(tex);
+      katexHtmlCache.set(cacheKey, cached);
+      return cached;
+    }
+
     function renderAllTex(root) {
       if (!root) return;
       root.querySelectorAll('[data-tex]').forEach(el => {
-        let tex = el.getAttribute('data-tex') || '';
+        if (el.dataset.rendered === 'true' && el.innerHTML.trim().length > 0) return;
+        const tex = el.getAttribute('data-tex') || '';
         if (!tex.trim()) { el.innerHTML = ''; return; }
-        tex = tex.replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&quot;/g, '"');
-        if (!tex.includes('\\begin{')) {
-          tex = tex.replace(/(?<!\\)&/g, '\\&').replace(/(?<!\\)%/g, '\\%');
-        }
         const display = el.getAttribute('data-display') !== 'false';
-        if (typeof window.katex !== 'undefined' && typeof window.katex.render === 'function') {
-          try {
-            window.katex.render(tex, el, { displayMode: display, throwOnError: false, strict: false });
-            return;
-          } catch (e) {
-            console.warn('KaTeX render fallback for:', tex, e);
-          }
-        }
-        el.innerHTML = prettyTexFallback(tex);
+        el.innerHTML = getCachedKatexHtml(tex, display);
+        el.dataset.rendered = 'true';
       });
     }
 
     function texNode(tex, display = true, extraClass = '') {
       if (!tex) return '';
       const tag = display ? 'div' : 'span';
-      return `<${tag} class="${extraClass}" data-tex="${escHtml(tex)}" data-display="${display ? 'true' : 'false'}"></${tag}>`;
+      const preHtml = getCachedKatexHtml(tex, display);
+      return `<${tag} class="${extraClass}" data-tex="${escHtml(tex)}" data-display="${display ? 'true' : 'false'}" data-rendered="true">${preHtml}</${tag}>`;
     }
 
     function isPureMathString(s) {
@@ -1399,6 +1405,9 @@
       updateVfxUI();
       if (window.SakugaFX) {
         window.SakugaFX.paused = !state.vfxEnabled;
+        if (!state.vfxEnabled && typeof window.SakugaFX.clear === 'function') {
+          window.SakugaFX.clear();
+        }
       }
       const skCanvas = document.querySelector('canvas.sakuga-fx');
       if (skCanvas) {
@@ -1453,7 +1462,7 @@
           osc.connect(g);
           g.connect(this.gainNode);
           osc.start(now);
-          osc.stop(now + 0.09);
+          osc.stop(now + 0.09); osc.onended = () => { try { osc.disconnect(); g.disconnect(); } catch(e) {} };
         } catch(e) {}
       }
       // 2. UI Click (Crisp subtle blip)
@@ -1473,7 +1482,7 @@
           osc.connect(g);
           g.connect(this.gainNode);
           osc.start(now);
-          osc.stop(now + 0.05);
+          osc.stop(now + 0.05); osc.onended = () => { try { osc.disconnect(); g.disconnect(); } catch(e) {} };
         } catch(e) {}
       }
       // 3. Toggle switch sound (two-tone tactile chirp)
@@ -1495,7 +1504,7 @@
           osc.connect(g);
           g.connect(this.gainNode);
           osc.start(now);
-          osc.stop(now + 0.1);
+          osc.stop(now + 0.1); osc.onended = () => { try { osc.disconnect(); g.disconnect(); } catch(e) {} };
         } catch(e) {}
       }
       // 4. Celebratory Mastered chime (Emerald crystal arpeggio: C5, E5, G5, C6)
@@ -1517,7 +1526,7 @@
             osc.connect(g);
             g.connect(this.gainNode);
             osc.start(now + idx * 0.05);
-            osc.stop(now + idx * 0.05 + 0.25);
+            osc.stop(now + idx * 0.05 + 0.25); osc.onended = () => { try { osc.disconnect(); g.disconnect(); } catch(e) {} };
           });
         } catch(e) {}
       }
@@ -1538,7 +1547,7 @@
           osc.connect(g);
           g.connect(this.gainNode);
           osc.start(now);
-          osc.stop(now + 0.13);
+          osc.stop(now + 0.13); osc.onended = () => { try { osc.disconnect(); g.disconnect(); } catch(e) {} };
         } catch(e) {}
       }
       // 6. Card Flip (Quick textured flutter)
@@ -1559,7 +1568,7 @@
           osc.connect(g);
           g.connect(this.gainNode);
           osc.start(now);
-          osc.stop(now + 0.09);
+          osc.stop(now + 0.09); osc.onended = () => { try { osc.disconnect(); g.disconnect(); } catch(e) {} };
         } catch(e) {}
       }
       // 7. Slider Tick (Micro click)
@@ -1578,7 +1587,7 @@
           osc.connect(g);
           g.connect(this.gainNode);
           osc.start(now);
-          osc.stop(now + 0.025);
+          osc.stop(now + 0.025); osc.onended = () => { try { osc.disconnect(); g.disconnect(); } catch(e) {} };
         } catch(e) {}
       }
       // 8. Action Done / Success Bell
@@ -1598,7 +1607,7 @@
           osc.connect(g);
           g.connect(this.gainNode);
           osc.start(now);
-          osc.stop(now + 0.3);
+          osc.stop(now + 0.3); osc.onended = () => { try { osc.disconnect(); g.disconnect(); } catch(e) {} };
         } catch(e) {}
       }
       // 9. Exam Finish & Submit Chime
@@ -1619,7 +1628,7 @@
             osc.connect(g);
             g.connect(this.gainNode);
             osc.start(now + idx * 0.08);
-            osc.stop(now + idx * 0.08 + 0.5);
+            osc.stop(now + idx * 0.08 + 0.5); osc.onended = () => { try { osc.disconnect(); g.disconnect(); } catch(e) {} };
           });
         } catch(e) {}
       }
@@ -2235,6 +2244,12 @@
       state.view = v;
       if (v === 'test') {
         state.testView = state.testView || 'builder';
+        if (window.SakugaFX) {
+          window.SakugaFX.paused = true;
+          if (typeof window.SakugaFX.clear === 'function') window.SakugaFX.clear();
+        }
+      } else if (state.vfxEnabled && window.SakugaFX) {
+        window.SakugaFX.paused = false;
       }
       renderApp();
       window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -7736,7 +7751,7 @@
           console.log('New Service Worker controller activated. Reloading page...');
           window.location.reload();
         });
-        navigator.serviceWorker.register('/sw.js?v=19').then(reg => {
+        navigator.serviceWorker.register('/sw.js?v=20').then(reg => {
           if (reg) reg.update();
         }).catch(() => {});
       }
