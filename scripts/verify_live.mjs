@@ -1,28 +1,25 @@
 import https from 'https';
 
-https.get('https://maths-master-studio.vercel.app/', (res) => {
+console.log('--- VERIFYING LIVE VERCEL DEPLOYMENT ---');
+
+https.get('https://maths-master-studio.vercel.app/?v=' + Date.now(), res => {
   let data = '';
   res.on('data', chunk => data += chunk);
   res.on('end', () => {
     console.log('Status Code:', res.statusCode);
     console.log('Total response bytes:', data.length);
-    console.log('Contains sw.js?v=9:', data.includes('/sw.js?v=9'));
-    console.log('Contains headerSakugaToggle:', data.includes('headerSakugaToggle'));
-    console.log('Contains sakuga-vfx/toggle.js:', data.includes('/sakuga-vfx/toggle.js'));
-    console.log('Contains playMasteredVfx:', data.includes('playMasteredVfx'));
-    console.log('Contains playUnmarkedVfx:', data.includes('playUnmarkedVfx'));
-    console.log('Contains fcTabs:', data.includes('fcTabs'));
-    console.log('Contains studioSearchInput:', data.includes('studioSearchInput'));
-    console.log('Contains masterTableTabs:', data.includes('masterTableTabs'));
-    console.log('Contains labGridToggle:', data.includes('labGridToggle'));
-    console.log('Contains testModeSakugaTabs:', data.includes('testModeSakugaTabs'));
-    
-    if (res.statusCode === 200 && data.includes('/sw.js?v=9') && data.includes('headerSakugaToggle')) {
-      console.log('>>> VERCEL FULL SAKUGA VFX LIVE DEPLOYMENT CONFIRMED AND ACTIVE! <<<');
+    console.log('Contains sw.js?v=19:', data.includes('sw.js?v=19'));
+    console.log('Contains profileVfxStatusBadge:', data.includes('profileVfxStatusBadge'));
+    console.log('Contains fcProgressBar:', data.includes('fcProgressBar'));
+    console.log('Contains SoundEngine:', data.includes('class SoundEngine'));
+    console.log('Contains 318 Question Bank:', data.includes('exam_questions_bank_verified.json'));
+
+    if (data.includes('profileVfxStatusBadge') && data.includes('sw.js?v=19')) {
+      console.log('>>> VERCEL LIVE DEPLOYMENT CONFIRMED AND ACTIVE WITH ALL FIXES! <<<');
     } else {
-      console.log('Waiting for Vercel deployment cache to refresh...');
+      console.log('>>> Vercel deployment in progress or waiting for CDN propagation... <<<');
     }
   });
 }).on('error', err => {
-  console.error('Error verifying live URL:', err);
+  console.error('Error verifying live:', err.message);
 });

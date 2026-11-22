@@ -17,7 +17,7 @@ class SakugaTabs extends fx.Base {
     .ind { position: absolute; top: -11px; bottom: -1px; left: 0; width: 10px; border: var(--sk-bw) solid var(--sk-ink); border-bottom: 0; border-radius: 13px 13px 0 0; background: var(--sk-card); margin: 0 0 0 calc(var(--sk-bw) * -1); will-change: transform, width; pointer-events: none; }
     button { position: relative; z-index: 2; padding: 10px 15px; border: 0; border-left: 2.4px solid var(--sk-ink); background: none; font: 600 15px/1.2 -apple-system, "Segoe UI", system-ui, sans-serif; white-space: nowrap; cursor: pointer; transition: translate .18s cubic-bezier(.3, 1.6, .5, 1); }
     button:first-of-type { border-left-color: transparent; }
-    button[aria-selected=true] { font-weight: 800; translate: 0 -5px; border-left-color: transparent; } button[aria-selected=true] + button { border-left-color: transparent; }`;
+    button[aria-selected=true] { font-weight: 800; color: #fff; translate: 0 0; border-left-color: transparent; } button[aria-selected=true] + button { border-left-color: transparent; }`;
   get selected() { return this.tabs ? this.tabs.findIndex((t) => t.getAttribute('aria-selected') === 'true') : +(this.getAttribute('selected') || 0); }
   set selected(i) { if (this.tabs) this.go(+i, true); else this.setAttribute('selected', i); }
   get value() { const t = this.tabs?.[this.selected]; return t ? t.dataset.value : ''; }
@@ -31,14 +31,18 @@ class SakugaTabs extends fx.Base {
     const tabs = this.tabs; i = Math.max(0, Math.min(tabs.length - 1, i)); if (i === this.selected && !quiet) return;
     tabs.forEach((t, n) => { t.setAttribute('aria-selected', String(n === i)); t.tabIndex = n === i ? 0 : -1; });
     const t = tabs[i]; this.dir = Math.sign(t.offsetLeft - this.sx.to) || 1; this.sx.to = t.offsetLeft; this.sw.to = t.offsetWidth;
-    if (quiet) { this.sx.x = this.sx.to; this.sw.x = this.sw.to; this.sx.v = 0; } else {
-      this.pending = true; this.up.x = -5;
-      const targetVal = t ? t.dataset.value : '';
-      this.dispatchEvent(new CustomEvent('change', { bubbles: true, composed: true, detail: { index: i, value: targetVal, label: t ? t.textContent : '' } }));
-      if (targetVal && typeof window.navigateToView === 'function' && (this.id === 'headerNavTabs' || this.getAttribute('id') === 'headerNavTabs')) {
-        window.navigateToView(targetVal);
+    const isVfxDisabled = window.SakugaFX && window.SakugaFX.paused;
+    if (quiet || isVfxDisabled) {
+      this.sx.x = this.sx.to; this.sw.x = this.sw.to; this.sx.v = 0;
+      if (this.ind) {
+        this.ind.style.transform = `translate(${this.sx.to}px, 0px)`;
+        this.ind.style.width = this.sw.to + 'px';
       }
+    } else {
+      this.pending = true; this.up.x = -5;
     }
+    const targetVal = t ? t.dataset.value : '';
+    this.dispatchEvent(new CustomEvent('change', { bubbles: true, composed: true, detail: { index: i, value: targetVal, label: t ? t.textContent : '' } }));
   }
   setup() {
     this.ind = this.$('.ind'); this.tabs = this.$$('button[role=tab]');
@@ -46,10 +50,6 @@ class SakugaTabs extends fx.Base {
     this.tabs.forEach((t, i) => {
       t.addEventListener('click', () => {
         this.go(i);
-        const targetVal = t ? t.dataset.value : '';
-        if (targetVal && typeof window.navigateToView === 'function' && (this.id === 'headerNavTabs' || this.getAttribute('id') === 'headerNavTabs')) {
-          window.navigateToView(targetVal);
-        }
       });
       t.addEventListener('keydown', (e) => { const d = { ArrowRight: 1, ArrowLeft: -1, Home: -99, End: 99 }[e.key]; if (!d) return; e.preventDefault(); const n = Math.abs(d) > 1 ? (d < 0 ? 0 : this.tabs.length - 1) : (i + d + this.tabs.length) % this.tabs.length; this.go(n); this.tabs[n].focus(); });
     });
@@ -57,6 +57,7 @@ class SakugaTabs extends fx.Base {
     new ResizeObserver(() => this.go(this.selected, true)).observe(this.$('.tabs'));
   }
   frame(dt) {
+    if (window.SakugaFX && window.SakugaFX.paused) return;
     const sx = this.sx, x = sx.step(dt), w = this.sw.step(dt) + Math.min(46, Math.abs(sx.v) * 0.06), u = this.up.step(dt);
     this.ind.style.transform = `translate(${x - (sx.v < 0 ? 0 : w - this.sw.x)}px, ${u}px)`; this.ind.style.width = w + 'px';
     if (this.pending && Math.abs(x - sx.to) < 3) {   // it has landed

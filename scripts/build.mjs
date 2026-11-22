@@ -8,6 +8,7 @@ console.log('--- EXECUTING BUILD PIPELINE ---');
 execSync('node scripts/test_full_vfx.mjs', { stdio: 'inherit' });
 execSync('node scripts/test_toggle.mjs', { stdio: 'inherit' });
 execSync('node scripts/test_phase2_phase3.mjs', { stdio: 'inherit' });
+execSync('node scripts/test_end_to_end_polish.mjs', { stdio: 'inherit' });
 
 // 2. Ensure public/ directory has all root assets
 if (!fs.existsSync('public')) {
