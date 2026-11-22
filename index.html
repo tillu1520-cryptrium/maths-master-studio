@@ -646,7 +646,10 @@
     <div class="w-full max-w-2xl ed-card rounded-2xl overflow-hidden border border-indigo-500/30">
       <div class="flex items-center gap-2.5 px-4 py-3 border-b border-slate-200 dark:border-slate-800">
         <i data-lucide="search" class="w-4 h-4 text-indigo-500 shrink-0"></i>
-        <sakuga-input id="globalSearchInput" placeholder="Search 150 flashcards, 150 practice Qs, Cover-Up Rule, Bernoulli, Q199..." class="w-full"></sakuga-input>
+        <sakuga-input id="globalSearchInput" placeholder="Search 150 flashcards, 150 practice Qs, Cover-Up Rule, Bernoulli, Laplace, Gamma..." class="w-full flex-1"></sakuga-input>
+        <button id="searchJumpEnterBtn" class="px-3 py-1.5 rounded-xl text-xs font-bold bg-indigo-600 hover:bg-indigo-500 text-white flex items-center gap-1 cursor-pointer shrink-0 shadow-sm" title="Jump to top result (Enter)">
+          <span>Jump</span><kbd class="text-[10px] font-mono bg-black/20 px-1 py-0.5 rounded">↵</kbd>
+        </button>
         <button id="closeSearchBtn" class="px-2 py-1 rounded-lg text-xs font-mono bg-slate-100 dark:bg-slate-800">ESC</button>
       </div>
       <div id="searchResults" class="max-h-[62vh] overflow-y-auto p-3 space-y-1.5 text-sm"></div>
@@ -1958,17 +1961,8 @@
           headerNavTabs.selected = idx;
         }
       }
-      const headerNavTabsEl = document.getElementById('headerNavTabs');
-    if (headerNavTabsEl) {
-      headerNavTabsEl.addEventListener('change', () => {
-        const v = headerNavTabsEl.value;
-        if (v && v !== state.view) {
-          switchView(v);
-        }
-      });
-    }
 
-    document.querySelectorAll('.nav-btn').forEach(btn => {
+      document.querySelectorAll('.nav-btn').forEach(btn => {
         const v = btn.dataset.view;
         const active = (v === cur);
         if (active) {
@@ -1980,6 +1974,22 @@
         }
       });
     }
+
+    function navigateToView(v) {
+      if (!v) return;
+      state.view = v;
+      if (v === 'test') {
+        state.testView = state.testView || 'builder';
+      }
+      renderApp();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      try {
+        const hash = v === 'syllabus' ? '#home' : '#' + v;
+        history.pushState({ appView: v }, '', hash);
+      } catch(e) {}
+    }
+    window.navigateToView = navigateToView;
+    window.switchView = navigateToView;
 
     function renderApp() {
       stopAllAnimations();
@@ -5367,35 +5377,94 @@
     function renderSearchResults(query) {
       const box = document.getElementById('searchResults');
       if (!box) return;
-      const q = query.trim().toLowerCase(), hits = [];
+      const q = (query || '').trim().toLowerCase();
+      const hits = [];
+
+      // 1. Search Formula Studio
       CHAPTERS.forEach(ch => ch.topics.forEach(t => {
         t.formulas.forEach(f => {
-          if (!q || `${ch.co} ${t.title} ${f.name} ${f.math} ${f.trick}`.toLowerCase().includes(q))
-            hits.push({ kind: 'studio', type: 'Formula', co: ch.co, target: `${ch.id}|${t.id}`, title: f.name, sub: f.trick });
+          if (!q || `${ch.co} ${t.title} ${f.name} ${f.math} ${f.trick || ''} ${f.note || ''}`.toLowerCase().includes(q))
+            hits.push({ kind: 'studio', type: 'Formula', co: ch.co, target: `${ch.id}|${t.id}`, title: f.name, sub: f.trick || f.note || f.name });
         });
         t.questions.forEach(qs => {
-          if (!q || `${ch.co} ${qs.id} ${qs.tag} ${qs.prompt} ${qs.promptMath} ${qs.hint}`.toLowerCase().includes(q))
+          if (!q || `${ch.co} ${qs.id} ${qs.tag} ${qs.prompt} ${qs.promptMath || ''} ${qs.hint || ''}`.toLowerCase().includes(q))
             hits.push({ kind: 'studio', type: 'Practice Q', co: ch.co, target: `${ch.id}|${t.id}`, title: `${qs.id} · ${qs.tag}`, sub: qs.prompt });
         });
       }));
+
+      // 2. Search Flashcards
       FLASHCARDS.forEach(fc => {
-        if (!q || `${fc.co} ${fc.cat} ${fc.level} ${fc.qText} ${fc.aMath} ${fc.tip}`.toLowerCase().includes(q))
+        if (!q || `${fc.co} ${fc.cat} ${fc.level} ${fc.qText} ${fc.aMath || ''} ${fc.tip || ''}`.toLowerCase().includes(q))
           hits.push({ kind: 'fc', type: 'Flashcard', co: fc.co.toUpperCase(), target: fc.id, title: `${fc.cat} (${fc.level})`, sub: fc.qText });
       });
 
+      // 3. Search Master Tables
+      if (typeof MASTER_TABLES !== 'undefined') {
+        MASTER_TABLES.forEach(tbl => {
+          tbl.rows.forEach(r => {
+            if (!q || `${tbl.title} ${tbl.short} ${r[0]} ${r[1]} ${r[2]}`.toLowerCase().includes(q)) {
+              hits.push({ kind: 'tables', type: 'Master Table', co: tbl.short, target: tbl.id, title: `${tbl.title}: ${r[0]}`, sub: r[2] || r[1] });
+            }
+          });
+        });
+      }
+
+      // 4. Search Live Labs
+      if (typeof LAB_CONCEPTS !== 'undefined') {
+        LAB_CONCEPTS.forEach(lab => {
+          if (!q || `${lab.id} ${lab.co} ${lab.title} ${lab.desc} ${lab.engine}`.toLowerCase().includes(q)) {
+            hits.push({ kind: 'labs', type: 'Live Lab', co: lab.co.toUpperCase(), target: lab.id, title: `${lab.id} · ${lab.title}`, sub: lab.desc });
+          }
+        });
+      }
+
+      state._currentSearchHits = hits;
+
       const shown = hits.slice(0, 16);
-      if (!shown.length) { box.innerHTML = `<div class="p-6 text-center text-xs text-slate-400">No matches for "${escHtml(query)}".</div>`; return; }
-      box.innerHTML = shown.map(h => `
-        <button data-search-jump="${h.kind}|${h.target}" class="w-full text-left p-2.5 rounded-xl hover:bg-indigo-500/10 border border-transparent hover:border-indigo-500/30 transition-all flex items-start justify-between gap-3">
+      if (!shown.length) {
+        box.innerHTML = `<div class="p-6 text-center text-xs text-slate-400">No matches for "${escHtml(query)}". Try searching "Laplace", "Bernoulli", "Gamma", or "C01".</div>`;
+        return;
+      }
+      box.innerHTML = shown.map((h, i) => `
+        <button data-search-jump="${h.kind}|${h.target}" class="w-full text-left p-2.5 rounded-xl hover:bg-indigo-500/10 border border-transparent hover:border-indigo-500/30 transition-all flex items-start justify-between gap-3 cursor-pointer ${i === 0 ? 'bg-indigo-500/10 border-indigo-500/25' : ''}">
           <div class="min-w-0">
             <div class="flex items-center gap-1.5">
-              <span class="px-1.5 py-0.5 rounded text-[10px] font-mono font-bold ${h.type==='Formula'?'bg-indigo-500/15 text-indigo-600 dark:text-indigo-400':h.type==='Practice Q'?'bg-emerald-500/15 text-emerald-600 dark:text-emerald-400':'bg-fuchsia-500/15 text-fuchsia-600 dark:text-fuchsia-400'}">${h.co} · ${h.type}</span>
+              <span class="px-1.5 py-0.5 rounded text-[10px] font-mono font-bold ${h.type==='Formula'?'bg-indigo-500/15 text-indigo-600 dark:text-indigo-400':h.type==='Practice Q'?'bg-emerald-500/15 text-emerald-600 dark:text-emerald-400':h.type==='Flashcard'?'bg-fuchsia-500/15 text-fuchsia-600 dark:text-fuchsia-400':'bg-cyan-500/15 text-cyan-600 dark:text-cyan-400'}">${h.co} · ${h.type}</span>
               <span class="font-bold text-xs truncate">${escHtml(h.title)}</span>
             </div>
             <p class="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5 line-clamp-1">${escHtml(h.sub)}</p>
           </div>
-          <span class="text-[11px] font-mono font-bold text-indigo-600 dark:text-indigo-400 shrink-0">Go →</span>
+          <span class="text-[11px] font-mono font-bold text-indigo-600 dark:text-indigo-400 shrink-0 flex items-center gap-1">
+            <span>Go</span>${i === 0 ? '<kbd class="px-1.5 py-0.5 text-[9px] bg-indigo-600 text-white rounded font-mono">↵ Enter</kbd>' : '→'}
+          </span>
         </button>`).join('');
+    }
+
+    function executeSearchJump(jumpStr) {
+      if (!jumpStr) return;
+      const parts = jumpStr.split('|');
+      closeSearchModal();
+      const kind = parts[0];
+      if (kind === 'studio') {
+        state.chapterId = parts[1] || 'ch1';
+        state.topicFilter = parts[2] || 'all';
+        navigateToView('studio');
+      } else if (kind === 'fc') {
+        state.fcCoFilter = 'all';
+        state.fcLevelFilter = 'all';
+        const deck = getFilteredDeck();
+        const idx = deck.findIndex(c => c.id === parts[1]);
+        state.fcIndex = idx >= 0 ? idx : 0;
+        navigateToView('flashcards');
+      } else if (kind === 'tables') {
+        state.activeTableId = parts[1] || 'all';
+        navigateToView('tables');
+      } else if (kind === 'labs') {
+        state.activeLabId = parts[1];
+        navigateToView('labs');
+      } else {
+        navigateToView('syllabus');
+      }
     }
 
     // =========================================================================
@@ -5676,17 +5745,7 @@
 
       const sj = e.target.closest('[data-search-jump]');
       if (sj) {
-        const parts = sj.dataset.searchJump.split('|');
-        closeSearchModal();
-        if (parts[0] === 'studio') {
-          state.chapterId = parts[1]; state.topicFilter = parts[2]; state.view = 'studio';
-          renderApp(); window.scrollTo({ top: 0, behavior: 'smooth' });
-        } else {
-          state.fcCoFilter = 'all'; state.fcLevelFilter = 'all'; state.view = 'flashcards';
-          const deck = getFilteredDeck(), idx = deck.findIndex(c => c.id === parts[1]);
-          state.fcIndex = idx >= 0 ? idx : 0;
-          renderApp(); window.scrollTo({ top: 0, behavior: 'smooth' });
-        }
+        executeSearchJump(sj.dataset.searchJump);
         return;
       }
     });
@@ -5713,7 +5772,77 @@
     document.getElementById('openSearchBtn').onclick = openSearchModal;
     document.getElementById('closeSearchBtn').onclick = closeSearchModal;
     document.getElementById('searchModal').onclick = e => { if (e.target.id === 'searchModal') closeSearchModal(); };
-    document.getElementById('globalSearchInput').oninput = e => renderSearchResults(e.target.value);
+    // Robust Search Input & Jump Wiring
+    const globalSearchInp = document.getElementById('globalSearchInput');
+    const searchJumpBtn = document.getElementById('searchJumpEnterBtn');
+    
+    function triggerTopSearchJump() {
+      if (state._currentSearchHits && state._currentSearchHits.length > 0) {
+        const topHit = state._currentSearchHits[0];
+        executeSearchJump(`${topHit.kind}|${topHit.target}`);
+        showToast(`Jumped to ${topHit.title} 🚀`, 'info');
+      }
+    }
+
+    if (globalSearchInp) {
+      const handleInput = () => {
+        const val = globalSearchInp.value || '';
+        renderSearchResults(val);
+      };
+      globalSearchInp.addEventListener('input', handleInput);
+      globalSearchInp.addEventListener('keydown', e => {
+        if (e.key === 'Enter') {
+          e.preventDefault();
+          triggerTopSearchJump();
+        } else if (e.key === 'Escape') {
+          closeSearchModal();
+        }
+      });
+      // Also attach to internal input once shadow root is ready
+      setTimeout(() => {
+        if (globalSearchInp.shadowRoot) {
+          const innerInp = globalSearchInp.shadowRoot.querySelector('input');
+          if (innerInp) {
+            innerInp.addEventListener('input', () => renderSearchResults(innerInp.value));
+            innerInp.addEventListener('keydown', e => {
+              if (e.key === 'Enter') {
+                e.preventDefault();
+                triggerTopSearchJump();
+              } else if (e.key === 'Escape') {
+                closeSearchModal();
+              }
+            });
+          }
+        }
+      }, 50);
+    }
+
+    if (searchJumpBtn) {
+      searchJumpBtn.onclick = triggerTopSearchJump;
+    }
+
+    // Header Nav Tabs Click & Change Synchronization
+    const headerNavTabs = document.getElementById('headerNavTabs');
+    if (headerNavTabs) {
+      headerNavTabs.addEventListener('change', e => {
+        const v = (e && e.detail && e.detail.value) || headerNavTabs.value;
+        if (v) navigateToView(v);
+      });
+
+      const wireTabsShadow = () => {
+        if (headerNavTabs.shadowRoot) {
+          headerNavTabs.shadowRoot.querySelectorAll('button[role="tab"]').forEach(btn => {
+            btn.addEventListener('click', () => {
+              const val = btn.dataset.value;
+              if (val) navigateToView(val);
+            });
+          });
+        }
+      };
+      wireTabsShadow();
+      setTimeout(wireTabsShadow, 60);
+      setTimeout(wireTabsShadow, 250);
+    }
 
     // Progress Modal & Management Wiring
     const openProgBtn = document.getElementById('openProgressBtn');

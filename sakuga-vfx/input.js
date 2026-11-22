@@ -29,7 +29,7 @@ class SakugaInput extends fx.Base {
     return `<input part="input" type="${type}" value="${a('value')}" placeholder="${a('placeholder')}" aria-label="${a('label', 'Text')}" autocomplete="${a('autocomplete', 'off')}"${this.disabled ? ' disabled' : ''}>`;
   }
   setup() {
-    const inp = this.inp = this.$('input'), m = document.createElement('canvas').getContext('2d'); this.s = new Spring(1, 700, 16); this.internals.setFormValue(inp.value);
+    const inp = this.inp = this.$('input'), m = document.createElement('canvas').getContext('2d'); this.s = new Spring(1, 700, 16); this.internals.setFormValue(inp.value); this.dispatchEvent(new Event('input', { bubbles: true, composed: true }));
     inp.addEventListener('focus', () => { const c = at(inp, 1, 0); this.s.x = 1.04; ticks(c.x - 6, c.y - 4, { dir: -1.05, n: 3, r: 5, len: 17, fan: 0.36, life: 0.5 }); });
     inp.addEventListener('input', () => {   // every key kicks up a little dust where the caret is
       this.internals.setFormValue(inp.value);
@@ -38,7 +38,7 @@ class SakugaInput extends fx.Base {
       const c = at(inp, 0, 0.5), x = c.x + 18 + Math.min(c.w - 38, m.measureText(shown).width);
       this.s.x = 0.985; puff(x, c.y + 10, { size: rnd(4, 6), n: 2, vy: -22, vx: rnd(-10, 10), life: 0.4 }); if (Math.random() < 0.35) shards(x, c.y + 6, { n: 2, speed: 110, size: 3, life: 0.5 });
     });
-    inp.addEventListener('change', () => this.dispatchEvent(new Event('change', { bubbles: true })));
+    inp.addEventListener('change', () => this.dispatchEvent(new Event('change', { bubbles: true, composed: true }))); inp.addEventListener('keydown', e => this.dispatchEvent(new KeyboardEvent('keydown', { key: e.key, code: e.code, keyCode: e.keyCode, bubbles: true, composed: true })));
   }
   frame(dt) { const y = this.s.step(dt); this.inp.style.transform = Math.abs(y - 1) < 0.0006 ? '' : `scale(${y})`; }
 }

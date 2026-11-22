@@ -31,7 +31,7 @@ class SakugaTabs extends fx.Base {
     const tabs = this.tabs; i = Math.max(0, Math.min(tabs.length - 1, i)); if (i === this.selected && !quiet) return;
     tabs.forEach((t, n) => { t.setAttribute('aria-selected', String(n === i)); t.tabIndex = n === i ? 0 : -1; });
     const t = tabs[i]; this.dir = Math.sign(t.offsetLeft - this.sx.to) || 1; this.sx.to = t.offsetLeft; this.sw.to = t.offsetWidth;
-    if (quiet) { this.sx.x = this.sx.to; this.sw.x = this.sw.to; this.sx.v = 0; } else { this.pending = true; this.up.x = -5; this.dispatchEvent(new CustomEvent('change', { bubbles: true, detail: { index: i, value: t.dataset.value, label: t.textContent } })); }
+    if (quiet) { this.sx.x = this.sx.to; this.sw.x = this.sw.to; this.sx.v = 0; } else { this.pending = true; this.up.x = -5; this.dispatchEvent(new CustomEvent('change', { bubbles: true, composed: true, detail: { index: i, value: t.dataset.value, label: t.textContent } })); }
   }
   setup() {
     this.ind = this.$('.ind'); this.tabs = this.$$('button[role=tab]');
