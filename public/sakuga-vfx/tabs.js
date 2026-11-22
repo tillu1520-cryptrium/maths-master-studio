@@ -14,8 +14,8 @@ class SakugaTabs extends fx.Base {
   static css = `
     :host { margin-top: 10px; }
     .tabs { position: relative; display: flex; border: var(--sk-bw) solid var(--sk-ink); border-radius: 12px; background: var(--sk-card); box-shadow: var(--sk-sh); }
-    .ind { position: absolute; top: -11px; bottom: -1px; left: 0; width: 10px; border: var(--sk-bw) solid var(--sk-ink); border-bottom: 0; border-radius: 13px 13px 0 0; background: var(--sk-card); margin: 0 0 0 calc(var(--sk-bw) * -1); will-change: transform, width; }
-    button { position: relative; padding: 10px 15px; border: 0; border-left: 2.4px solid var(--sk-ink); background: none; font: 600 15px/1.2 -apple-system, "Segoe UI", system-ui, sans-serif; white-space: nowrap; cursor: pointer; transition: translate .18s cubic-bezier(.3, 1.6, .5, 1); }
+    .ind { position: absolute; top: -11px; bottom: -1px; left: 0; width: 10px; border: var(--sk-bw) solid var(--sk-ink); border-bottom: 0; border-radius: 13px 13px 0 0; background: var(--sk-card); margin: 0 0 0 calc(var(--sk-bw) * -1); will-change: transform, width; pointer-events: none; }
+    button { position: relative; z-index: 2; padding: 10px 15px; border: 0; border-left: 2.4px solid var(--sk-ink); background: none; font: 600 15px/1.2 -apple-system, "Segoe UI", system-ui, sans-serif; white-space: nowrap; cursor: pointer; transition: translate .18s cubic-bezier(.3, 1.6, .5, 1); }
     button:first-of-type { border-left-color: transparent; }
     button[aria-selected=true] { font-weight: 800; translate: 0 -5px; border-left-color: transparent; } button[aria-selected=true] + button { border-left-color: transparent; }`;
   get selected() { return this.tabs ? this.tabs.findIndex((t) => t.getAttribute('aria-selected') === 'true') : +(this.getAttribute('selected') || 0); }
@@ -31,13 +31,26 @@ class SakugaTabs extends fx.Base {
     const tabs = this.tabs; i = Math.max(0, Math.min(tabs.length - 1, i)); if (i === this.selected && !quiet) return;
     tabs.forEach((t, n) => { t.setAttribute('aria-selected', String(n === i)); t.tabIndex = n === i ? 0 : -1; });
     const t = tabs[i]; this.dir = Math.sign(t.offsetLeft - this.sx.to) || 1; this.sx.to = t.offsetLeft; this.sw.to = t.offsetWidth;
-    if (quiet) { this.sx.x = this.sx.to; this.sw.x = this.sw.to; this.sx.v = 0; } else { this.pending = true; this.up.x = -5; this.dispatchEvent(new CustomEvent('change', { bubbles: true, composed: true, detail: { index: i, value: t.dataset.value, label: t.textContent } })); }
+    if (quiet) { this.sx.x = this.sx.to; this.sw.x = this.sw.to; this.sx.v = 0; } else {
+      this.pending = true; this.up.x = -5;
+      const targetVal = t ? t.dataset.value : '';
+      this.dispatchEvent(new CustomEvent('change', { bubbles: true, composed: true, detail: { index: i, value: targetVal, label: t ? t.textContent : '' } }));
+      if (targetVal && typeof window.navigateToView === 'function' && (this.id === 'headerNavTabs' || this.getAttribute('id') === 'headerNavTabs')) {
+        window.navigateToView(targetVal);
+      }
+    }
   }
   setup() {
     this.ind = this.$('.ind'); this.tabs = this.$$('button[role=tab]');
     this.sx = new Spring(0, 320, 23); this.sw = new Spring(10, 320, 26); this.up = new Spring(0, 420, 13); this.pending = false; this.dir = 1;
     this.tabs.forEach((t, i) => {
-      t.addEventListener('click', () => this.go(i));
+      t.addEventListener('click', () => {
+        this.go(i);
+        const targetVal = t ? t.dataset.value : '';
+        if (targetVal && typeof window.navigateToView === 'function' && (this.id === 'headerNavTabs' || this.getAttribute('id') === 'headerNavTabs')) {
+          window.navigateToView(targetVal);
+        }
+      });
       t.addEventListener('keydown', (e) => { const d = { ArrowRight: 1, ArrowLeft: -1, Home: -99, End: 99 }[e.key]; if (!d) return; e.preventDefault(); const n = Math.abs(d) > 1 ? (d < 0 ? 0 : this.tabs.length - 1) : (i + d + this.tabs.length) % this.tabs.length; this.go(n); this.tabs[n].focus(); });
     });
     this.go(+(this.getAttribute('selected') || 0), true);
