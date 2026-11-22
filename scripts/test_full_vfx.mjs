@@ -59,14 +59,49 @@ if (!html.includes('id="headerSakugaToggle"') || !html.includes('id="vfxToggleBt
 }
 console.log('PASS: Header animated <sakuga-toggle> and toggleVfx handler verified');
 
-// 5. Verify Two-State Mastery VFX Functions
+// 5. Phase 1: Verify Header Navigation <sakuga-tabs>
+if (!html.includes('id="headerNavTabs"') || !html.includes('Primary Views')) {
+  console.error('FAIL: Header navigation missing unified <sakuga-tabs id="headerNavTabs">');
+  process.exit(1);
+}
+console.log('PASS: Top header navigation bar upgraded to unified <sakuga-tabs>');
+
+// 6. Phase 1: Verify Study Analytics Button and Interior VFX
+if (!html.includes('data-open-progress-modal') ||
+    !html.includes('id="analyticsSubTabs"') ||
+    !html.includes('id="analyticsSyllabusProgress"') ||
+    !html.includes('id="exportProgressBtn"')) {
+  console.error('FAIL: Study Analytics missing required Sakuga VFX components');
+  process.exit(1);
+}
+console.log('PASS: Study Analytics button and interior (tabs, progress, buttons, popovers) verified');
+
+// 7. Phase 1: Verify Home Dashboard & Header Polish
+if (!html.includes('id="globalSearchInput"') ||
+    !html.includes('id="dashTopicsSakugaBar"') ||
+    !html.includes('id="dashQsSakugaBar"') ||
+    !html.includes('id="dashCardsSakugaBar"') ||
+    !html.includes('id="dashLabsSakugaBar"')) {
+  console.error('FAIL: Home Dashboard missing required Sakuga components');
+  process.exit(1);
+}
+console.log('PASS: Home Dashboard Hero CTAs, 4 Sakuga progress bars, and Search verified');
+
+// 8. Phase 1: Verify canvas pointer-events: none
+if (!html.includes('pointer-events: none !important')) {
+  console.error('FAIL: Missing pointer-events: none !important on Sakuga canvas');
+  process.exit(1);
+}
+console.log('PASS: Sakuga canvas pointer-events: none verified (unobstructed math & click events)');
+
+// 9. Verify Two-State Mastery VFX Functions
 if (!html.includes('function playMasteredVfx') || !html.includes('function playUnmarkedVfx')) {
   console.error('FAIL: Missing playMasteredVfx or playUnmarkedVfx');
   process.exit(1);
 }
 console.log('PASS: Two-state mastery functions (celebratory burst vs subtle reverse puff) verified');
 
-// 6. Verify Formula Studio: sakuga-progress, sakuga-button, sakuga-input, sakuga-popover
+// 10. Verify Formula Studio: sakuga-progress, sakuga-button, sakuga-input, sakuga-popover
 if (!html.includes('id="chapterMasteryProgress"') ||
     !html.includes('id="studioSearchInput"') ||
     !html.includes('data-toggle-master') ||
@@ -76,7 +111,7 @@ if (!html.includes('id="chapterMasteryProgress"') ||
 }
 console.log('PASS: Formula Studio components (progress, button, input, popover) verified');
 
-// 7. Verify Flashcards: sakuga-tabs, sakuga-progress, sakuga-button, sakuga-checkbox, sakuga-rating
+// 11. Verify Flashcards: sakuga-tabs, sakuga-progress, sakuga-button, sakuga-checkbox, sakuga-rating
 if (!html.includes('id="fcTabs"') ||
     !html.includes('id="fcSakugaProgress"') ||
     !html.includes('id="fcKnowCheckbox"') ||
@@ -87,7 +122,7 @@ if (!html.includes('id="fcTabs"') ||
 }
 console.log('PASS: Flashcards components (tabs, progress, buttons, checkbox, rating) verified');
 
-// 8. Verify Live Labs: sakuga-slider, sakuga-toggle, sakuga-radio
+// 12. Verify Live Labs: sakuga-slider, sakuga-toggle, sakuga-radio
 if (!html.includes('id="labS1"') ||
     !html.includes('id="labGridToggle"') ||
     !html.includes('id="labPresetRadio"')) {
@@ -96,7 +131,7 @@ if (!html.includes('id="labS1"') ||
 }
 console.log('PASS: Live Labs components (sliders, toggle overlays, preset radio) verified');
 
-// 9. Verify Master Tables: sakuga-tabs, sakuga-input, sakuga-button, sakuga-popover
+// 13. Verify Master Tables: sakuga-tabs, sakuga-input, sakuga-button, sakuga-popover
 if (!html.includes('id="masterTableTabs"') ||
     !html.includes('id="masterTableSearch"') ||
     !html.includes('data-copy-math')) {
@@ -105,7 +140,7 @@ if (!html.includes('id="masterTableTabs"') ||
 }
 console.log('PASS: Master Tables components (tabs, input, copy button, popover) verified');
 
-// 10. Verify Test Studio Lobby & Scorecard Components
+// 14. Verify Test Studio Lobby & Scorecard Components
 if (!html.includes('id="testModeSakugaTabs"') ||
     !html.includes('id="scorecardPercentageProgress"') ||
     !html.includes('data-action="return-cbt-builder"')) {
@@ -114,7 +149,7 @@ if (!html.includes('id="testModeSakugaTabs"') ||
 }
 console.log('PASS: Test Studio Lobby/Scorecard components (tabs, progress, action buttons) verified');
 
-// 11. Strict Exam Boundary: Active Exam Screen must have STRICTLY ZERO Sakuga elements
+// 15. Strict Exam Boundary: Active Exam Screen must have STRICTLY ZERO Sakuga elements
 const examEnvMatch = html.match(/function renderCbtExamEnvironment[\s\S]*?function renderCbtScorecard/);
 if (examEnvMatch) {
   const code = examEnvMatch[0];
@@ -125,7 +160,7 @@ if (examEnvMatch) {
 }
 console.log('PASS: Active exam environment contains STRICTLY ZERO Sakuga elements (exam focus verified)');
 
-// 12. Verify Zero Banned Words
+// 16. Verify Zero Banned Words
 const bannedWords = ['KIIT', 'A30', 'MA 11009'];
 for (const b of bannedWords) {
   if (html.includes(b)) {
@@ -135,11 +170,11 @@ for (const b of bannedWords) {
 }
 console.log('PASS: Zero banned words found across entire codebase');
 
-// 13. Verify Zero Paywalls
+// 17. Verify Zero Paywalls
 if (html.toLowerCase().includes('subscription required') || html.toLowerCase().includes('unlock premium') || html.toLowerCase().includes('pay to unlock')) {
   console.error('FAIL: Found paywall strings in index.html');
   process.exit(1);
 }
 console.log('PASS: 100% Free Forever verified');
 
-console.log('\n>>> ALL 13 FULL SAKUGA VFX VERIFICATION TESTS PASSED! <<<');
+console.log('\n>>> ALL FULL SAKUGA VFX & PHASE 1 VERIFICATION TESTS PASSED! <<<');

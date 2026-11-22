@@ -153,6 +153,35 @@
       display: inline-flex;
       margin: 0 !important;
     }
+    #headerNavTabs::part(tabs) {
+      background: transparent;
+      border: 0;
+      box-shadow: none;
+      padding: 0;
+      gap: 2px;
+    }
+    #headerNavTabs::part(tab) {
+      padding: 6px 12px;
+      font-size: 12px;
+      font-weight: 700;
+      color: #94a3b8;
+      border: 0;
+      border-radius: 8px;
+    }
+    #headerNavTabs::part(indicator) {
+      background: #4f46e5;
+      border: 1px solid #818cf8;
+      border-radius: 8px;
+      top: 0;
+      bottom: 0;
+    }
+    canvas.sakuga-fx, .sakuga-fx {
+      pointer-events: none !important;
+    }
+      overflow: visible;
+      display: inline-flex;
+      margin: 0 !important;
+    }
     sakuga-progress {
       overflow: visible;
       display: block;
@@ -585,24 +614,22 @@
       </div>
 
       <nav class="flex items-center gap-0.5 sm:gap-1 bg-slate-100 dark:bg-slate-900/90 p-1 rounded-xl border border-slate-200/80 dark:border-slate-800 overflow-x-auto no-scrollbar shrink-0 lg:order-2" aria-label="Primary Views">
-        <button data-view="syllabus" class="nav-btn px-2 xl:px-3 py-1.5 rounded-lg text-xs font-semibold shrink-0 flex items-center gap-1 xl:gap-1.5 whitespace-nowrap transition-all">
-          <i data-lucide="home" class="w-3.5 h-3.5"></i><span>Home</span>
-        </button>
-        <button data-view="studio" class="nav-btn px-2 xl:px-3 py-1.5 rounded-lg text-xs font-semibold shrink-0 flex items-center gap-1 xl:gap-1.5 whitespace-nowrap transition-all">
-          <i data-lucide="book-open" class="w-3.5 h-3.5"></i><span>Formula Studio</span>
-        </button>
-        <button data-view="flashcards" class="nav-btn px-2 xl:px-3 py-1.5 rounded-lg text-xs font-semibold shrink-0 flex items-center gap-1 xl:gap-1.5 whitespace-nowrap transition-all">
-          <i data-lucide="layers" class="w-3.5 h-3.5"></i><span>150 Flashcards</span>
-        </button>
-        <button data-view="labs" class="nav-btn px-2 xl:px-3 py-1.5 rounded-lg text-xs font-semibold shrink-0 flex items-center gap-1 xl:gap-1.5 whitespace-nowrap transition-all">
-          <i data-lucide="activity" class="w-3.5 h-3.5"></i><span>100 Live Labs</span>
-        </button>
-        <button data-view="tables" class="nav-btn px-2 xl:px-3 py-1.5 rounded-lg text-xs font-semibold shrink-0 flex items-center gap-1 xl:gap-1.5 whitespace-nowrap transition-all">
-          <i data-lucide="table-2" class="w-3.5 h-3.5"></i><span>Master Tables</span>
-        </button>
-        <button data-view="test" class="nav-btn px-2 xl:px-3 py-1.5 rounded-lg text-xs font-semibold shrink-0 flex items-center gap-1 xl:gap-1.5 whitespace-nowrap transition-all">
-          <i data-lucide="crosshair" class="w-3.5 h-3.5 text-indigo-500"></i><span>Test Studio 🎯</span>
-        </button>
+        <sakuga-tabs id="headerNavTabs" label="Primary Views" class="m-0 p-0 flex items-center overflow-visible">
+          <option value="syllabus" selected>Home</option>
+          <option value="studio">Formula Studio</option>
+          <option value="flashcards">150 Flashcards</option>
+          <option value="labs">100 Live Labs</option>
+          <option value="tables">Master Tables</option>
+          <option value="test">Test Studio 🎯</option>
+        </sakuga-tabs>
+        <div class="sr-only">
+          <button data-view="syllabus" class="nav-btn">Home</button>
+          <button data-view="studio" class="nav-btn">Formula Studio</button>
+          <button data-view="flashcards" class="nav-btn">150 Flashcards</button>
+          <button data-view="labs" class="nav-btn">100 Live Labs</button>
+          <button data-view="tables" class="nav-btn">Master Tables</button>
+          <button data-view="test" class="nav-btn">Test Studio</button>
+        </div>
       </nav>
     </div>
   </header>
@@ -619,7 +646,7 @@
     <div class="w-full max-w-2xl ed-card rounded-2xl overflow-hidden border border-indigo-500/30">
       <div class="flex items-center gap-2.5 px-4 py-3 border-b border-slate-200 dark:border-slate-800">
         <i data-lucide="search" class="w-4 h-4 text-indigo-500 shrink-0"></i>
-        <input id="globalSearchInput" type="text" placeholder="Search 150 flashcards, 150 practice Qs, Cover-Up Rule, Bernoulli, Q199..." class="w-full bg-transparent text-sm outline-none placeholder:text-slate-400" autocomplete="off" />
+        <sakuga-input id="globalSearchInput" placeholder="Search 150 flashcards, 150 practice Qs, Cover-Up Rule, Bernoulli, Q199..." class="w-full"></sakuga-input>
         <button id="closeSearchBtn" class="px-2 py-1 rounded-lg text-xs font-mono bg-slate-100 dark:bg-slate-800">ESC</button>
       </div>
       <div id="searchResults" class="max-h-[62vh] overflow-y-auto p-3 space-y-1.5 text-sm"></div>
@@ -639,23 +666,23 @@
             <p class="text-xs text-slate-500 dark:text-slate-400">Real-time local study tracking across 7 chapters</p>
           </div>
         </div>
-        <button id="closeProgressModalBtn" class="px-2.5 py-1.5 rounded-xl text-xs font-mono bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 transition-colors">ESC</button>
+        <sakuga-button id="closeProgressModalBtn" class="cursor-pointer" style="--sk-r:8px; font-size:11px; padding:3px 10px;">✕ Close</sakuga-button>
       </div>
 
       <div id="progressModalContent" class="p-5 sm:p-6 space-y-5 max-h-[72vh] overflow-y-auto"></div>
 
       <div class="flex flex-wrap items-center justify-between gap-2.5 px-5 py-3.5 border-t border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/50 text-xs">
         <div class="flex flex-wrap items-center gap-2">
-          <button id="exportProgressBtn" class="px-3 py-1.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 font-semibold text-slate-700 dark:text-slate-200 hover:border-indigo-500 flex items-center gap-1.5 transition-colors cursor-pointer">
-            <i data-lucide="download" class="w-3.5 h-3.5"></i><span>Export Backup</span>
-          </button>
-          <button id="importProgressBtn" class="px-3 py-1.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 font-semibold text-slate-700 dark:text-slate-200 hover:border-indigo-500 flex items-center gap-1.5 transition-colors cursor-pointer">
-            <i data-lucide="upload" class="w-3.5 h-3.5"></i><span>Import Backup</span>
-          </button>
+          <sakuga-button id="exportProgressBtn" class="cursor-pointer" style="--sk-r:10px; font-size:11px; padding:4px 12px;">
+            <i data-lucide="download" class="w-3.5 h-3.5 mr-1 inline-block"></i><span>Export Backup</span>
+          </sakuga-button>
+          <sakuga-button id="importProgressBtn" class="cursor-pointer" style="--sk-r:10px; font-size:11px; padding:4px 12px;">
+            <i data-lucide="upload" class="w-3.5 h-3.5 mr-1 inline-block"></i><span>Import Backup</span>
+          </sakuga-button>
         </div>
-        <button id="resetProgressBtn" class="px-3 py-1.5 rounded-xl border border-rose-300 dark:border-rose-900/60 bg-rose-50 dark:bg-rose-950/30 text-rose-600 dark:text-rose-400 font-semibold hover:bg-rose-100 dark:hover:bg-rose-900/50 flex items-center gap-1.5 transition-colors cursor-pointer">
-          <i data-lucide="trash-2" class="w-3.5 h-3.5"></i><span>Reset Progress</span>
-        </button>
+        <sakuga-button id="resetProgressBtn" class="cursor-pointer" style="--sk-r:10px; font-size:11px; padding:4px 12px; --sk-pri:#e11d48; --sk-ink:#f43f5e;">
+          <i data-lucide="trash-2" class="w-3.5 h-3.5 mr-1 inline-block"></i><span>Reset Progress</span>
+        </sakuga-button>
       </div>
     </div>
   </div>
@@ -1704,6 +1731,7 @@
       const cont = document.getElementById('progressModalContent');
       if (!cont) return;
       const s = getAllCounts();
+      const currentTab = state.analyticsTab || 'overview';
 
       const lastStudiedBanner = state.lastStudied ? `
         <div class="p-3.5 rounded-2xl bg-indigo-50 dark:bg-indigo-950/40 border border-indigo-200 dark:border-indigo-800/60 flex flex-col sm:flex-row sm:items-center justify-between gap-2.5">
@@ -1711,60 +1739,167 @@
             <span class="text-[10px] font-mono font-bold uppercase tracking-wider text-indigo-600 dark:text-indigo-400">Continue Where You Left Off</span>
             <div class="text-xs font-bold truncate text-slate-800 dark:text-slate-100">${escHtml(state.lastStudied.title || 'In Progress')}</div>
           </div>
-          <button data-jump-chapter="${state.lastStudied.chapterId}" class="px-3 py-1.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs shadow-sm shrink-0 flex items-center gap-1 cursor-pointer">
-            <span>Resume Chapter</span><i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
-          </button>
+          <sakuga-button primary data-jump-chapter="${state.lastStudied.chapterId}" class="cursor-pointer" style="--sk-r:10px; font-size:11px; padding:5px 12px;">
+            <span>Resume Chapter</span><i data-lucide="arrow-right" class="w-3 h-3 ml-1 inline-block"></i>
+          </sakuga-button>
         </div>` : '';
 
-      cont.innerHTML = `
-        <div class="space-y-4">
-          <!-- Big Ring Overview -->
-          <div class="p-4 rounded-2xl bg-gradient-to-br from-indigo-50/80 to-cyan-50/60 dark:from-slate-900 dark:to-indigo-950/40 border border-indigo-500/20 flex items-center gap-4">
-            <div class="relative w-16 h-16 shrink-0 flex items-center justify-center">
-              <svg class="w-16 h-16 -rotate-90" viewBox="0 0 36 36">
-                <circle cx="18" cy="18" r="15.9155" fill="none" class="stroke-slate-200 dark:stroke-slate-800" stroke-width="3"></circle>
-                <circle cx="18" cy="18" r="15.9155" fill="none" class="stroke-indigo-600 dark:stroke-indigo-400" stroke-width="3" stroke-linecap="round" stroke-dasharray="100" stroke-dashoffset="${100 - s.pct}"></circle>
-              </svg>
-              <span class="absolute font-mono font-extrabold text-sm text-slate-900 dark:text-white">${s.pct}%</span>
+      // Tab Content Views
+      let tabBodyHtml = '';
+
+      if (currentTab === 'overview') {
+        tabBodyHtml = `
+          <!-- Big Ring & Syllabus Readiness Bar -->
+          <div class="p-4 rounded-2xl bg-gradient-to-br from-indigo-50/80 to-cyan-50/60 dark:from-slate-900 dark:to-indigo-950/40 border border-indigo-500/20 space-y-3">
+            <div class="flex items-center gap-4">
+              <div class="relative w-16 h-16 shrink-0 flex items-center justify-center">
+                <svg class="w-16 h-16 -rotate-90" viewBox="0 0 36 36">
+                  <circle cx="18" cy="18" r="15.9155" fill="none" class="stroke-slate-200 dark:stroke-slate-800" stroke-width="3"></circle>
+                  <circle cx="18" cy="18" r="15.9155" fill="none" class="stroke-indigo-600 dark:stroke-indigo-400" stroke-width="3" stroke-linecap="round" stroke-dasharray="100" stroke-dashoffset="${100 - s.pct}"></circle>
+                </svg>
+                <span class="absolute font-mono font-extrabold text-sm text-slate-900 dark:text-white">${s.pct}%</span>
+              </div>
+              <div class="min-w-0 flex-1">
+                <div class="flex items-center gap-1.5">
+                  <h4 class="font-extrabold text-sm sm:text-base text-slate-900 dark:text-white">Overall Calculus &amp; DE Syllabus Progress</h4>
+                  <sakuga-popover text="Your cumulative completion percentage across all 7 syllabus chapters, 150 practice questions, and 100 animated labs." class="cursor-help">ℹ️</sakuga-popover>
+                </div>
+                <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">${s.doneTopics} of ${s.totalTopics} topics studied · ${s.doneQ} of ${s.totalQ} practice questions solved</p>
+              </div>
             </div>
-            <div class="min-w-0">
-              <h4 class="font-extrabold text-sm sm:text-base text-slate-900 dark:text-white">Overall Calculus &amp; DE Syllabus Progress</h4>
-              <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">${s.doneTopics} of ${s.totalTopics} topics studied · ${s.doneQ} of ${s.totalQ} practice questions solved</p>
+            <div class="pt-2 border-t border-slate-200/80 dark:border-slate-800">
+              <div class="flex justify-between items-center text-xs font-mono font-bold mb-1">
+                <span>Syllabus Readiness Meter</span>
+                <span class="text-indigo-600 dark:text-indigo-400">${s.pct}% Ready</span>
+              </div>
+              <sakuga-progress id="analyticsSyllabusProgress" label="Syllabus Readiness" value="${(s.pct / 100).toFixed(2)}" class="w-full"></sakuga-progress>
+            </div>
+          </div>
+
+          <!-- 4 Core Metrics Grid with Tooltips -->
+          <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
+            <div class="p-3 rounded-xl bg-slate-50 dark:bg-slate-900/60 border border-slate-200/80 dark:border-slate-800 space-y-1">
+              <div class="flex items-center justify-between text-[11px] text-slate-500 font-medium">
+                <span>Formulas</span>
+                <sakuga-popover text="Total mastered engineering math formulas synced permanently to your lifetime profile." class="cursor-help">💡</sakuga-popover>
+              </div>
+              <div class="text-base font-extrabold font-mono text-purple-600 dark:text-purple-400">${s.doneFormulas || Object.keys(state.mastered || {}).length}</div>
+            </div>
+            <div class="p-3 rounded-xl bg-slate-50 dark:bg-slate-900/60 border border-slate-200/80 dark:border-slate-800 space-y-1">
+              <div class="flex items-center justify-between text-[11px] text-slate-500 font-medium">
+                <span>Qs Solved</span>
+                <sakuga-popover text="Total practice and exam questions successfully recalled or solved." class="cursor-help">💡</sakuga-popover>
+              </div>
+              <div class="text-base font-extrabold font-mono text-emerald-600 dark:text-emerald-400">${s.doneQ} / ${s.totalQ}</div>
+            </div>
+            <div class="p-3 rounded-xl bg-slate-50 dark:bg-slate-900/60 border border-slate-200/80 dark:border-slate-800 space-y-1">
+              <div class="flex items-center justify-between text-[11px] text-slate-500 font-medium">
+                <span>Cards Known</span>
+                <sakuga-popover text="Flashcards marked known or rated high confidence for active recall." class="cursor-help">💡</sakuga-popover>
+              </div>
+              <div class="text-base font-extrabold font-mono text-fuchsia-600 dark:text-fuchsia-400">${s.doneCards} / ${s.totalCards}</div>
+            </div>
+            <div class="p-3 rounded-xl bg-slate-50 dark:bg-slate-900/60 border border-slate-200/80 dark:border-slate-800 space-y-1">
+              <div class="flex items-center justify-between text-[11px] text-slate-500 font-medium">
+                <span>Labs Explored</span>
+                <sakuga-popover text="Interactive visual labs explored and animated at 60 FPS." class="cursor-help">💡</sakuga-popover>
+              </div>
+              <div class="text-base font-extrabold font-mono text-cyan-600 dark:text-cyan-400">${s.doneLabs} / ${s.totalLabs}</div>
             </div>
           </div>
 
           ${lastStudiedBanner}
-
-          <!-- Chapter Breakdown Grid -->
-          <div class="space-y-2">
-            <h5 class="text-xs font-mono font-bold uppercase tracking-wider text-slate-500">Chapter-by-Chapter Study Progress</h5>
-            <div class="space-y-2">
-              ${CHAPTERS.map(c => {
-                const cs = getChapterStats(c);
-                return `
-                  <div class="p-3 rounded-2xl bg-slate-50 dark:bg-slate-900/60 border border-slate-200/80 dark:border-slate-800 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-                    <div class="flex items-center gap-2.5 min-w-0">
+        `;
+      } else if (currentTab === 'chapters') {
+        tabBodyHtml = `
+          <div class="space-y-3">
+            ${CHAPTERS.map(c => {
+              const cs = getChapterStats(c);
+              return `
+                <div class="p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-900/60 border border-slate-200/80 dark:border-slate-800 space-y-2">
+                  <div class="flex items-center justify-between gap-3">
+                    <div class="flex items-center gap-2 min-w-0">
                       <span class="px-2.5 py-1 rounded-lg text-[10px] font-mono font-extrabold text-white shrink-0" style="background:${c.gradCss}">${c.co}</span>
                       <div class="min-w-0">
                         <div class="text-xs font-bold truncate text-slate-800 dark:text-slate-200">${escHtml(c.shortTitle)}</div>
                         <div class="text-[10px] text-slate-400 font-mono">${cs.doneTopics}/${cs.totalTopics} Topics · ${cs.doneQ}/${cs.totalQ} Qs · ${cs.doneLabs}/${cs.totalLabs} Labs</div>
                       </div>
                     </div>
-                    <div class="flex items-center gap-3 shrink-0">
-                      <div class="w-24 sm:w-28 space-y-1">
-                        <div class="flex justify-between text-[10px] font-mono font-bold"><span>Progress</span><span>${cs.pct}%</span></div>
-                        <div class="h-1.5 rounded-full bg-slate-200 dark:bg-slate-700 overflow-hidden">
-                          <div class="h-full rounded-full" style="width:${cs.pct}%; background:${c.accentHex}"></div>
-                        </div>
-                      </div>
-                      <button data-jump-chapter="${c.id}" class="px-2.5 py-1 rounded-lg text-xs font-bold bg-indigo-600/10 hover:bg-indigo-600 text-indigo-700 dark:text-indigo-300 hover:text-white transition-colors cursor-pointer">Study →</button>
-                    </div>
-                  </div>`;
-              }).join('')}
-            </div>
+                    <sakuga-button data-jump-chapter="${c.id}" class="cursor-pointer shrink-0" style="--sk-r:8px; font-size:10px; padding:4px 10px;">Study ${c.co} →</sakuga-button>
+                  </div>
+                  <sakuga-progress label="${c.co} Progress" value="${(cs.pct / 100).toFixed(2)}" style="--sk-pri:${c.accentHex}; width:100%;"></sakuga-progress>
+                </div>`;
+            }).join('')}
           </div>
+        `;
+      } else if (currentTab === 'tests') {
+        const hist = state.testHistory || [];
+        tabBodyHtml = `
+          <div class="space-y-3">
+            <div class="p-4 rounded-2xl bg-slate-50 dark:bg-slate-900/60 border border-slate-200/80 dark:border-slate-800 flex items-center justify-between">
+              <div>
+                <div class="text-xs font-bold text-slate-500 uppercase font-mono">Exam Simulator History</div>
+                <div class="text-base font-extrabold text-slate-900 dark:text-white mt-0.5">${hist.length} Tests Attempted</div>
+              </div>
+              <sakuga-button primary data-view="test" class="cursor-pointer" style="--sk-r:10px; font-size:11px; padding:6px 14px;">Open Test Studio</sakuga-button>
+            </div>
+            ${hist.length ? hist.slice(0, 5).map(t => `
+              <div class="p-3 rounded-xl bg-slate-50 dark:bg-slate-900/60 border border-slate-200/80 dark:border-slate-800 flex items-center justify-between text-xs">
+                <div>
+                  <div class="font-bold">${escHtml(t.testTitle)}</div>
+                  <div class="text-[10px] text-slate-400 font-mono">${t.date} · ${t.correctCount}/${t.totalQuestions} Correct</div>
+                </div>
+                <span class="px-2.5 py-1 rounded-lg font-mono font-bold text-white bg-indigo-600">${t.percentage}%</span>
+              </div>
+            `).join('') : '<div class="p-6 text-center text-xs text-slate-400">No tests taken yet. Launch 50M Exam or Custom Quiz in Test Studio!</div>'}
+          </div>
+        `;
+      } else if (currentTab === 'weak') {
+        const weakChapters = CHAPTERS.map(c => ({ chapter: c, stats: getChapterStats(c) }))
+          .sort((a, b) => a.stats.pct - b.stats.pct);
+        tabBodyHtml = `
+          <div class="space-y-3">
+            <div class="text-xs text-slate-500 font-mono">Target your lowest completion chapters to maximize overall syllabus readiness:</div>
+            ${weakChapters.slice(0, 3).map(w => `
+              <div class="p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-900/60 border border-slate-200/80 dark:border-slate-800 flex items-center justify-between gap-3">
+                <div class="min-w-0">
+                  <div class="flex items-center gap-1.5">
+                    <span class="px-2 py-0.5 rounded text-[10px] font-mono font-extrabold text-white" style="background:${w.chapter.accentHex}">${w.chapter.co}</span>
+                    <span class="text-xs font-bold truncate">${escHtml(w.chapter.shortTitle)}</span>
+                  </div>
+                  <div class="text-[10px] text-slate-400 font-mono mt-0.5">${w.stats.pct}% Completed · ${w.stats.totalTopics - w.stats.doneTopics} Topics remaining</div>
+                </div>
+                <sakuga-button primary data-jump-chapter="${w.chapter.id}" class="cursor-pointer shrink-0" style="--sk-r:8px; font-size:10px; padding:5px 12px;">Retake Weak Chapter</sakuga-button>
+              </div>
+            `).join('')}
+          </div>
+        `;
+      }
+
+      cont.innerHTML = `
+        <div class="space-y-4">
+          <!-- Sub-tabs for Analytics Views -->
+          <div class="w-full overflow-x-auto pb-1">
+            <sakuga-tabs id="analyticsSubTabs" label="Analytics View" class="w-full overflow-x-auto">
+              <option value="overview" ${currentTab === 'overview' ? 'selected' : ''}>Overview</option>
+              <option value="chapters" ${currentTab === 'chapters' ? 'selected' : ''}>Chapter Mastery</option>
+              <option value="tests" ${currentTab === 'tests' ? 'selected' : ''}>Test History</option>
+              <option value="weak" ${currentTab === 'weak' ? 'selected' : ''}>Weak Areas</option>
+            </sakuga-tabs>
+          </div>
+
+          ${tabBodyHtml}
         </div>
       `;
+
+      const subTabsEl = document.getElementById('analyticsSubTabs');
+      if (subTabsEl) {
+        subTabsEl.addEventListener('change', () => {
+          state.analyticsTab = subTabsEl.value;
+          renderProgressModalContent();
+          refreshIcons();
+        });
+      }
     }
 
     const LEVEL_BADGE = {
@@ -1815,7 +1950,25 @@
 
     function updateNavButtons() {
       const cur = state.view || 'syllabus';
-      document.querySelectorAll('.nav-btn').forEach(btn => {
+      const headerNavTabs = document.getElementById('headerNavTabs');
+      if (headerNavTabs) {
+        const views = ['syllabus', 'studio', 'flashcards', 'labs', 'tables', 'test'];
+        const idx = views.indexOf(cur);
+        if (idx !== -1 && headerNavTabs.selected !== idx) {
+          headerNavTabs.selected = idx;
+        }
+      }
+      const headerNavTabsEl = document.getElementById('headerNavTabs');
+    if (headerNavTabsEl) {
+      headerNavTabsEl.addEventListener('change', () => {
+        const v = headerNavTabsEl.value;
+        if (v && v !== state.view) {
+          switchView(v);
+        }
+      });
+    }
+
+    document.querySelectorAll('.nav-btn').forEach(btn => {
         const v = btn.dataset.view;
         const active = (v === cur);
         if (active) {
@@ -5022,15 +5175,15 @@
                 <span class="px-3 py-1.5 rounded-xl bg-white/10 border border-white/15">Active Recall: <strong class="text-fuchsia-300">150 Flashcards + 150 Worked Qs</strong></span>
               </div>
               <div class="flex flex-wrap gap-2.5 pt-1">
-                <button data-view="studio" class="px-4 py-2 rounded-xl text-xs font-bold bg-indigo-600 hover:bg-indigo-500 text-white shadow-lg shadow-indigo-500/30 flex items-center gap-1.5 transition-transform active:scale-95 cursor-pointer">
-                  <i data-lucide="book-open" class="w-3.5 h-3.5"></i><span>Open Formula Studio</span>
-                </button>
-                <button data-view="flashcards" class="px-4 py-2 rounded-xl text-xs font-bold bg-white/15 hover:bg-white/25 text-white border border-white/25 flex items-center gap-1.5 transition-transform active:scale-95 cursor-pointer">
-                  <i data-lucide="layers" class="w-3.5 h-3.5"></i><span>Practice 150 Flashcards</span>
-                </button>
-                <button data-view="labs" class="px-4 py-2 rounded-xl text-xs font-bold bg-cyan-500/20 hover:bg-cyan-500/30 text-cyan-200 border border-cyan-400/35 flex items-center gap-1.5 transition-transform active:scale-95 cursor-pointer">
-                  <i data-lucide="activity" class="w-3.5 h-3.5"></i><span>Explore 100 Live Labs</span>
-                </button>
+                <sakuga-button primary data-view="studio" class="cursor-pointer overflow-visible" style="--sk-r:12px; font-size:12px; padding:7px 16px;">
+                  <i data-lucide="book-open" class="w-3.5 h-3.5 mr-1 inline-block"></i><span>Open Formula Studio</span>
+                </sakuga-button>
+                <sakuga-button data-view="flashcards" class="cursor-pointer overflow-visible" style="--sk-r:12px; font-size:12px; padding:7px 16px;">
+                  <i data-lucide="layers" class="w-3.5 h-3.5 mr-1 inline-block"></i><span>Practice 150 Flashcards</span>
+                </sakuga-button>
+                <sakuga-button data-view="labs" class="cursor-pointer overflow-visible" style="--sk-r:12px; font-size:12px; padding:7px 16px; --sk-pri:#06b6d4; --sk-ink:#22d3ee;">
+                  <i data-lucide="activity" class="w-3.5 h-3.5 mr-1 inline-block"></i><span>Explore 100 Live Labs</span>
+                </sakuga-button>
               </div>
             </div>
           </div>
@@ -5066,22 +5219,21 @@
                     <span>Resume: ${escHtml(state.lastStudied.title.split(':')[0].split(',')[0])}</span>
                   </button>
                 ` : ''}
-                <button data-open-progress-modal class="px-3.5 py-2 rounded-xl text-xs font-bold bg-indigo-600 hover:bg-indigo-500 text-white shadow-md flex items-center gap-1.5 transition-transform active:scale-95 cursor-pointer">
-                  <i data-lucide="bar-chart-2" class="w-3.5 h-3.5"></i><span>Study Analytics</span>
-                </button>
+                <sakuga-button primary data-open-progress-modal class="cursor-pointer overflow-visible" style="--sk-r:12px; font-size:12px; padding:6px 14px;">
+                  <i data-lucide="bar-chart-2" class="w-3.5 h-3.5 mr-1 inline-block"></i><span>Study Analytics</span>
+                </sakuga-button>
               </div>
             </div>
 
-            <!-- 4 Live Metric Stat Cards -->
+            <!-- 4 Live Metric Stat Cards with Sakuga-Progress -->
             <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 pt-1">
               <div class="p-3 rounded-2xl bg-white/90 dark:bg-slate-800/80 border border-slate-200/80 dark:border-slate-700/80 space-y-1.5">
                 <div class="flex justify-between items-center text-[11px] font-semibold text-slate-600 dark:text-slate-300">
                   <span class="flex items-center gap-1"><i data-lucide="book" class="w-3 h-3 text-indigo-500"></i>Topics Done</span>
                   <span id="dashTopicsRatio" class="font-mono font-bold text-indigo-600 dark:text-indigo-400">${stats.doneTopics}/${stats.totalTopics}</span>
                 </div>
-                <div class="h-1.5 rounded-full bg-slate-200 dark:bg-slate-700 overflow-hidden">
-                  <div id="dashTopicsBar" class="h-full rounded-full bg-indigo-600 transition-all duration-500" style="width:${stats.totalTopics ? Math.round((stats.doneTopics / stats.totalTopics) * 100) : 0}%"></div>
-                </div>
+                <sakuga-progress id="dashTopicsSakugaBar" label="Topics Done" value="${stats.totalTopics ? (stats.doneTopics / stats.totalTopics).toFixed(2) : 0}" style="--sk-pri:#6366f1; width:100%;" class="w-full block"></sakuga-progress>
+                <div class="hidden"><div id="dashTopicsBar"></div></div>
               </div>
 
               <div class="p-3 rounded-2xl bg-white/90 dark:bg-slate-800/80 border border-slate-200/80 dark:border-slate-700/80 space-y-1.5">
@@ -5089,6 +5241,28 @@
                   <span class="flex items-center gap-1"><i data-lucide="brain" class="w-3 h-3 text-emerald-500"></i>Qs Solved</span>
                   <span id="dashQsRatio" class="font-mono font-bold text-emerald-600 dark:text-emerald-400">${stats.doneQ}/${stats.totalQ}</span>
                 </div>
+                <sakuga-progress id="dashQsSakugaBar" label="Qs Solved" value="${stats.totalQ ? (stats.doneQ / stats.totalQ).toFixed(2) : 0}" style="--sk-pri:#10b981; width:100%;" class="w-full block"></sakuga-progress>
+                <div class="hidden"><div id="dashQsBar"></div></div>
+              </div>
+
+              <div class="p-3 rounded-2xl bg-white/90 dark:bg-slate-800/80 border border-slate-200/80 dark:border-slate-700/80 space-y-1.5">
+                <div class="flex justify-between items-center text-[11px] font-semibold text-slate-600 dark:text-slate-300">
+                  <span class="flex items-center gap-1"><i data-lucide="layers" class="w-3 h-3 text-fuchsia-500"></i>Cards Known</span>
+                  <span id="dashCardsRatio" class="font-mono font-bold text-fuchsia-600 dark:text-fuchsia-400">${stats.doneCards}/${stats.totalCards}</span>
+                </div>
+                <sakuga-progress id="dashCardsSakugaBar" label="Cards Known" value="${stats.totalCards ? (stats.doneCards / stats.totalCards).toFixed(2) : 0}" style="--sk-pri:#d946ef; width:100%;" class="w-full block"></sakuga-progress>
+                <div class="hidden"><div id="dashCardsBar"></div></div>
+              </div>
+
+              <div class="p-3 rounded-2xl bg-white/90 dark:bg-slate-800/80 border border-slate-200/80 dark:border-slate-700/80 space-y-1.5">
+                <div class="flex justify-between items-center text-[11px] font-semibold text-slate-600 dark:text-slate-300">
+                  <span class="flex items-center gap-1"><i data-lucide="activity" class="w-3 h-3 text-cyan-500"></i>Labs Explored</span>
+                  <span id="dashLabsRatio" class="font-mono font-bold text-cyan-600 dark:text-cyan-400">${stats.doneLabs}/${stats.totalLabs}</span>
+                </div>
+                <sakuga-progress id="dashLabsSakugaBar" label="Labs Explored" value="${stats.totalLabs ? (stats.doneLabs / stats.totalLabs).toFixed(2) : 0}" style="--sk-pri:#06b6d4; width:100%;" class="w-full block"></sakuga-progress>
+                <div class="hidden"><div id="dashLabsBar"></div></div>
+              </div>
+            </div>
                 <div class="h-1.5 rounded-full bg-slate-200 dark:bg-slate-700 overflow-hidden">
                   <div id="dashQsBar" class="h-full rounded-full bg-emerald-600 transition-all duration-500" style="width:${stats.totalQ ? Math.round((stats.doneQ / stats.totalQ) * 100) : 0}%"></div>
                 </div>
