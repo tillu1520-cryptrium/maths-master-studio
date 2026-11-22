@@ -1,0 +1,19 @@
+{
+  "name": "Maths Master Studio — Interactive Calculus & Differential Equations",
+  "short_name": "Maths Master",
+  "description": "Interactive Calculus & Differential Equations with 150 Flashcards, 150 Worked Qs, and 100 Live Animated Labs.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#f3f6fc",
+  "theme_color": "#312e81",
+  "orientation": "any",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
+
