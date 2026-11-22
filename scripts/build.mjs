@@ -5,7 +5,7 @@ import { execSync } from 'child_process';
 console.log('--- EXECUTING BUILD PIPELINE ---');
 
 // 1. Run Verification Test Suites
-execSync('node scripts/test_phase2.mjs', { stdio: 'inherit' });
+execSync('node scripts/test_full_vfx.mjs', { stdio: 'inherit' });
 execSync('node scripts/test_toggle.mjs', { stdio: 'inherit' });
 
 // 2. Ensure public/ directory has all root assets
@@ -29,12 +29,17 @@ for (const file of syncFiles) {
   }
 }
 
-// Ensure public/sakuga-vfx has all 4 scripts
+const allSakugaScripts = [
+  'button.js', 'toggle.js', 'slider.js', 'checkbox.js', 'radio.js',
+  'input.js', 'tabs.js', 'progress.js', 'rating.js', 'toast.js', 'tooltip.js'
+];
+
+// Ensure public/sakuga-vfx has all 11 scripts
 if (fs.existsSync('sakuga-vfx')) {
   if (!fs.existsSync('public/sakuga-vfx')) {
     fs.mkdirSync('public/sakuga-vfx', { recursive: true });
   }
-  for (const s of ['button.js', 'progress.js', 'slider.js', 'toast.js']) {
+  for (const s of allSakugaScripts) {
     if (fs.existsSync(path.join('sakuga-vfx', s))) {
       fs.copyFileSync(path.join('sakuga-vfx', s), path.join('public/sakuga-vfx', s));
       console.log(`Synced sakuga-vfx/${s} -> public/sakuga-vfx/${s}`);
