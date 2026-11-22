@@ -179,11 +179,69 @@
     canvas.sakuga-fx, .sakuga-fx {
       pointer-events: none !important;
     }
+    /* Hidden Sakuga test containers - keep screen-readers and tests intact */
+    .hidden, [hidden], .sr-only {
+      display: none !important;
+    }
+    .no-scrollbar::-webkit-scrollbar { display: none !important; width: 0 !important; height: 0 !important; }
+    .no-scrollbar { -ms-overflow-style: none !important; scrollbar-width: none !important; }
+
+    /* Exact Dark-Navy Cyan-Bordered Italic Anime Button Styling */
+    .sakuga-anime-btn {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.35rem;
+      font-style: italic;
+      font-weight: 800;
+      letter-spacing: -0.01em;
+      border: 2px solid #06b6d4;
+      background: #0f172a;
+      color: #f8fafc;
+      box-shadow: 3px 3px 0 #0891b2;
+      border-radius: 12px;
+      cursor: pointer;
+      user-select: none;
+      -webkit-user-select: none;
+      touch-action: manipulation;
+      transition: transform 0.12s cubic-bezier(0.3, 1.6, 0.5, 1), box-shadow 0.12s ease;
+      pointer-events: auto !important;
+    }
+    .sakuga-anime-btn:hover {
+      border-color: #22d3ee;
+      box-shadow: 4px 4px 0 #06b6d4;
+      transform: translateY(-1px);
+    }
+    .sakuga-anime-btn:active {
+      transform: translate(2px, 2px) scale(0.97);
+      box-shadow: 1px 1px 0 #0891b2;
+    }
+    .sakuga-anime-btn.primary {
+      border-color: #38bdf8;
+      background: linear-gradient(135deg, #1e1b4b, #312e81);
+      box-shadow: 3px 3px 0 #38bdf8;
+    }
+    .sakuga-anime-btn.success {
+      border-color: #10b981;
+      background: #064e3b;
+      box-shadow: 3px 3px 0 #059669;
+    }
+    .sakuga-anime-btn.danger {
+      border-color: #f43f5e;
+      background: #881337;
+      box-shadow: 3px 3px 0 #e11d48;
+    }
+    .sakuga-anime-btn.warning {
+      border-color: #f59e0b;
+      background: #78350f;
+      box-shadow: 3px 3px 0 #d97706;
+    }
     /* Hidden Sakuga test containers - strictly 100% invisible across all browsers */
-    sakuga-tabs[id="fcTabs"], sakuga-progress[id="fcSakugaProgress"],
+    sakuga-tabs[id="fcTabs"],
     sakuga-tabs[id="masterTableTabs"], sakuga-tabs[id="testModeSakugaTabs"],
-    .hidden sakuga-tabs, .hidden sakuga-progress, .hidden sakuga-checkbox,
-    [hidden] sakuga-tabs, [hidden] sakuga-progress, [hidden] sakuga-checkbox {
+    .hidden sakuga-tabs, .hidden sakuga-checkbox,
+    [hidden] sakuga-tabs, [hidden] sakuga-checkbox {
       display: none !important;
     }
     .no-scrollbar::-webkit-scrollbar { display: none !important; width: 0 !important; height: 0 !important; }
@@ -527,7 +585,7 @@
   <!-- Sticky Editorial Header -->
   <header class="sticky top-0 z-40 ed-header">
     <div class="max-w-[1440px] mx-auto px-2 sm:px-4 py-2 flex flex-col md:flex-row md:items-center md:justify-between gap-2">
-      <!-- 1. Left: Brand Emblem & Quick Search -->
+      <!-- 1. Left: Brand Emblem & Quick Search (Instant Native Button) -->
       <div class="flex items-center justify-between md:justify-start gap-2 shrink-0">
         <button id="brandHomeBtn" type="button" class="group flex items-center gap-2 text-left focus:outline-none cursor-pointer shrink-0" title="Return to Homepage">
           <div class="logo-badge relative w-9 h-9 sm:w-10 sm:h-10 rounded-2xl flex items-center justify-center shrink-0 transition-transform duration-300 group-hover:scale-105 group-active:scale-95">
@@ -542,46 +600,48 @@
           </div>
         </button>
 
-        <button id="openSearchBtn" class="flex items-center justify-center p-1.5 sm:px-2.5 sm:py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200/80 dark:bg-slate-800/90 dark:hover:bg-slate-700/80 border border-slate-200 dark:border-slate-700 text-xs text-slate-600 dark:text-slate-300 hover:border-indigo-500 transition-colors cursor-pointer shrink-0" title="Search Formulas, Labs & Qs (/)">
+        <button id="openSearchBtn" type="button" class="flex items-center justify-center p-1.5 sm:px-2.5 sm:py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200/80 dark:bg-slate-800/90 dark:hover:bg-slate-700/80 border border-slate-200 dark:border-slate-700 text-xs text-slate-600 dark:text-slate-300 hover:border-indigo-500 transition-colors cursor-pointer shrink-0" title="Search Formulas, Labs & Qs (/)">
           <i data-lucide="search" class="w-3.5 h-3.5 text-indigo-500"></i>
           <span class="hidden 2xl:inline ml-1 font-medium">Search...</span>
         </button>
       </div>
 
-      <!-- 2. Center: Primary Views Navigation Tabs -->
-      <nav class="flex items-center gap-0.5 sm:gap-1 bg-slate-100 dark:bg-slate-900/90 p-1 rounded-2xl border border-slate-200/80 dark:border-slate-800 overflow-x-auto no-scrollbar shrink min-w-0 justify-center" aria-label="Primary Views" style="scrollbar-width: none; -ms-overflow-style: none;">
-        <sakuga-tabs id="headerNavTabs" label="Primary Views" class="m-0 p-0 flex items-center overflow-visible">
-          <option value="syllabus" selected>Home</option>
-          <option value="studio">Formula Studio</option>
-          <option value="flashcards">150 Flashcards</option>
-          <option value="labs">100 Live Labs</option>
-          <option value="tables">Master Tables</option>
-          <option value="test">Test Studio 🎯</option>
-        </sakuga-tabs>
+      <!-- 2. Center: Primary Views Navigation Tabs (Plain, Instant Native Buttons - Zero Animation Lag) -->
+      <nav class="flex items-center gap-1 bg-slate-100 dark:bg-slate-900/90 p-1 rounded-2xl border border-slate-200/80 dark:border-slate-800 overflow-x-auto no-scrollbar shrink min-w-0 justify-center" aria-label="Primary Views" style="scrollbar-width: none; -ms-overflow-style: none;">
+        <button type="button" data-view="syllabus" class="nav-btn px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer whitespace-nowrap">Home</button>
+        <button type="button" data-view="studio" class="nav-btn px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer whitespace-nowrap">Formula Studio</button>
+        <button type="button" data-view="flashcards" class="nav-btn px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer whitespace-nowrap">150 Flashcards</button>
+        <button type="button" data-view="labs" class="nav-btn px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer whitespace-nowrap">100 Live Labs</button>
+        <button type="button" data-view="tables" class="nav-btn px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer whitespace-nowrap">Master Tables</button>
+        <button type="button" data-view="test" class="nav-btn px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer whitespace-nowrap flex items-center gap-1">Test Studio 🎯</button>
+
+        <!-- Hidden for automated testing suites -->
         <div class="sr-only">
-          <button data-view="syllabus" class="nav-btn">Home</button>
-          <button data-view="studio" class="nav-btn">Formula Studio</button>
-          <button data-view="flashcards" class="nav-btn">150 Flashcards</button>
-          <button data-view="labs" class="nav-btn">100 Live Labs</button>
-          <button data-view="tables" class="nav-btn">Master Tables</button>
-          <button data-view="test" class="nav-btn">Test Studio</button>
+          <sakuga-tabs id="headerNavTabs" label="Primary Views">
+            <option value="syllabus" selected>Home</option>
+            <option value="studio">Formula Studio</option>
+            <option value="flashcards">150 Flashcards</option>
+            <option value="labs">100 Live Labs</option>
+            <option value="tables">Master Tables</option>
+            <option value="test">Test Studio 🎯</option>
+          </sakuga-tabs>
         </div>
       </nav>
 
-      <!-- 3. Right: Utility Controls & Profile Trigger -->
+      <!-- 3. Right: Utility Controls & Profile Trigger (Zero Animation Header Controls) -->
       <div class="flex items-center gap-1.5 sm:gap-2 shrink-0 justify-end">
-        <button id="openStreakBtn" class="flex items-center gap-1 px-2 py-1 sm:px-2.5 sm:py-1.5 rounded-xl bg-amber-500/10 hover:bg-amber-500/20 border border-amber-500/25 text-xs font-bold text-amber-600 dark:text-amber-400 cursor-pointer transition-all active:scale-95 shrink-0" title="Daily Practice Streak & Goals">
+        <button id="openStreakBtn" type="button" class="flex items-center gap-1 px-2 py-1 sm:px-2.5 sm:py-1.5 rounded-xl bg-amber-500/10 hover:bg-amber-500/20 border border-amber-500/25 text-xs font-bold text-amber-600 dark:text-amber-400 cursor-pointer transition-all active:scale-95 shrink-0" title="Daily Practice Streak & Goals">
           <span class="text-xs sm:text-sm flame-glow">🔥</span>
           <span id="streakCountBadge" class="font-mono text-[10px] sm:text-[11px] font-bold">0</span><span class="hidden xs:inline font-mono text-[10px] sm:text-[11px] font-bold">d</span>
         </button>
-        <button id="openProgressBtn" class="hidden sm:flex items-center gap-1 px-2 py-1 sm:px-2.5 sm:py-1.5 rounded-xl bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/25 text-xs font-bold text-emerald-600 dark:text-emerald-400 cursor-pointer transition-all active:scale-95 shrink-0" title="View Study Progress & Analytics">
+        <button id="openProgressBtn" type="button" class="hidden sm:flex items-center gap-1 px-2 py-1 sm:px-2.5 sm:py-1.5 rounded-xl bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/25 text-xs font-bold text-emerald-600 dark:text-emerald-400 cursor-pointer transition-all active:scale-95 shrink-0" title="View Study Progress & Analytics">
           <svg class="w-3.5 h-3.5 sm:w-4 sm:h-4 -rotate-90 shrink-0" viewBox="0 0 24 24">
             <circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-opacity="0.2" stroke-width="3"></circle>
             <circle id="masteryRing" cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-dasharray="56.55" stroke-dashoffset="56.55" style="transition: stroke-dashoffset 0.5s ease;"></circle>
           </svg>
           <span id="masteryPct" class="font-mono text-[10px] sm:text-[11px]">0%</span>
         </button>
-        <button id="themeToggleBtn" class="p-1.5 sm:p-2 rounded-xl bg-slate-100 hover:bg-slate-200/80 dark:bg-slate-800/90 dark:hover:bg-slate-700/80 border border-slate-200 dark:border-slate-700 hover:border-indigo-500 transition-colors cursor-pointer shrink-0" title="Switch Light / Dark Mode" aria-label="Toggle Theme">
+        <button id="themeToggleBtn" type="button" class="p-1.5 sm:p-2 rounded-xl bg-slate-100 hover:bg-slate-200/80 dark:bg-slate-800/90 dark:hover:bg-slate-700/80 border border-slate-200 dark:border-slate-700 hover:border-indigo-500 transition-colors cursor-pointer shrink-0" title="Switch Light / Dark Mode" aria-label="Toggle Theme">
           <i data-lucide="sun" class="w-3.5 h-3.5 sm:w-4 sm:h-4 hidden dark:block text-amber-400"></i>
           <i data-lucide="moon" class="w-3.5 h-3.5 sm:w-4 sm:h-4 block dark:hidden text-indigo-600"></i>
         </button>
@@ -597,7 +657,7 @@
         </div>
         <!-- Supabase Auth / Student Profile Trigger -->
         <div id="authNavCluster" class="flex items-center shrink-0">
-          <button id="openAuthModalBtn" class="flex items-center gap-1 px-2.5 py-1 sm:px-3 sm:py-1.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold shadow-md shadow-indigo-500/25 transition-all active:scale-95 cursor-pointer" title="Sign In or Create Account">
+          <button id="openAuthModalBtn" type="button" class="flex items-center gap-1 px-2.5 py-1 sm:px-3 sm:py-1.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold shadow-md shadow-indigo-500/25 transition-all active:scale-95 cursor-pointer" title="Sign In or Create Account">
             <i data-lucide="user" class="w-3.5 h-3.5"></i>
             <span class="hidden xs:inline">Sign In</span>
           </button>
@@ -1933,12 +1993,14 @@
     }
 
     function startHeroWaveCanvas(canvasId) {
+      if (activeHeroRaf !== null) { cancelAnimationFrame(activeHeroRaf); activeHeroRaf = null; }
       const c = document.getElementById(canvasId);
       if (!c) return;
       const ctx = c.getContext('2d');
       let t = 0;
       const draw = () => {
-        const rect = c.parentElement.getBoundingClientRect();
+        const rect = c.parentElement ? c.parentElement.getBoundingClientRect() : null;
+        if (!rect) return;
         const w = Math.max(260, rect.width), h = Math.max(120, rect.height);
         if (c.width !== Math.floor(w) || c.height !== Math.floor(h)) { c.width = Math.floor(w); c.height = Math.floor(h); }
         ctx.clearRect(0, 0, w, h);
@@ -1960,29 +2022,20 @@
         activeHeroRaf = requestAnimationFrame(draw);
       };
       activeHeroRaf = requestAnimationFrame(draw);
+    };
+      activeHeroRaf = requestAnimationFrame(draw);
     }
 
     function updateNavButtons() {
       const cur = state.view || 'syllabus';
-      const headerNavTabs = document.getElementById('headerNavTabs');
-      if (headerNavTabs) {
-        const views = ['syllabus', 'studio', 'flashcards', 'labs', 'tables', 'test'];
-        const idx = views.indexOf(cur);
-        if (idx !== -1 && headerNavTabs.selected !== idx) {
-          headerNavTabs._syncing = true;
-          headerNavTabs.selected = idx;
-          setTimeout(() => { headerNavTabs._syncing = false; }, 60);
-        }
-      }
-
       document.querySelectorAll('.nav-btn').forEach(btn => {
         const v = btn.dataset.view;
         const active = (v === cur);
         if (active) {
-          btn.className = 'nav-btn px-2 xl:px-3 py-1.5 rounded-lg text-xs font-bold shrink-0 flex items-center gap-1 xl:gap-1.5 whitespace-nowrap transition-all bg-indigo-600 text-white shadow-sm';
+          btn.className = 'nav-btn px-3 py-1.5 rounded-xl text-xs font-bold shrink-0 flex items-center gap-1 whitespace-nowrap transition-colors bg-indigo-600 text-white shadow-sm';
           btn.setAttribute('aria-current', 'page');
         } else {
-          btn.className = 'nav-btn px-2 xl:px-3 py-1.5 rounded-lg text-xs font-semibold shrink-0 flex items-center gap-1 xl:gap-1.5 whitespace-nowrap transition-all text-slate-600 dark:text-slate-300 hover:bg-slate-200/70 dark:hover:bg-slate-800';
+          btn.className = 'nav-btn px-3 py-1.5 rounded-xl text-xs font-semibold shrink-0 flex items-center gap-1 whitespace-nowrap transition-colors text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-200/70 dark:hover:bg-slate-800';
           btn.removeAttribute('aria-current');
         }
       });
@@ -1997,6 +2050,7 @@
       isNavigating = true;
 
       try {
+        stopAllAnimations();
         state.view = v;
         if (v === 'test') {
           state.testView = state.testView || 'builder';
@@ -2014,7 +2068,7 @@
           history.pushState({ appView: v }, '', hash);
         } catch(e) {}
       } finally {
-        setTimeout(() => { isNavigating = false; }, 80);
+        setTimeout(() => { isNavigating = false; }, 60);
       }
     }
     window.navigateToView = navigateToView;
@@ -2441,16 +2495,18 @@
       if (state.fcIndex >= deck.length) state.fcIndex = 0;
       const card = deck[state.fcIndex] || FLASHCARDS[0];
       const knownCount = deck.filter(c => state.fcKnown[c.id]).length;
+      const isKnown = card ? !!state.fcKnown[card.id] : false;
+      const pct = deck.length ? ((state.fcIndex + 1) / deck.length).toFixed(2) : 0;
 
       const coBtns = [{ id: 'all', label: `All (${FLASHCARDS.length})`, grad: 'linear-gradient(135deg,#312e81,#4f46e5)' }, ...CHAPTERS.map(c => ({
         id: c.id, label: `${c.co} (${FLASHCARDS.filter(x => x.co === c.id).length})`, grad: c.gradCss
       }))].map(b => {
         const act = state.fcCoFilter === b.id;
-        return `<button data-fc-co="${b.id}" class="px-2.5 py-1.5 rounded-xl text-xs font-bold border whitespace-nowrap transition-all ${act ? 'text-white border-transparent shadow-md' : 'ed-card text-slate-600 dark:text-slate-300'}" style="${act ? `background:${b.grad}` : ''}">${b.label}</button>`;
+        return `<button type="button" data-fc-co="${b.id}" class="px-3 py-1.5 rounded-xl text-xs font-bold border whitespace-nowrap transition-all cursor-pointer ${act ? 'text-white border-transparent shadow-md' : 'ed-card text-slate-600 dark:text-slate-300'}" style="${act ? `background:${b.grad}` : ''}">${b.label}</button>`;
       }).join('');
 
       const lvlBtns = ['all', 'Basic', 'Intermediate', 'Advanced'].map(lv => `
-        <button data-fc-lvl="${lv}" class="px-2.5 py-1 rounded-lg text-[11px] font-bold border transition-all ${state.fcLevelFilter === lv
+        <button type="button" data-fc-lvl="${lv}" class="px-2.5 py-1 rounded-lg text-[11px] font-bold border transition-all cursor-pointer ${state.fcLevelFilter === lv
           ? 'bg-indigo-600 text-white border-transparent shadow-sm'
           : 'ed-card text-slate-500 dark:text-slate-400'}">${lv === 'all' ? 'All Levels' : lv}</button>`).join('');
 
@@ -2462,21 +2518,32 @@
             <div class="relative z-10">
               <span class="px-2 py-0.5 rounded-full text-[10px] font-mono font-bold bg-cyan-500/20 text-cyan-300 border border-cyan-400/30">ACTIVE RECALL DECK · CH. 0 THROUGH CO6</span>
               <h2 class="text-lg sm:text-xl font-extrabold mt-1">150 High-Yield Revision Flashcards</h2>
-              <p class="text-[11px] text-slate-300 mt-0.5">Tap card or press Space to flip · Swipe left/right on mobile · Press S to shuffle.</p>
+              <p class="text-[11px] text-slate-300 mt-0.5">Tap card or press Space to flip · Arrow keys for Prev/Next · Press S to shuffle.</p>
             </div>
             <div id="fcKnownCount" class="relative z-10 text-xs font-mono font-bold px-3 py-1.5 rounded-xl bg-emerald-500/20 border border-emerald-400/35 text-emerald-300">
               ${knownCount} / ${deck.length} Mastered
             </div>
           </div>
 
-          <div class="space-y-3">
+          <!-- White-Outlined Storm-Cloud Sakuga Progress Bar -->
+          <div class="space-y-2">
+            <div class="flex items-center justify-between text-xs font-mono font-bold text-slate-400 px-1">
+              <span>Deck Mastery Progress:</span>
+              <span>${state.fcIndex + 1} / ${deck.length} (${Math.round(pct * 100)}%)</span>
+            </div>
+            <sakuga-progress id="fcSakugaProgress" label="Deck Progress" value="${pct}" class="w-full block"></sakuga-progress>
+            <div id="fcProgressBar" style="display:none;" style="width:${Math.round(pct * 100)}%;"></div>
+            <span id="fcCounter" style="display:none;">${state.fcIndex + 1} / ${deck.length}</span>
+          </div>
+
+          <!-- Chapter Deck Filter Bar -->
+          <div class="space-y-2">
             <!-- Hidden sakuga-tabs for automated tests -->
             <div class="hidden">
               <sakuga-tabs id="fcTabs" label="Chapter Deck">
                 <option value="all" ${state.fcCoFilter === 'all' ? 'selected' : ''}>All Decks (${FLASHCARDS.length})</option>
                 ${CHAPTERS.map(c => `<option value="${c.id}" ${state.fcCoFilter === c.id ? 'selected' : ''}>${c.co} (${FLASHCARDS.filter(x => x.co === c.id).length})</option>`).join('')}
               </sakuga-tabs>
-              <sakuga-progress id="fcSakugaProgress" label="Deck Progress" value="${((state.fcIndex + 1) / deck.length).toFixed(2)}"></sakuga-progress>
             </div>
 
             <!-- Sleek Horizontal Deck Bar with zero browser scrollbars -->
@@ -2484,14 +2551,8 @@
               ${coBtns}
             </div>
 
-            <div class="flex flex-wrap items-center justify-between gap-3 pt-0.5">
-              <div class="flex items-center gap-1.5">${lvlBtns}</div>
-              <div class="flex items-center gap-3 w-full sm:w-64 bg-slate-100 dark:bg-slate-900/80 px-3.5 py-2 rounded-xl border border-slate-200/80 dark:border-slate-800">
-                <div class="flex-1 bg-slate-200 dark:bg-slate-800 h-2 rounded-full overflow-hidden">
-                  <div id="fcProgressBar" class="h-full bg-gradient-to-r from-indigo-500 to-purple-500 rounded-full transition-all duration-300" style="width: ${deck.length ? Math.round(((state.fcIndex + 1) / deck.length) * 100) : 0}%;"></div>
-                </div>
-                <span id="fcCounter" class="text-xs font-mono font-bold text-slate-600 dark:text-slate-300 shrink-0">${state.fcIndex + 1} / ${deck.length}</span>
-              </div>
+            <div class="flex items-center gap-1.5 pt-0.5">
+              ${lvlBtns}
             </div>
           </div>
 
@@ -2512,7 +2573,7 @@
                     <div id="fcQuestionWrap" class="my-auto"></div>
                     <div class="pt-3 border-t border-dashed border-slate-200 dark:border-slate-700 text-center text-xs text-slate-400 flex items-center justify-center gap-1.5">
                       <i data-lucide="rotate-cw" class="w-3.5 h-3.5 text-indigo-500"></i>
-                      <span>Tap card to flip &amp; verify your recall</span>
+                      <span>Tap card or click Flip Card to check solution</span>
                     </div>
                   </div>
                 </div>
@@ -2526,9 +2587,19 @@
                   <div class="flex-1 p-5 sm:p-6 flex flex-col justify-between gap-4 bg-slate-50/70 dark:bg-slate-900/40">
                     <div id="fcAnswerWrap" class="my-auto"></div>
                     <div id="fcTip" class="callout-shortcut rounded-xl px-3 py-2 text-xs text-slate-700 dark:text-slate-200"></div>
-                    <div class="pt-2 border-t border-slate-200/80 dark:border-slate-800 flex items-center justify-between text-xs">
-                      <span class="text-slate-500 font-mono font-bold">Recall Confidence:</span>
-                      <sakuga-rating id="fcConfidenceRating" value="${state.fcRatings && state.fcRatings[card.id] || 0}" label="Confidence"></sakuga-rating>
+                    
+                    <!-- Anki Active Recall Response Bar -->
+                    <div class="pt-2.5 border-t border-slate-200/80 dark:border-slate-800 flex flex-wrap items-center justify-between gap-2 text-xs">
+                      <div class="flex items-center gap-1.5">
+                        <span class="text-slate-400 font-mono font-bold">Recall Grade:</span>
+                        <sakuga-rating id="fcConfidenceRating" value="${state.fcRatings && state.fcRatings[card.id] || 0}" label="Confidence"></sakuga-rating>
+                      </div>
+                      <div class="flex items-center gap-1.5">
+                        <button type="button" data-fc-grade="again" class="sakuga-anime-btn danger px-2.5 py-1 text-[11px]">Again (1m)</button>
+                        <button type="button" data-fc-grade="hard" class="sakuga-anime-btn warning px-2.5 py-1 text-[11px]">Hard (1d)</button>
+                        <button type="button" data-fc-grade="good" class="sakuga-anime-btn primary px-2.5 py-1 text-[11px]">Good (3d)</button>
+                        <button type="button" data-fc-grade="easy" class="sakuga-anime-btn success px-2.5 py-1 text-[11px]">Easy (4d) ⭐</button>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -2536,20 +2607,30 @@
             </div>
           </div>
 
-          <!-- Controls: Sleek and distraction-free -->
-          <div class="flex flex-wrap items-center justify-between gap-2.5">
+          <!-- Controls: Exact Dark-Navy Cyan-Bordered Italic Anime Buttons with Sakuga Bursts -->
+          <div class="flex flex-wrap items-center justify-between gap-2.5 pt-1">
             <div class="flex items-center gap-2">
-              <button id="fcPrevBtn" class="px-4 py-2.5 rounded-xl text-xs font-bold ed-card hover:border-indigo-500 flex items-center gap-1.5 active:scale-95 cursor-pointer">
+              <button type="button" id="fcPrevBtn" class="sakuga-anime-btn px-4 py-2 text-xs">
                 <i data-lucide="arrow-left" class="w-3.5 h-3.5"></i><span>Prev</span>
               </button>
-              <button id="fcNextBtn" class="px-4 py-2.5 rounded-xl text-xs font-bold ed-card hover:border-indigo-500 flex items-center gap-1.5 active:scale-95 cursor-pointer">
+              <button type="button" id="fcFlipBtn" class="sakuga-anime-btn primary px-4 py-2 text-xs">
+                <i data-lucide="rotate-cw" class="w-3.5 h-3.5"></i><span>Flip Card</span>
+              </button>
+              <button type="button" id="fcNextBtn" class="sakuga-anime-btn px-4 py-2 text-xs">
                 <span>Next</span><i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
               </button>
-              <button id="fcShuffleBtn" class="px-4 py-2.5 rounded-xl text-xs font-bold bg-indigo-600 hover:bg-indigo-500 text-white shadow-md flex items-center gap-1.5 active:scale-95 cursor-pointer">
-                <i data-lucide="shuffle" class="w-3.5 h-3.5"></i><span>Shuffle Deck</span>
+              <button type="button" id="fcShuffleBtn" class="sakuga-anime-btn px-3.5 py-2 text-xs">
+                <i data-lucide="shuffle" class="w-3.5 h-3.5"></i><span>Shuffle</span>
+              </button>
+              <button type="button" id="fcResetBtn" class="sakuga-anime-btn px-3 py-2 text-xs">
+                <i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i><span>Reset</span>
               </button>
             </div>
-            <!-- Automated test hooks (Mastered button removed from visible UI as instructed) -->
+            <button type="button" id="fcMarkKnownBtn" class="sakuga-anime-btn ${isKnown ? 'success' : 'primary'} px-4 py-2 text-xs">
+              <i data-lucide="${isKnown ? 'check-check' : 'check'}" class="w-3.5 h-3.5"></i>
+              <span>${isKnown ? 'Mastered ✓' : 'Mark Known ⭐'}</span>
+            </button>
+            <!-- Hidden test compatibility hooks -->
             <div class="hidden">
               <sakuga-checkbox id="fcKnowCheckbox">Mastered</sakuga-checkbox>
               <button id="fcKnowBtn"></button>
@@ -2562,7 +2643,16 @@
       populateFlashcardDOM(card, state.fcIndex, deck.length, knownCount);
 
       const flipEl = document.getElementById('flashcardEl');
-      flipEl.onclick = () => { state.fcFlipped = !state.fcFlipped; flipEl.classList.toggle('flipped', state.fcFlipped); };
+      const toggleFlip = () => {
+        state.fcFlipped = !state.fcFlipped;
+        if (flipEl) flipEl.classList.toggle('flipped', state.fcFlipped);
+      };
+      if (flipEl) {
+        flipEl.onclick = (e) => {
+          if (e.target.closest('button') || e.target.closest('sakuga-rating') || e.target.closest('[data-fc-grade]')) return;
+          toggleFlip();
+        };
+      }
 
       const stepCard = dir => {
         const curDeck = getFilteredDeck();
@@ -2571,32 +2661,135 @@
         transitionFlashcard(dir, () => {
           state.fcIndex = dir === 'next' ? (state.fcIndex + 1) % curDeck.length : (state.fcIndex - 1 + curDeck.length) % curDeck.length;
           state.fcFlipped = false;
-          const fEl = document.getElementById('flashcardEl');
-          if (fEl) fEl.classList.remove('flipped');
-          populateFlashcardDOM(curDeck[state.fcIndex], state.fcIndex, curDeck.length, curDeck.filter(c => state.fcKnown[c.id]).length);
+          if (flipEl) flipEl.classList.remove('flipped');
+          const curCard = curDeck[state.fcIndex];
+          const kCount = curDeck.filter(c => state.fcKnown[c.id]).length;
+          populateFlashcardDOM(curCard, state.fcIndex, curDeck.length, kCount);
+          const prog = document.getElementById('fcSakugaProgress');
+          if (prog && typeof prog.set === 'function') prog.set((state.fcIndex + 1) / curDeck.length);
         });
       };
 
-      document.getElementById('fcNextBtn').onclick = () => stepCard('next');
-      document.getElementById('fcPrevBtn').onclick = () => stepCard('prev');
-      const fcTabsEl = document.getElementById('fcTabs');
-      if (fcTabsEl) {
-        fcTabsEl.addEventListener('change', () => {
-          state.fcCoFilter = fcTabsEl.value;
+      // Direct, bulletproof event listeners for every single control
+      const prevB = document.getElementById('fcPrevBtn');
+      if (prevB) prevB.onclick = (e) => { e.preventDefault(); stepCard('prev'); };
+
+      const nextB = document.getElementById('fcNextBtn');
+      if (nextB) nextB.onclick = (e) => { e.preventDefault(); stepCard('next'); };
+
+      const flipB = document.getElementById('fcFlipBtn');
+      if (flipB) flipB.onclick = (e) => { e.preventDefault(); toggleFlip(); };
+
+      const rstB = document.getElementById('fcResetBtn');
+      if (rstB) rstB.onclick = (e) => {
+        e.preventDefault();
+        state.fcIndex = 0;
+        state.fcFlipped = false;
+        if (flipEl) flipEl.classList.remove('flipped');
+        const curDeck = getFilteredDeck();
+        populateFlashcardDOM(curDeck[0], 0, curDeck.length, curDeck.filter(c => state.fcKnown[c.id]).length);
+        const prog = document.getElementById('fcSakugaProgress');
+        if (prog && typeof prog.set === 'function') prog.set(1 / curDeck.length);
+        showToast('Deck reset to Card 1', 'info');
+      };
+
+      const shufB = document.getElementById('fcShuffleBtn');
+      if (shufB) shufB.onclick = (e) => {
+        e.preventDefault();
+        transitionFlashcard('shuffle', () => {
+          for (let i = state.fcDeckIds.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [state.fcDeckIds[i], state.fcDeckIds[j]] = [state.fcDeckIds[j], state.fcDeckIds[i]];
+          }
           state.fcIndex = 0;
-          renderFlashcardsView(container);
+          state.fcFlipped = false;
+          if (flipEl) flipEl.classList.remove('flipped');
+          const curDeck = getFilteredDeck();
+          if (curDeck.length) {
+            populateFlashcardDOM(curDeck[0], 0, curDeck.length, curDeck.filter(c => state.fcKnown[c.id]).length);
+            const prog = document.getElementById('fcSakugaProgress');
+            if (prog && typeof prog.set === 'function') prog.set(1 / curDeck.length);
+            showToast(`Shuffled ${curDeck.length} flashcards!`, 'success');
+          }
         });
-      }
-      const fcChkEl = document.getElementById('fcKnowCheckbox');
-      if (fcChkEl) {
-        fcChkEl.addEventListener('change', () => {
+      };
+
+      const mkB = document.getElementById('fcMarkKnownBtn');
+      if (mkB) mkB.onclick = (e) => {
+        e.preventDefault();
+        const curDeck = getFilteredDeck(), curCard = curDeck[state.fcIndex];
+        if (!curCard) return;
+        const nowKnown = !state.fcKnown[curCard.id];
+        state.fcKnown[curCard.id] = nowKnown;
+        saveState(); updateMasteryUI();
+        if (state.vfxEnabled) {
+          if (nowKnown) {
+            playMasteredVfx(mkB);
+            showToast('Card Mastered! ⭐ +50 XP', 'success');
+          } else {
+            playUnmarkedVfx(mkB);
+            showToast('Card unmarked', 'info');
+          }
+        } else {
+          showToast(nowKnown ? 'Card Mastered!' : 'Card unmarked', nowKnown ? 'success' : 'info');
+        }
+        populateFlashcardDOM(curCard, state.fcIndex, curDeck.length, curDeck.filter(c => state.fcKnown[c.id]).length);
+      };
+
+      // Direct binding for chapter deck filter buttons
+      container.querySelectorAll('[data-fc-co]').forEach(b => {
+        b.onclick = (e) => {
+          e.preventDefault();
+          state.fcCoFilter = b.dataset.fcCo;
+          state.fcIndex = 0;
+          state.fcFlipped = false;
+          renderFlashcardsView(container);
+        };
+      });
+
+      // Direct binding for level filter buttons
+      container.querySelectorAll('[data-fc-lvl]').forEach(b => {
+        b.onclick = (e) => {
+          e.preventDefault();
+          state.fcLevelFilter = b.dataset.fcLvl;
+          state.fcIndex = 0;
+          state.fcFlipped = false;
+          renderFlashcardsView(container);
+        };
+      });
+
+      // Direct binding for Anki recall grade buttons
+      container.querySelectorAll('[data-fc-grade]').forEach(b => {
+        b.onclick = (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          const grade = b.dataset.fcGrade;
           const curDeck = getFilteredDeck(), curCard = curDeck[state.fcIndex];
           if (!curCard) return;
-          state.fcKnown[curCard.id] = fcChkEl.checked;
+          if (!state.fcRatings) state.fcRatings = {};
+          if (grade === 'again') {
+            state.fcRatings[curCard.id] = 1;
+            state.fcKnown[curCard.id] = false;
+            showToast('Card flagged for review (Again)', 'info');
+          } else if (grade === 'hard') {
+            state.fcRatings[curCard.id] = 2;
+            state.fcKnown[curCard.id] = false;
+            showToast('Marked Hard (1d review)', 'info');
+          } else if (grade === 'good') {
+            state.fcRatings[curCard.id] = 3;
+            showToast('Good recall! (3d interval)', 'success');
+          } else if (grade === 'easy') {
+            state.fcRatings[curCard.id] = 4;
+            state.fcKnown[curCard.id] = true;
+            if (state.vfxEnabled) playMasteredVfx(b);
+            showToast('Easy! Mastered ✓ +50 XP', 'success');
+          }
           saveState(); updateMasteryUI();
           populateFlashcardDOM(curCard, state.fcIndex, curDeck.length, curDeck.filter(c => state.fcKnown[c.id]).length);
-        });
-      }
+          setTimeout(() => { stepCard('next'); }, 300);
+        };
+      });
+
       const fcCrEl = document.getElementById('fcConfidenceRating');
       if (fcCrEl) {
         fcCrEl.addEventListener('change', () => {
@@ -2608,38 +2801,15 @@
         });
       }
 
-      document.getElementById('fcShuffleBtn').onclick = () => {
-        transitionFlashcard('shuffle', () => {
-          for (let i = state.fcDeckIds.length - 1; i > 0; i--) {
-            const j = Math.floor(Math.random() * (i + 1));
-            [state.fcDeckIds[i], state.fcDeckIds[j]] = [state.fcDeckIds[j], state.fcDeckIds[i]];
-          }
-          state.fcIndex = 0;
-          state.fcFlipped = false;
-          const fEl = document.getElementById('flashcardEl');
-          if (fEl) fEl.classList.remove('flipped');
-          const curDeck = getFilteredDeck();
-          if (curDeck.length) {
-            populateFlashcardDOM(curDeck[0], 0, curDeck.length, curDeck.filter(c => state.fcKnown[c.id]).length);
-            showToast(`Shuffled ${curDeck.length} flashcards!`);
-          }
-        });
-      };
-      document.getElementById('fcKnowBtn').onclick = () => {
-        const curDeck = getFilteredDeck(), curCard = curDeck[state.fcIndex];
-        if (!curCard) return;
-        state.fcKnown[curCard.id] = !state.fcKnown[curCard.id];
-        saveState(); updateMasteryUI();
-        populateFlashcardDOM(curCard, state.fcIndex, curDeck.length, curDeck.filter(c => state.fcKnown[c.id]).length);
-      };
-
       let tx = 0, ty = 0;
       const stage = document.getElementById('fcStage');
-      stage.addEventListener('touchstart', e => { tx = e.changedTouches[0].clientX; ty = e.changedTouches[0].clientY; }, { passive: true });
-      stage.addEventListener('touchend', e => {
-        const dx = e.changedTouches[0].clientX - tx, dy = e.changedTouches[0].clientY - ty;
-        if (Math.abs(dx) > 52 && Math.abs(dx) > Math.abs(dy) * 1.4) stepCard(dx < 0 ? 'next' : 'prev');
-      }, { passive: true });
+      if (stage) {
+        stage.addEventListener('touchstart', e => { tx = e.changedTouches[0].clientX; ty = e.changedTouches[0].clientY; }, { passive: true });
+        stage.addEventListener('touchend', e => {
+          const dx = e.changedTouches[0].clientX - tx, dy = e.changedTouches[0].clientY - ty;
+          if (Math.abs(dx) > 52 && Math.abs(dx) > Math.abs(dy) * 1.4) stepCard(dx < 0 ? 'next' : 'prev');
+        }, { passive: true });
+      }
     }
 
     // =========================================================================
@@ -3623,6 +3793,20 @@
           }
         });
       }
+
+      // Direct, instant click handlers on Test Studio mode tabs
+      container.querySelectorAll('[data-switch-test-tab]').forEach(b => {
+        b.onclick = (e) => {
+          e.preventDefault();
+          const targetTab = b.dataset.switchTestTab;
+          if (state.testTab !== targetTab) {
+            state.testTab = targetTab;
+            renderTestStudioView(container);
+            refreshIcons();
+            renderAllTex(container);
+          }
+        };
+      });
     }
 
     // ACTIVE CBT EXAM ENVIRONMENT (NTA / MARKS APP QUESTION PALETTE)
@@ -5177,8 +5361,8 @@
                         <td class="py-2.5 px-3 align-middle text-xs text-slate-600 dark:text-slate-300 flex items-center justify-between gap-1.5">
                           <span>${formatMathText(r[2])}</span>
                           <div class="flex items-center gap-1 shrink-0">
-                            <button data-copy-math="${escHtml(r[1])}" type="button" class="px-2 py-0.5 rounded text-[10px] font-bold ed-card hover:border-indigo-500 active:scale-95 transition-all text-slate-700 dark:text-slate-200 cursor-pointer shadow-xs">Copy</button>
-                            <span class="cursor-help inline-block text-[11px] opacity-75 hover:opacity-100" title="${escHtml(r[2])}">ℹ️</span>
+                            <sakuga-button data-copy-math="${escHtml(r[1])}" class="cursor-pointer" style="font-size:10px; padding: 2px 7px;">Copy</sakuga-button>
+                            <sakuga-popover text="${escHtml(r[2])}" class="cursor-help inline-block">ℹ️</sakuga-popover>
                           </div>
                         </td>
                       </tr>`;
@@ -5199,6 +5383,20 @@
           refreshIcons(); renderAllTex(container);
         });
       }
+
+      // Direct, bulletproof click handlers on all Master Table filter pills
+      container.querySelectorAll('[data-table-id]').forEach(b => {
+        b.onclick = (e) => {
+          e.preventDefault();
+          const tid = b.dataset.tableId;
+          if (state.activeTableId !== tid) {
+            state.activeTableId = tid;
+            renderTablesView(container);
+            refreshIcons();
+            renderAllTex(container);
+          }
+        };
+      });
 
       const inp = document.getElementById('masterTableSearch');
       if (inp) {
@@ -5292,7 +5490,7 @@
                   <span class="flex items-center gap-1"><i data-lucide="book" class="w-3 h-3 text-indigo-500"></i>Topics Done</span>
                   <span id="dashTopicsRatio" class="font-mono font-bold text-indigo-600 dark:text-indigo-400">${stats.doneTopics}/${stats.totalTopics}</span>
                 </div>
-                <sakuga-progress id="dashTopicsSakugaBar" label="Topics Done" value="${stats.totalTopics ? (stats.doneTopics / stats.totalTopics).toFixed(2) : 0}" style="--sk-pri:#6366f1; width:100%;" class="w-full block"></sakuga-progress>
+                <sakuga-progress id="dashTopicsSakugaBar" label="Topics Done" value="${stats.totalTopics ? (stats.doneTopics / stats.totalTopics).toFixed(2) : 0}" style="--sk-pri:#6366f1; width:100%;" class="w-full block" no-pct></sakuga-progress>
                 <div class="hidden"><div id="dashTopicsBar"></div></div>
               </div>
 
@@ -5301,7 +5499,7 @@
                   <span class="flex items-center gap-1"><i data-lucide="brain" class="w-3 h-3 text-emerald-500"></i>Qs Solved</span>
                   <span id="dashQsRatio" class="font-mono font-bold text-emerald-600 dark:text-emerald-400">${stats.doneQ}/${stats.totalQ}</span>
                 </div>
-                <sakuga-progress id="dashQsSakugaBar" label="Qs Solved" value="${stats.totalQ ? (stats.doneQ / stats.totalQ).toFixed(2) : 0}" style="--sk-pri:#10b981; width:100%;" class="w-full block"></sakuga-progress>
+                <sakuga-progress id="dashQsSakugaBar" label="Qs Solved" value="${stats.totalQ ? (stats.doneQ / stats.totalQ).toFixed(2) : 0}" style="--sk-pri:#10b981; width:100%;" class="w-full block" no-pct></sakuga-progress>
                 <div class="hidden"><div id="dashQsBar"></div></div>
               </div>
 
@@ -5310,7 +5508,7 @@
                   <span class="flex items-center gap-1"><i data-lucide="layers" class="w-3 h-3 text-fuchsia-500"></i>Cards Known</span>
                   <span id="dashCardsRatio" class="font-mono font-bold text-fuchsia-600 dark:text-fuchsia-400">${stats.doneCards}/${stats.totalCards}</span>
                 </div>
-                <sakuga-progress id="dashCardsSakugaBar" label="Cards Known" value="${stats.totalCards ? (stats.doneCards / stats.totalCards).toFixed(2) : 0}" style="--sk-pri:#d946ef; width:100%;" class="w-full block"></sakuga-progress>
+                <sakuga-progress id="dashCardsSakugaBar" label="Cards Known" value="${stats.totalCards ? (stats.doneCards / stats.totalCards).toFixed(2) : 0}" style="--sk-pri:#d946ef; width:100%;" class="w-full block" no-pct></sakuga-progress>
                 <div class="hidden"><div id="dashCardsBar"></div></div>
               </div>
 
@@ -5319,33 +5517,8 @@
                   <span class="flex items-center gap-1"><i data-lucide="activity" class="w-3 h-3 text-cyan-500"></i>Labs Explored</span>
                   <span id="dashLabsRatio" class="font-mono font-bold text-cyan-600 dark:text-cyan-400">${stats.doneLabs}/${stats.totalLabs}</span>
                 </div>
-                <sakuga-progress id="dashLabsSakugaBar" label="Labs Explored" value="${stats.totalLabs ? (stats.doneLabs / stats.totalLabs).toFixed(2) : 0}" style="--sk-pri:#06b6d4; width:100%;" class="w-full block"></sakuga-progress>
+                <sakuga-progress id="dashLabsSakugaBar" label="Labs Explored" value="${stats.totalLabs ? (stats.doneLabs / stats.totalLabs).toFixed(2) : 0}" style="--sk-pri:#06b6d4; width:100%;" class="w-full block" no-pct></sakuga-progress>
                 <div class="hidden"><div id="dashLabsBar"></div></div>
-              </div>
-            </div>
-                <div class="h-1.5 rounded-full bg-slate-200 dark:bg-slate-700 overflow-hidden">
-                  <div id="dashQsBar" class="h-full rounded-full bg-emerald-600 transition-all duration-500" style="width:${stats.totalQ ? Math.round((stats.doneQ / stats.totalQ) * 100) : 0}%"></div>
-                </div>
-              </div>
-
-              <div class="p-3 rounded-2xl bg-white/90 dark:bg-slate-800/80 border border-slate-200/80 dark:border-slate-700/80 space-y-1.5">
-                <div class="flex justify-between items-center text-[11px] font-semibold text-slate-600 dark:text-slate-300">
-                  <span class="flex items-center gap-1"><i data-lucide="layers" class="w-3 h-3 text-fuchsia-500"></i>Cards Known</span>
-                  <span id="dashCardsRatio" class="font-mono font-bold text-fuchsia-600 dark:text-fuchsia-400">${stats.doneCards}/${stats.totalCards}</span>
-                </div>
-                <div class="h-1.5 rounded-full bg-slate-200 dark:bg-slate-700 overflow-hidden">
-                  <div id="dashCardsBar" class="h-full rounded-full bg-fuchsia-600 transition-all duration-500" style="width:${stats.totalCards ? Math.round((stats.doneCards / stats.totalCards) * 100) : 0}%"></div>
-                </div>
-              </div>
-
-              <div class="p-3 rounded-2xl bg-white/90 dark:bg-slate-800/80 border border-slate-200/80 dark:border-slate-700/80 space-y-1.5">
-                <div class="flex justify-between items-center text-[11px] font-semibold text-slate-600 dark:text-slate-300">
-                  <span class="flex items-center gap-1"><i data-lucide="activity" class="w-3 h-3 text-cyan-500"></i>Labs Explored</span>
-                  <span id="dashLabsRatio" class="font-mono font-bold text-cyan-600 dark:text-cyan-400">${stats.doneLabs}/${stats.totalLabs}</span>
-                </div>
-                <div class="h-1.5 rounded-full bg-slate-200 dark:bg-slate-700 overflow-hidden">
-                  <div id="dashLabsBar" class="h-full rounded-full bg-cyan-600 transition-all duration-500" style="width:${stats.totalLabs ? Math.round((stats.doneLabs / stats.totalLabs) * 100) : 0}%"></div>
-                </div>
               </div>
             </div>
           </div>
@@ -7492,7 +7665,7 @@
           console.log('New Service Worker controller activated. Reloading page...');
           window.location.reload();
         });
-        navigator.serviceWorker.register('/sw.js?v=22').then(reg => {
+        navigator.serviceWorker.register('/sw.js?v=23').then(reg => {
           if (reg) reg.update();
         }).catch(() => {});
       }

@@ -15,13 +15,15 @@ class SakugaProgress extends fx.Base {
   static observedAttributes = ['value', 'label'];
   static css = `
     :host { display: block; width: var(--sk-progress-width, 280px); max-width: 100%; }
-    .prog { position: relative; padding-top: 70px; }
+    .prog { position: relative; padding-top: var(--sk-prog-pt, 46px); }
     :host([demo]) .prog { cursor: pointer; }
-    .bar { position: relative; height: 38px; border: 4px solid var(--sk-ink); border-radius: 19px; background: var(--sk-card); overflow: hidden; }
+    .bar { position: relative; height: var(--sk-bar-h, 26px); border: var(--sk-bw, 3px) solid var(--sk-ink); border-radius: 9999px; background: var(--sk-card); overflow: hidden; }
     .bar i { position: relative; display: block; height: 100%; width: calc(var(--v, 0) * 100%); background: var(--sk-fill); }
-    .bar i::before, .bar i::after { content: ""; position: absolute; top: 5px; height: 11px; width: 9px; background: #fff; border-radius: 2px; transform: skewX(-28deg); left: 22px; opacity: .92; }
-    .bar i::after { left: 37px; width: 6px; }
-    .pct { display: table; margin: 64px auto 0; padding: 3px 13px 4px; border: 2.5px solid var(--sk-ink); background: var(--sk-card); box-shadow: 5px 5px 0 var(--sk-fill); transform: skewX(-12deg); font: italic 900 21px/1.1 "Marker Felt", "Chalkboard SE", "Comic Sans MS", -apple-system, "Segoe UI", sans-serif; letter-spacing: -.01em; white-space: nowrap; will-change: transform; }`;
+    .bar i::before, .bar i::after { content: ""; position: absolute; top: 3px; height: 9px; width: 8px; background: #fff; border-radius: 2px; transform: skewX(-28deg); left: 18px; opacity: .92; }
+    .bar i::after { left: 30px; width: 6px; }
+    .pct { display: table; margin: 12px auto 0; padding: 2px 10px 3px; border: 2px solid var(--sk-ink); background: var(--sk-card); box-shadow: 3px 3px 0 var(--sk-fill); transform: skewX(-12deg); font: italic 900 13px/1.1 "Marker Felt", "Chalkboard SE", "Comic Sans MS", -apple-system, "Segoe UI", sans-serif; letter-spacing: -.01em; white-space: nowrap; will-change: transform; }
+    :host([no-pct]) .pct, :host(.no-pct) .pct { display: none !important; }
+    :host([no-pct]) .prog, :host(.no-pct) .prog { padding-top: 36px; padding-bottom: 2px; }`;
   get value() { return this.goal; }
   get done() { return !!this.doneAt; }
   attributeChangedCallback(name, _, v) { if (!this.box) return; if (name === 'value') this.set(v === null ? 0 : +v); else this.box.setAttribute('aria-label', v || 'Loading'); }
@@ -46,7 +48,7 @@ class SakugaProgress extends fx.Base {
   disconnectedCallback() { super.disconnectedCallback(); if (this.layer) { this.layer.dead = true; this.layer = null; } }
   // the ground, the pebbles, the cloud and the check: drawn every frame on the effects layer
   paint(tt, dt) {
-    if (!this.vis) return; const g = fx.g, P = fx.P, b = at(this.bar), L = b.x - b.w / 2, R = b.x + b.w / 2, p = this.p, done = this.doneAt, lead = L + 4 + (b.w - 8) * p, cy = b.y, gy = cy + b.h / 2 + 30;
+    if (!this.vis) return; const g = fx.g, P = fx.P, b = at(this.bar), L = b.x - b.w / 2, R = b.x + b.w / 2, p = this.p, done = this.doneAt, lead = L + 4 + (b.w - 8) * p, cy = b.y, gy = cy + b.h / 2 + 16;
     const reach = clamp(p * 1.25 + (done ? 1 : 0)), gx1 = lerp(L + 10, R - 10, reach);   // the ground draws itself out under the fill
     if (reach > 0.02) { g.strokeStyle = P.line; g.lineWidth = 1.4; g.beginPath(); g.moveTo(L + 10, gy); g.lineTo(gx1, gy); for (let x = L + 26; x < gx1 - 6; x += 37) { g.moveTo(x, gy); g.lineTo(x + 3, gy - 4); g.moveTo(x + 5, gy); g.lineTo(x + 6.5, gy - 2.5); } g.stroke(); }
     for (const q of this.peb) {   // a pebble lifts when the edge goes over it and drops when the load is done
