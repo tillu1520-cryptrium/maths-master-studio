@@ -4,8 +4,8 @@
   "description": "Maths Master Studio — Interactive Calculus & Differential Equations Web App",
   "type": "module",
   "scripts": {
-    "build": "node scripts/test_phase2.mjs",
-    "test": "node scripts/test_phase2.mjs",
+    "build": "node scripts/test_phase2.mjs && node scripts/test_toggle.mjs",
+    "test": "node scripts/test_phase2.mjs && node scripts/test_toggle.mjs",
     "start": "node scripts/server.mjs"
   },
   "keywords": [

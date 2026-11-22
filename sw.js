@@ -1,4 +1,4 @@
-const CACHE_NAME = 'maths-master-studio-v15';
+const CACHE_NAME = 'maths-master-studio-v16';
 const STATIC_ASSETS = [
   '/',
   '/index.html',
