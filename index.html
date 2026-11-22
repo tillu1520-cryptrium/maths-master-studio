@@ -2671,7 +2671,7 @@
 
       const testedHistory = getTestedQuestionHistory();
       const uniqueTestedCount = Object.keys(testedHistory).length;
-      const totalBankQuestions = Math.max(318, (window.EXAM_BANK && window.EXAM_BANK.length) || EXAM_BANK.length || 318);
+      const totalBankQuestions = (window.EXAM_BANK && window.EXAM_BANK.length) || (typeof EXAM_BANK !== 'undefined' && EXAM_BANK.length) || 335;
       const exposurePct = Math.round((uniqueTestedCount / totalBankQuestions) * 100);
       const remainingFresh = Math.max(0, totalBankQuestions - uniqueTestedCount);
 
@@ -2715,21 +2715,30 @@
             </div>
           </div>
 
-          <!-- Mode Selector Tabs -->
-          <div class="flex items-center gap-2 border-b border-slate-200 dark:border-slate-800 pb-2 overflow-x-auto no-scrollbar">
-            <button data-switch-test-tab="endsem" class="px-4 py-2 rounded-xl text-xs sm:text-sm font-bold flex items-center gap-2 shrink-0 transition-all ${activeTab === 'endsem' ? 'bg-indigo-600 text-white shadow-sm' : 'ed-card text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800'}">
-              <i data-lucide="award" class="w-4 h-4"></i>
-              <span>50M · 150 Min End-Semester Simulator</span>
-              <span class="px-1.5 py-0.5 rounded text-[10px] bg-amber-400 text-slate-900 font-mono font-extrabold uppercase">Official</span>
+          <!-- Mode Selector Tabs (Mobile 3-Column Responsive Grid + Desktop Tabs) -->
+          <div class="grid grid-cols-3 gap-1.5 p-1 bg-slate-100 dark:bg-slate-900/90 rounded-2xl border border-slate-200/80 dark:border-slate-800 sm:flex sm:items-center sm:gap-2 sm:bg-transparent sm:border-0 sm:p-0 sm:border-b sm:border-slate-200 sm:dark:border-slate-800 sm:pb-2 sm:rounded-none">
+            <button data-switch-test-tab="endsem" class="flex flex-col sm:flex-row items-center justify-center gap-1 sm:gap-2 px-2 sm:px-4 py-2 sm:py-2.5 rounded-xl text-[11px] sm:text-xs font-bold transition-all text-center ${activeTab === 'endsem' ? 'bg-indigo-600 text-white shadow-md' : 'text-slate-600 dark:text-slate-300 hover:bg-slate-200/70 dark:hover:bg-slate-800'}">
+              <div class="flex items-center gap-1">
+                <i data-lucide="award" class="w-3.5 h-3.5 sm:w-4 sm:h-4"></i>
+                <span class="sm:hidden font-bold">50M Exam</span>
+                <span class="hidden sm:inline">50M · 150 Min End-Semester Simulator</span>
+              </div>
+              <span class="px-1.5 py-0.2 rounded text-[9px] sm:text-[10px] bg-amber-400 text-slate-900 font-mono font-extrabold uppercase">Official</span>
             </button>
-            <button data-switch-test-tab="custom" class="px-4 py-2 rounded-xl text-xs sm:text-sm font-bold flex items-center gap-2 shrink-0 transition-all ${activeTab === 'custom' ? 'bg-indigo-600 text-white shadow-sm' : 'ed-card text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800'}">
-              <i data-lucide="sliders" class="w-4 h-4"></i>
-              <span>Custom Test Generator & Quick Quiz</span>
+            <button data-switch-test-tab="custom" class="flex flex-col sm:flex-row items-center justify-center gap-1 sm:gap-2 px-2 sm:px-4 py-2 sm:py-2.5 rounded-xl text-[11px] sm:text-xs font-bold transition-all text-center ${activeTab === 'custom' ? 'bg-indigo-600 text-white shadow-md' : 'text-slate-600 dark:text-slate-300 hover:bg-slate-200/70 dark:hover:bg-slate-800'}">
+              <div class="flex items-center gap-1">
+                <i data-lucide="sliders" class="w-3.5 h-3.5 sm:w-4 sm:h-4"></i>
+                <span class="sm:hidden font-bold">Custom Quiz</span>
+                <span class="hidden sm:inline">Custom Test Generator & Quick Quiz</span>
+              </div>
             </button>
-            <button data-switch-test-tab="history" class="px-4 py-2 rounded-xl text-xs sm:text-sm font-bold flex items-center gap-2 shrink-0 transition-all ${activeTab === 'history' ? 'bg-indigo-600 text-white shadow-sm' : 'ed-card text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800'}">
-              <i data-lucide="history" class="w-4 h-4"></i>
-              <span>Past Test History & Archives</span>
-              ${history.length > 0 ? `<span class="px-1.5 py-0.5 rounded text-[10px] bg-indigo-500/20 text-indigo-400 font-mono font-bold">${history.length}</span>` : ''}
+            <button data-switch-test-tab="history" class="flex flex-col sm:flex-row items-center justify-center gap-1 sm:gap-2 px-2 sm:px-4 py-2 sm:py-2.5 rounded-xl text-[11px] sm:text-xs font-bold transition-all text-center ${activeTab === 'history' ? 'bg-indigo-600 text-white shadow-md' : 'text-slate-600 dark:text-slate-300 hover:bg-slate-200/70 dark:hover:bg-slate-800'}">
+              <div class="flex items-center gap-1">
+                <i data-lucide="history" class="w-3.5 h-3.5 sm:w-4 sm:h-4"></i>
+                <span class="sm:hidden font-bold">Past Tests</span>
+                <span class="hidden sm:inline">Past Test History & Archives</span>
+              </div>
+              ${history.length > 0 ? `<span class="px-1.5 py-0.2 rounded text-[9px] sm:text-[10px] bg-indigo-500/20 text-indigo-400 font-mono font-bold">${history.length}</span>` : ''}
             </button>
           </div>
 
@@ -5239,7 +5248,7 @@
       // Reset Question Exposure History
       const resetExposure = e.target.closest('[data-action="reset-question-exposure"]');
       if (resetExposure) {
-        if (confirm('Reset your question exposure history? All 318 questions will be treated as fresh and unattempted.')) {
+        if (confirm('Reset your question exposure history? All 335 questions will be treated as fresh and unattempted.')) {
           resetQuestionExposureHistory();
           showToast('Question exposure history reset to 0!', 'success');
           renderApp();
@@ -5717,7 +5726,7 @@
       if (history.length === 0) return;
       try {
         for (const test of history) {
-          if (!test.id && !test.syncedToSupabase) {
+          if (!test.syncedToSupabase) {
             await saveTestAttemptToSupabase(test);
             test.syncedToSupabase = true;
           }
@@ -6319,11 +6328,13 @@
         el.textContent = '';
         return;
       }
-      el.className = `text-xs p-3 rounded-xl border ${
-        type === 'success'
-          ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-600 dark:text-emerald-400'
-          : 'bg-rose-500/10 border-rose-500/30 text-rose-600 dark:text-rose-400'
-      }`;
+      let colorClasses = 'bg-rose-500/10 border-rose-500/30 text-rose-600 dark:text-rose-400';
+      if (type === 'success') {
+        colorClasses = 'bg-emerald-500/10 border-emerald-500/30 text-emerald-600 dark:text-emerald-400';
+      } else if (type === 'info') {
+        colorClasses = 'bg-indigo-500/10 border-indigo-500/30 text-indigo-600 dark:text-indigo-400';
+      }
+      el.className = `text-xs p-3 rounded-xl border ${colorClasses}`;
       el.textContent = msg;
     }
 
@@ -6450,13 +6461,39 @@
                 }
               });
               if (error) {
+                // If user is already registered OR hits the Supabase 60s duplicate email confirmation rate limit
+                if (error.message.includes('security purposes') || error.message.toLowerCase().includes('already registered')) {
+                  // Attempt immediate sign-in with the provided password!
+                  const signInAttempt = await supabaseClient.auth.signInWithPassword({ email, password });
+                  if (signInAttempt.data && signInAttempt.data.session) {
+                    showToast(`Welcome to Maths Master Studio, ${name || 'Student'}!`, 'success');
+                    await handleSessionDetected(signInAttempt.data.session);
+                    return;
+                  } else if (signInAttempt.error && signInAttempt.error.message.toLowerCase().includes('email not confirmed')) {
+                    setAuthAlert(`Your account is registered! Supabase has sent a verification email to ${email}. Please check your inbox (or spam) to confirm your email, then click Sign In.`, 'info');
+                    setMode('signin');
+                    return;
+                  } else {
+                    setAuthAlert(`This email is already registered. Please switch to the Sign In tab and enter your password.`, 'info');
+                    setMode('signin');
+                    return;
+                  }
+                }
                 setAuthAlert(error.message, 'error');
               } else if (data && data.user) {
                 if (data.session) {
                   showToast(`Welcome to Maths Master Studio, ${name}!`, 'success');
                   await handleSessionDetected(data.session);
                 } else {
-                  setAuthAlert('Registration successful! If confirmation is required, please check your inbox, then sign in.', 'success');
+                  // Try immediate sign-in in case auto-confirm is active
+                  const signInAttempt = await supabaseClient.auth.signInWithPassword({ email, password });
+                  if (signInAttempt.data && signInAttempt.data.session) {
+                    showToast(`Welcome to Maths Master Studio, ${name}!`, 'success');
+                    await handleSessionDetected(signInAttempt.data.session);
+                  } else {
+                    setAuthAlert(`Registration submitted! Supabase sent a verification email to ${email}. Please check your inbox (or spam) to confirm, then sign in.`, 'info');
+                    setMode('signin');
+                  }
                 }
               }
             } else {
@@ -6465,7 +6502,11 @@
                 password
               });
               if (error) {
-                setAuthAlert(error.message, 'error');
+                if (error.message.toLowerCase().includes('email not confirmed')) {
+                  setAuthAlert(`Email not confirmed yet! Please click the confirmation link sent by Supabase to ${email} (check spam folder as well).`, 'error');
+                } else {
+                  setAuthAlert(error.message, 'error');
+                }
               } else if (data && data.session) {
                 showToast('Signed in successfully!', 'success');
                 await handleSessionDetected(data.session);
@@ -6559,7 +6600,7 @@
           console.log('New Service Worker controller activated. Reloading page...');
           window.location.reload();
         });
-        navigator.serviceWorker.register('/sw.js?v=5').then(reg => {
+        navigator.serviceWorker.register('/sw.js?v=6').then(reg => {
           if (reg) reg.update();
         }).catch(() => {});
       }
@@ -6778,6 +6819,10 @@
           <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
         </button>
       </form>
+
+      <p class="text-[11px] text-slate-500 dark:text-slate-400 text-center leading-normal">
+        💡 <strong class="text-slate-700 dark:text-slate-300">Fastest Access:</strong> Tap <em>"Continue with Google"</em> above for instant 1-click access without waiting for email verification codes.
+      </p>
 
       <div class="pt-2 text-center text-[11px] text-slate-400 border-t border-slate-200 dark:border-slate-800/80">
         <span class="flex items-center justify-center gap-1"><i data-lucide="shield-check" class="w-3.5 h-3.5 text-emerald-500"></i> Encrypted authentication via Supabase Auth</span>
