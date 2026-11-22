@@ -664,39 +664,76 @@
 
       EXAM_BANK = Array.from(qMap.values());
 
-      // Fetch comprehensive enriched question bank (318+ items with 4 options and KaTeX math)
-      fetch('./exam_questions_bank.json?t=' + Date.now())
-        .catch(() => fetch('/exam_questions_bank.json?t=' + Date.now()))
-        .then(res => res && res.ok ? res.json() : [])
-        .then(data => {
-          if (Array.isArray(data) && data.length > 0) {
-            data.forEach(q => {
-              qMap.set(q.id, {
-                id: q.id,
-                co: q.co || 'co1',
-                chapterTitle: q.chapterTitle || 'University Engineering Mathematics',
-                chNum: q.chNum || 1,
-                marks: Number(q.marks) || (q.marksLabel === '1M' ? 1 : q.marksLabel === '6M' ? 6 : 4),
-                marksLabel: q.marksLabel || (q.marks + 'M'),
-                level: q.level || (q.marks === 1 ? 'Rapid' : q.marks === 6 ? 'Comprehensive' : 'Standard'),
-                topic: q.topic || '',
-                prompt: q.prompt,
-                promptMath: q.promptMath || '',
-                options: q.options && q.options.length === 4 ? q.options : synthesizeLocalOptions(q.answer),
-                correctOption: q.correctOption || 'A',
-                hint: q.hint || 'Review the core theorem, substitution method, or standard recurrence.',
-                solution: q.solution || '',
-                steps: q.steps || [{ text: q.solution || '', math: '' }],
-                answer: q.answer || '',
-                sillyTrap: q.sillyTrap || 'Watch for algebraic signs (+/-) and power indices in the denominator.',
-                tag: q.tag || ('Exam Paper · ' + (q.marksLabel || '4M'))
-              });
-            });
-            EXAM_BANK = Array.from(qMap.values());
-            window.EXAM_BANK = EXAM_BANK;
-          }
-        })
-        .catch(() => {});
+      // Fetch verified master question bank (335 items with 4 options and KaTeX math)
+      const bankUrls = [
+        './src/data/verified_question_bank.json?t=' + Date.now(),
+        '/src/data/verified_question_bank.json?t=' + Date.now(),
+        './verified_question_bank.json?t=' + Date.now(),
+        '/verified_question_bank.json?t=' + Date.now(),
+        './exam_questions_bank.json?t=' + Date.now()
+      ];
+
+      async function loadBankFromUrls() {
+        for (const url of bankUrls) {
+          try {
+            const res = await fetch(url);
+            if (res.ok) {
+              const data = await res.json();
+              if (Array.isArray(data) && data.length > 0) {
+                data.forEach(q => {
+                  let opts = [];
+                  if (Array.isArray(q.options) && q.options.length === 4) {
+                    opts = typeof q.options[0] === 'string'
+                      ? q.options.map((opt, i) => ({ id: ['A', 'B', 'C', 'D'][i], text: opt }))
+                      : q.options;
+                  } else {
+                    opts = synthesizeLocalOptions(q.finalAnswerLatex || q.answer);
+                  }
+
+                  const correctOptLetter = typeof q.correctOptionIndex === 'number'
+                    ? ['A', 'B', 'C', 'D'][q.correctOptionIndex]
+                    : (q.correctOption || 'A');
+
+                  const solText = Array.isArray(q.detailedSolutionSteps)
+                    ? q.detailedSolutionSteps.join('\n\n')
+                    : (q.solution || '');
+
+                  const stepsList = Array.isArray(q.detailedSolutionSteps)
+                    ? q.detailedSolutionSteps.map(s => ({ text: s, math: '' }))
+                    : (q.steps || [{ text: solText, math: '' }]);
+
+                  qMap.set(q.id, {
+                    id: q.id,
+                    co: q.chapter || q.co || 'ch1',
+                    chapterTitle: q.chapterTitle || 'University Engineering Mathematics',
+                    chNum: q.chNum || 1,
+                    marks: Number(q.marks) || (q.marksLabel === '1M' ? 1 : q.marksLabel === '6M' ? 6 : 4),
+                    marksLabel: q.marksLabel || (q.marks + 'M'),
+                    level: q.level || (q.marks === 1 ? 'Rapid' : q.marks === 6 ? 'Comprehensive' : 'Standard'),
+                    topic: q.topic || '',
+                    prompt: q.questionLatex || q.prompt,
+                    promptMath: q.promptMath || '',
+                    options: opts,
+                    correctOption: correctOptLetter,
+                    hint: q.hint || 'Review the core theorem, substitution method, or standard recurrence.',
+                    solution: solText,
+                    steps: stepsList,
+                    answer: q.finalAnswerLatex || q.answer || '',
+                    sillyTrap: q.sillyTrap || 'Watch for algebraic signs (+/-) and power indices in the denominator.',
+                    tag: q.tag || ((q.chapter ? q.chapter.toUpperCase() : 'CO') + ' · ' + (q.marks || 4) + 'M')
+                  });
+                });
+                EXAM_BANK = Array.from(qMap.values());
+                window.EXAM_BANK = EXAM_BANK;
+                return true;
+              }
+            }
+          } catch (e) {}
+        }
+        return false;
+      }
+
+      loadBankFromUrls();
     }
 
     function recordActivity(actionName, count = 1) {
@@ -878,6 +915,9 @@
           localStorage.setItem('mms_test_records', JSON.stringify(state.testHistory));
         }
       } catch (e) {}
+      if (typeof scheduleLearningProgressSync === 'function') {
+        scheduleLearningProgressSync();
+      }
     }
 
     // =========================================================================
@@ -2158,7 +2198,22 @@
 
       // Find original correct option text
       const targetAns = (qClone.answer || '').trim();
-      let correctText = (rawOpts.find(o => o.isCorrect) || rawOpts.find(o => o.text === targetAns) || rawOpts[0]).text;
+      let correctText = '';
+      if (qClone.correctOption) {
+        const byId = rawOpts.find(o => o.id === qClone.correctOption);
+        if (byId) correctText = byId.text;
+      }
+      if (!correctText) {
+        const byFlag = rawOpts.find(o => o.isCorrect);
+        if (byFlag) correctText = byFlag.text;
+      }
+      if (!correctText && targetAns) {
+        const byAns = rawOpts.find(o => o.text === targetAns || o.text.trim() === targetAns);
+        if (byAns) correctText = byAns.text;
+      }
+      if (!correctText && rawOpts.length > 0) {
+        correctText = rawOpts[0].text;
+      }
 
       // Fisher-Yates shuffle
       const shuffled = rawOpts.map(o => ({ ...o }));
@@ -2190,7 +2245,9 @@
     }
 
     function startCustomTest() {
-      const selectedCos = state.testConfig.chapters || ['co1', 'co2', 'co3', 'co4', 'co5', 'co6'];
+      const selectedCos = (state.testConfig.chapters && state.testConfig.chapters.length > 0)
+        ? state.testConfig.chapters
+        : ['ch0', 'co1', 'co2', 'co3', 'co4', 'co5', 'co6'];
       const marksFilter = state.testConfig.marks || 'all';
       const targetCount = Number(state.testConfig.count) || 10;
       const mode = state.testConfig.mode || 'practice';
@@ -2211,7 +2268,7 @@
 
       state.activeTest = {
         id: 'test_' + Date.now(),
-        title: 'Custom Practice Quiz (' + questions.length + ' Qs · ' + totalMarks + ' Marks)',
+        title: (mode === 'practice' ? 'Custom Practice Session (' : 'Custom CBT Test (') + questions.length + ' Qs · ' + totalMarks + ' Marks)',
         isEndSem: false,
         mode: mode,
         totalMarks: totalMarks,
@@ -2235,6 +2292,7 @@
       state.testCurrentIndex = 0;
       state.testRemainingSeconds = estSeconds;
       state.testView = 'exam';
+      try { history.pushState({ appView: 'test', testView: 'exam' }, '', '#exam'); } catch(e) {}
 
       if (state.testTimerInterval) clearInterval(state.testTimerInterval);
       state.testTimerInterval = setInterval(() => {
@@ -2323,6 +2381,7 @@
       state.testCurrentIndex = 0;
       state.testRemainingSeconds = durationSec;
       state.testView = 'exam';
+      try { history.pushState({ appView: 'test', testView: 'exam' }, '', '#exam'); } catch(e) {}
 
       if (state.testTimerInterval) clearInterval(state.testTimerInterval);
       state.testTimerInterval = setInterval(() => {
@@ -2539,12 +2598,17 @@
         localStorage.setItem('mms_test_records', JSON.stringify(state.testHistory));
       } catch (e) {}
 
+      // Lifetime Database Persistence in Supabase
+      if (typeof saveTestAttemptToSupabase === 'function') {
+        saveTestAttemptToSupabase(scorecard);
+      }
+
       if (state.authUser && state.authUser.email) {
         syncStudentToSheet({
           name: state.authUser.name,
           email: state.authUser.email,
           authMethod: state.authUser.provider || 'Google',
-          activity: `Exam Completed: Scored ${scorecard.score}/${scorecard.totalPossibleMarks} (${scorecard.percentage}%)`
+          activity: `Exam Completed: Scored ${scorecard.score}/${scorecard.totalMarks} (${scorecard.percentage}%)`
         });
       }
 
@@ -2553,6 +2617,7 @@
 
       saveState();
       state.testView = 'scorecard';
+      try { history.pushState({ appView: 'test', testView: 'scorecard' }, '', '#scorecard'); } catch(e) {}
       renderApp();
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
@@ -3393,6 +3458,24 @@
 
       container.innerHTML = `
         <div class="space-y-6 animate-in fade-in duration-300">
+          <!-- Top Global Quick-Action Navigation Bar -->
+          <div class="flex flex-wrap items-center justify-between gap-3 p-4 rounded-2xl bg-white/90 dark:bg-slate-900/90 backdrop-blur-md border border-slate-200 dark:border-slate-800 shadow-md">
+            <div class="flex items-center gap-2">
+              <button data-action="return-cbt-builder" class="px-3.5 sm:px-4 py-2 rounded-xl text-xs sm:text-sm font-bold bg-indigo-600 hover:bg-indigo-700 text-white flex items-center gap-1.5 transition-all shadow-sm active:scale-95 cursor-pointer">
+                <i data-lucide="arrow-left" class="w-4 h-4"></i>
+                <span>← Back to Test Studio</span>
+              </button>
+              <button data-action="return-home" class="px-3.5 sm:px-4 py-2 rounded-xl text-xs sm:text-sm font-bold border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200 flex items-center gap-1.5 transition-all cursor-pointer">
+                <i data-lucide="home" class="w-4 h-4"></i>
+                <span>← Back to Home</span>
+              </button>
+            </div>
+            <button data-action="retake-cbt-exam" class="px-3.5 sm:px-4 py-2 rounded-xl text-xs sm:text-sm font-bold bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white flex items-center gap-1.5 transition-all shadow-sm active:scale-95 cursor-pointer">
+              <i data-lucide="rotate-ccw" class="w-4 h-4"></i>
+              <span>Retake Similar Test</span>
+            </button>
+          </div>
+
           <!-- Hero Scorecard Header -->
           <div class="ed-card rounded-3xl p-6 sm:p-8 border-2 border-indigo-500/25 shadow-xl relative overflow-hidden">
             <div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
@@ -3690,6 +3773,24 @@
                 `;
               }).join('')}
             </div>
+          </div>
+
+          <!-- Bottom Global Navigation Bar -->
+          <div class="flex flex-wrap items-center justify-between gap-3 p-5 rounded-2xl bg-white/90 dark:bg-slate-900/90 backdrop-blur-md border border-slate-200 dark:border-slate-800 shadow-lg mt-8">
+            <div class="flex items-center gap-2">
+              <button data-action="return-cbt-builder" class="px-4 py-2.5 rounded-xl text-xs sm:text-sm font-bold bg-indigo-600 hover:bg-indigo-700 text-white flex items-center gap-1.5 transition-all shadow-sm active:scale-95 cursor-pointer">
+                <i data-lucide="arrow-left" class="w-4 h-4"></i>
+                <span>← Back to Test Studio</span>
+              </button>
+              <button data-action="return-home" class="px-4 py-2.5 rounded-xl text-xs sm:text-sm font-bold border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200 flex items-center gap-1.5 transition-all cursor-pointer">
+                <i data-lucide="home" class="w-4 h-4"></i>
+                <span>← Back to Home</span>
+              </button>
+            </div>
+            <button data-action="retake-cbt-exam" class="px-4 py-2.5 rounded-xl text-xs sm:text-sm font-bold bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white flex items-center gap-1.5 transition-all shadow-sm active:scale-95 cursor-pointer">
+              <i data-lucide="rotate-ccw" class="w-4 h-4"></i>
+              <span>Retake Similar Test</span>
+            </button>
           </div>
         </div>
       `;
@@ -5129,12 +5230,27 @@
         return;
       }
 
+      // Toggle individual chapter in Custom Test Generator
+      const coToggle = e.target.closest('[data-custom-co-toggle]');
+      if (coToggle) {
+        const chId = coToggle.dataset.customCoToggle;
+        const cur = state.testConfig.chapters || [];
+        if (cur.includes(chId)) {
+          state.testConfig.chapters = cur.filter(id => id !== chId);
+        } else {
+          state.testConfig.chapters = [...cur, chId];
+        }
+        renderApp();
+        return;
+      }
+
       const viewHist = e.target.closest('[data-view-history-scorecard]');
       if (viewHist) {
         const idx = Number(viewHist.dataset.viewHistoryScorecard);
         if (state.testHistory && state.testHistory[idx]) {
           state.testScorecard = state.testHistory[idx];
           state.testView = 'scorecard';
+          try { history.pushState({ appView: 'test', testView: 'scorecard' }, '', '#scorecard'); } catch(e) {}
           renderApp();
           window.scrollTo({ top: 0, behavior: 'smooth' });
         }
@@ -5152,6 +5268,18 @@
       const retBuilder = e.target.closest('[data-action="return-cbt-builder"]');
       if (retBuilder) {
         state.testView = 'builder';
+        try { history.pushState({ appView: 'test', testView: 'builder' }, '', '#test'); } catch(e) {}
+        renderApp();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+        return;
+      }
+
+      // Return to Home Roadmap
+      const retHome = e.target.closest('[data-action="return-home"]');
+      if (retHome) {
+        state.view = 'syllabus';
+        state.testView = 'builder';
+        try { history.pushState({ appView: 'syllabus' }, '', '#home'); } catch(e) {}
         renderApp();
         window.scrollTo({ top: 0, behavior: 'smooth' });
         return;
@@ -5160,7 +5288,8 @@
       // Retake CBT Exam
       const retakeExam = e.target.closest('[data-action="retake-cbt-exam"]');
       if (retakeExam) {
-        if (state.activeTest && state.activeTest.isEndSem) {
+        const isEndSem = (state.testScorecard && state.testScorecard.isEndSem) || (state.activeTest && state.activeTest.isEndSem);
+        if (isEndSem) {
           startEndSemExam();
         } else {
           startCustomTest();
@@ -5444,6 +5573,11 @@
       updateAuthUI();
       closeAuthModal();
 
+      // Lifetime Database Persistence & Sync (Supabase)
+      syncPendingLocalTestsToSupabase();
+      loadLifetimeTestHistoryFromSupabase();
+      loadLifetimeLearningProgressFromSupabase();
+
       // Start periodic telemetry heartbeat
       startTelemetryHeartbeat();
 
@@ -5461,6 +5595,211 @@
       if (!name) {
         pendingAuthSession = { user, session, email, name, avatar, authMethod };
         openConfirmProfileModal(name, email);
+      }
+    }
+
+    // =========================================================================
+    // LIFETIME DATABASE PERSISTENCE ENGINE (SUPABASE: test_attempts & progress)
+    // =========================================================================
+    async function saveTestAttemptToSupabase(scorecard) {
+      if (!scorecard || !supabaseClient || !state.authUser?.id) return;
+      try {
+        const mode = scorecard.isEndSem ? 'endsem' : (scorecard.mode || state.activeTest?.mode || 'practice');
+        const accuracy = scorecard.answeredCount > 0 ? Math.round((scorecard.correctCount / scorecard.answeredCount) * 100) : 0;
+        const responses = (scorecard.questions || []).map(q => ({
+          id: q.id,
+          prompt: q.prompt || '',
+          options: q.options || [],
+          userOption: q.userAnswer?.selectedOption || null,
+          correctOption: q.correctOption || 'A',
+          isCorrect: q.userAnswer?.selectedOption === q.correctOption,
+          timeSpent: q.userAnswer?.timeSpent || 0
+        }));
+
+        const { data, error } = await supabaseClient.from('test_attempts').insert([{
+          user_id: state.authUser.id,
+          test_mode: mode,
+          test_title: scorecard.testTitle || 'Mathematics Examination',
+          score: scorecard.score || 0,
+          max_marks: scorecard.totalMarks || 50,
+          accuracy_pct: accuracy,
+          total_time_sec: scorecard.timeTakenSec || 0,
+          co_breakdown_json: scorecard.chapterStats || {},
+          responses_json: responses,
+          created_at: new Date().toISOString()
+        }]).select();
+
+        if (error) {
+          console.warn('Supabase test_attempts insert note:', error.message);
+        } else if (data && data[0]) {
+          scorecard.id = data[0].id;
+          scorecard.syncedToSupabase = true;
+          saveState();
+        }
+      } catch (err) {
+        console.warn('Error saving attempt to Supabase:', err);
+      }
+    }
+
+    async function syncPendingLocalTestsToSupabase() {
+      if (!supabaseClient || !state.authUser?.id) return;
+      const history = state.testHistory || [];
+      if (history.length === 0) return;
+      try {
+        for (const test of history) {
+          if (!test.id && !test.syncedToSupabase) {
+            await saveTestAttemptToSupabase(test);
+            test.syncedToSupabase = true;
+          }
+        }
+      } catch (err) {
+        console.warn('Error syncing pending tests to Supabase:', err);
+      }
+    }
+
+    async function loadLifetimeTestHistoryFromSupabase() {
+      if (!supabaseClient || !state.authUser?.id) return;
+      try {
+        const { data, error } = await supabaseClient
+          .from('test_attempts')
+          .select('*')
+          .eq('user_id', state.authUser.id)
+          .order('created_at', { ascending: false });
+
+        if (error) {
+          console.warn('Could not load test attempts from Supabase:', error.message);
+          return;
+        }
+
+        if (Array.isArray(data) && data.length > 0) {
+          const remoteScores = data.map(row => {
+            const responses = row.responses_json || [];
+            const answered = responses.filter(r => r.userOption != null);
+            const correct = answered.filter(r => r.isCorrect);
+            const incorrect = answered.filter(r => !r.isCorrect);
+            const skipped = responses.filter(r => r.userOption == null);
+            const pct = row.max_marks > 0 ? Math.round((Number(row.score) / Number(row.max_marks)) * 100) : 0;
+            const totalTime = row.total_time_sec || 0;
+
+            return {
+              id: row.id,
+              testId: row.id,
+              testTitle: row.test_title,
+              isEndSem: row.test_mode === 'endsem',
+              mode: row.test_mode,
+              date: new Date(row.created_at).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' }),
+              score: Number(row.score),
+              totalMarks: Number(row.max_marks),
+              percentage: pct,
+              timeTakenSec: totalTime,
+              avgTimePerQ: Math.round(totalTime / Math.max(1, responses.length)),
+              totalQuestions: responses.length,
+              answeredCount: answered.length,
+              correctCount: correct.length,
+              incorrectCount: incorrect.length,
+              unattemptedCount: skipped.length,
+              reviewCount: 0,
+              timeSpentOnCorrect: Math.round(totalTime * (correct.length / Math.max(1, responses.length))),
+              timeSpentOnIncorrect: Math.round(totalTime * (incorrect.length / Math.max(1, responses.length))),
+              timeSpentOnSkipped: Math.round(totalTime * (skipped.length / Math.max(1, responses.length))),
+              sillyMistakes: [],
+              chapterStats: row.co_breakdown_json || {},
+              typeStats: {},
+              syncedToSupabase: true,
+              questions: responses.map((r, i) => {
+                const original = (window.EXAM_BANK || EXAM_BANK || []).find(q => q.id === r.id);
+                return {
+                  ...(original || {}),
+                  id: r.id,
+                  qNum: i + 1,
+                  prompt: original?.prompt || r.prompt || ('Question ' + (i + 1)),
+                  promptMath: original?.promptMath || '',
+                  marks: original?.marks || (row.test_mode === 'endsem' ? (i < 10 ? 1 : i < 17 ? 4 : 6) : 4),
+                  co: original?.co || 'co1',
+                  options: original?.options || r.options || [],
+                  correctOption: r.correctOption || original?.correctOption || 'A',
+                  solution: original?.solution || '',
+                  steps: original?.steps || [],
+                  answer: original?.answer || '',
+                  sillyTrap: original?.sillyTrap || '',
+                  userAnswer: {
+                    selectedOption: r.userOption,
+                    timeSpent: r.timeSpent || 0,
+                    status: r.userOption ? 'answered' : 'not_answered'
+                  }
+                };
+              })
+            };
+          });
+
+          const remoteIds = new Set(remoteScores.map(s => s.id));
+          const localOnly = (state.testHistory || []).filter(h => !h.id || !remoteIds.has(h.id));
+          state.testHistory = [...remoteScores, ...localOnly];
+          saveState();
+          if (state.view === 'test' && state.testView === 'builder') {
+            renderApp();
+          }
+        }
+      } catch (err) {
+        console.warn('Error loading lifetime test history from Supabase:', err);
+      }
+    }
+
+    let learningSyncDebounceTimer = null;
+    function scheduleLearningProgressSync() {
+      if (!supabaseClient || !state.authUser?.id) return;
+      if (learningSyncDebounceTimer) clearTimeout(learningSyncDebounceTimer);
+      learningSyncDebounceTimer = setTimeout(syncLearningProgressToSupabase, 2000);
+    }
+
+    async function syncLearningProgressToSupabase() {
+      if (!supabaseClient || !state.authUser?.id) return;
+      try {
+        const today = new Date().toISOString().split('T')[0];
+        const payload = {
+          user_id: state.authUser.id,
+          mastered_formulas_json: state.mastered || {},
+          bookmarked_formulas_json: state.bookmarks || {},
+          flashcards_mastered_json: state.fcKnown || {},
+          labs_explored_json: state.completedLabs || {},
+          study_streak_days: state.streak?.count || 0,
+          last_active_date: state.streak?.lastActiveDate || today,
+          updated_at: new Date().toISOString()
+        };
+
+        const { error } = await supabaseClient.from('user_learning_progress').upsert(payload, { onConflict: 'user_id' });
+        if (error) {
+          console.warn('Supabase learning progress upsert note:', error.message);
+        }
+      } catch (err) {
+        console.warn('Error syncing learning progress to Supabase:', err);
+      }
+    }
+
+    async function loadLifetimeLearningProgressFromSupabase() {
+      if (!supabaseClient || !state.authUser?.id) return;
+      try {
+        const { data, error } = await supabaseClient
+          .from('user_learning_progress')
+          .select('*')
+          .eq('user_id', state.authUser.id)
+          .maybeSingle();
+
+        if (!error && data) {
+          state.mastered = { ...state.mastered, ...(data.mastered_formulas_json || {}) };
+          state.bookmarks = { ...state.bookmarks, ...(data.bookmarked_formulas_json || {}) };
+          state.fcKnown = { ...state.fcKnown, ...(data.flashcards_mastered_json || {}) };
+          state.completedLabs = { ...state.completedLabs, ...(data.labs_explored_json || {}) };
+          if (typeof data.study_streak_days === 'number' && data.study_streak_days > (state.streak?.count || 0)) {
+            state.streak.count = data.study_streak_days;
+            if (data.last_active_date) state.streak.lastActiveDate = data.last_active_date;
+          }
+          saveState();
+          updateStreakUI();
+          updateMasteryUI();
+        }
+      } catch (err) {
+        console.warn('Error loading progress from Supabase:', err);
       }
     }
 
@@ -5486,6 +5825,25 @@
     if (typeof window !== 'undefined') {
       ['pointerdown', 'keydown', 'scroll', 'touchstart'].forEach(evt => {
         window.addEventListener(evt, handleUserInteraction, { passive: true });
+      });
+
+      // Browser Back & Popstate Navigation for CBT Test Studio & Scorecard
+      window.addEventListener('popstate', () => {
+        if (state.testView === 'exam') {
+          if (confirm('Leave active examination? Your current progress will be forfeited.')) {
+            if (state.testTimerInterval) clearInterval(state.testTimerInterval);
+            state.activeTest = null;
+            state.testView = 'builder';
+            renderApp();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+          } else {
+            try { history.pushState({ appView: 'test', testView: 'exam' }, '', '#exam'); } catch(err) {}
+          }
+        } else if (state.testView === 'scorecard') {
+          state.testView = 'builder';
+          renderApp();
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
       });
     }
 
