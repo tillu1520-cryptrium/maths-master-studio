@@ -70,12 +70,12 @@ for (const b of banned) {
 }
 console.log('PASS: Zero banned words verified');
 
-// 9. Verify Service Worker v23
+// 9. Verify Service Worker v24
 const sw = fs.readFileSync('sw.js', 'utf8');
-if (!sw.includes("maths-master-studio-v23") || !html.includes("sw.js?v=23")) {
-  console.error('FAIL: Service Worker v23 cache busting missing');
+if (!sw.includes("maths-master-studio-v24") || !html.includes("sw.js?v=24")) {
+  console.error('FAIL: Service Worker v24 cache busting missing');
   process.exit(1);
 }
-console.log('PASS: Service Worker v23 cache busting verified');
+console.log('PASS: Service Worker v24 cache busting verified');
 
 console.log('\n>>> ALL PHASE 2 & PHASE 3 COMPREHENSIVE TESTS PASSED! <<<');

@@ -4,6 +4,25 @@ import { execSync } from 'child_process';
 
 console.log('--- EXECUTING BUILD PIPELINE ---');
 
+// 0. Verify Script Syntax in index.html
+import vm from 'vm';
+const htmlSource = fs.readFileSync('index.html', 'utf8');
+const scriptRegex = /<script\b[^>]*>([\s\S]*?)<\/script>/gi;
+let m;
+let sIdx = 0;
+while ((m = scriptRegex.exec(htmlSource)) !== null) {
+  sIdx++;
+  const code = m[1];
+  if (!code.trim()) continue;
+  try {
+    new vm.Script(code, { filename: `index.html:<script-${sIdx}>` });
+  } catch (err) {
+    console.error(`FATAL BUILD ERROR: SyntaxError in index.html script #${sIdx}:`, err);
+    process.exit(1);
+  }
+}
+console.log('PASS: All inline scripts in index.html verified syntactically valid with zero errors');
+
 // 1. Run Verification Test Suites
 execSync('node scripts/test_full_vfx.mjs', { stdio: 'inherit' });
 execSync('node scripts/test_toggle.mjs', { stdio: 'inherit' });
