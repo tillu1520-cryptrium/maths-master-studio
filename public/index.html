@@ -3146,7 +3146,7 @@
 
       const testedHistory = getTestedQuestionHistory();
       const uniqueTestedCount = Object.keys(testedHistory).length;
-      const totalBankQuestions = (window.EXAM_BANK && window.EXAM_BANK.length) || (typeof EXAM_BANK !== 'undefined' && EXAM_BANK.length) || 335;
+      const totalBankQuestions = (window.EXAM_BANK && window.EXAM_BANK.length) || (typeof EXAM_BANK !== 'undefined' && EXAM_BANK.length) || 318;
       const exposurePct = Math.round((uniqueTestedCount / totalBankQuestions) * 100);
       const remainingFresh = Math.max(0, totalBankQuestions - uniqueTestedCount);
 
@@ -3190,38 +3190,35 @@
             </div>
           </div>
 
-          <!-- Mode Selector Tabs with Sakuga-Tabs -->
-          <div class="mb-2">
+          <!-- Mode Selector Tabs with Sakuga-Tabs (Desktop/Tablet) -->
+          <div class="mb-2 hidden sm:block">
             <sakuga-tabs id="testModeSakugaTabs" label="Exam Mode" class="w-full sm:w-auto">
               <option value="endsem" ${activeTab === 'endsem' ? 'selected' : ''}>50M Exam Simulator</option>
               <option value="custom" ${activeTab === 'custom' ? 'selected' : ''}>Custom Test & Quiz</option>
               <option value="history" ${activeTab === 'history' ? 'selected' : ''}>Test History & Archives</option>
             </sakuga-tabs>
           </div>
-          <!-- Mode Selector Tabs (Mobile 3-Column Responsive Grid + Desktop Tabs) -->
-          <div class="grid grid-cols-3 gap-1.5 p-1 bg-slate-100 dark:bg-slate-900/90 rounded-2xl border border-slate-200/80 dark:border-slate-800 sm:flex sm:items-center sm:gap-2 sm:bg-transparent sm:border-0 sm:p-0 sm:border-b sm:border-slate-200 sm:dark:border-slate-800 sm:pb-2 sm:rounded-none">
-            <button data-switch-test-tab="endsem" class="flex flex-col sm:flex-row items-center justify-center gap-1 sm:gap-2 px-2 sm:px-4 py-2 sm:py-2.5 rounded-xl text-[11px] sm:text-xs font-bold transition-all text-center ${activeTab === 'endsem' ? 'bg-indigo-600 text-white shadow-md' : 'text-slate-600 dark:text-slate-300 hover:bg-slate-200/70 dark:hover:bg-slate-800'}">
+          <!-- Mode Selector Tabs (Mobile 3-Column Responsive Grid) -->
+          <div class="grid grid-cols-3 gap-1.5 p-1 bg-slate-100 dark:bg-slate-900/90 rounded-2xl border border-slate-200/80 dark:border-slate-800 sm:hidden">
+            <button data-switch-test-tab="endsem" class="flex flex-col items-center justify-center gap-1 px-2 py-2 rounded-xl text-[11px] font-bold transition-all text-center ${activeTab === 'endsem' ? 'bg-indigo-600 text-white shadow-md' : 'text-slate-600 dark:text-slate-300 hover:bg-slate-200/70 dark:hover:bg-slate-800'}">
               <div class="flex items-center gap-1">
-                <i data-lucide="award" class="w-3.5 h-3.5 sm:w-4 sm:h-4"></i>
-                <span class="sm:hidden font-bold">50M Exam</span>
-                <span class="hidden sm:inline">50M · 150 Min End-Semester Simulator</span>
+                <i data-lucide="award" class="w-3.5 h-3.5"></i>
+                <span class="font-bold">50M Exam</span>
               </div>
-              <span class="px-1.5 py-0.2 rounded text-[9px] sm:text-[10px] bg-amber-400 text-slate-900 font-mono font-extrabold uppercase">Official</span>
+              <span class="px-1.5 py-0.2 rounded text-[9px] bg-amber-400 text-slate-900 font-mono font-extrabold uppercase">Official</span>
             </button>
-            <button data-switch-test-tab="custom" class="flex flex-col sm:flex-row items-center justify-center gap-1 sm:gap-2 px-2 sm:px-4 py-2 sm:py-2.5 rounded-xl text-[11px] sm:text-xs font-bold transition-all text-center ${activeTab === 'custom' ? 'bg-indigo-600 text-white shadow-md' : 'text-slate-600 dark:text-slate-300 hover:bg-slate-200/70 dark:hover:bg-slate-800'}">
+            <button data-switch-test-tab="custom" class="flex flex-col items-center justify-center gap-1 px-2 py-2 rounded-xl text-[11px] font-bold transition-all text-center ${activeTab === 'custom' ? 'bg-indigo-600 text-white shadow-md' : 'text-slate-600 dark:text-slate-300 hover:bg-slate-200/70 dark:hover:bg-slate-800'}">
               <div class="flex items-center gap-1">
-                <i data-lucide="sliders" class="w-3.5 h-3.5 sm:w-4 sm:h-4"></i>
-                <span class="sm:hidden font-bold">Custom Quiz</span>
-                <span class="hidden sm:inline">Custom Test Generator & Quick Quiz</span>
+                <i data-lucide="sliders" class="w-3.5 h-3.5"></i>
+                <span class="font-bold">Custom Quiz</span>
               </div>
             </button>
-            <button data-switch-test-tab="history" class="flex flex-col sm:flex-row items-center justify-center gap-1 sm:gap-2 px-2 sm:px-4 py-2 sm:py-2.5 rounded-xl text-[11px] sm:text-xs font-bold transition-all text-center ${activeTab === 'history' ? 'bg-indigo-600 text-white shadow-md' : 'text-slate-600 dark:text-slate-300 hover:bg-slate-200/70 dark:hover:bg-slate-800'}">
+            <button data-switch-test-tab="history" class="flex flex-col items-center justify-center gap-1 px-2 py-2 rounded-xl text-[11px] font-bold transition-all text-center ${activeTab === 'history' ? 'bg-indigo-600 text-white shadow-md' : 'text-slate-600 dark:text-slate-300 hover:bg-slate-200/70 dark:hover:bg-slate-800'}">
               <div class="flex items-center gap-1">
-                <i data-lucide="history" class="w-3.5 h-3.5 sm:w-4 sm:h-4"></i>
-                <span class="sm:hidden font-bold">Past Tests</span>
-                <span class="hidden sm:inline">Past Test History & Archives</span>
+                <i data-lucide="history" class="w-3.5 h-3.5"></i>
+                <span class="font-bold">Past Tests</span>
               </div>
-              ${history.length > 0 ? `<span class="px-1.5 py-0.2 rounded text-[9px] sm:text-[10px] bg-indigo-500/20 text-indigo-400 font-mono font-bold">${history.length}</span>` : ''}
+              ${history.length > 0 ? `<span class="px-1.5 py-0.2 rounded text-[9px] bg-indigo-500/20 text-indigo-400 font-mono font-bold">${history.length}</span>` : ''}
             </button>
           </div>
 
@@ -3575,6 +3572,17 @@
           `}
         </div>
       `;
+
+      const testTabs = document.getElementById('testModeSakugaTabs');
+      if (testTabs) {
+        testTabs.addEventListener('change', (e) => {
+          const val = (e && e.detail && e.detail.value) || testTabs.value;
+          if (val && state.testTab !== val) {
+            state.testTab = val;
+            renderApp();
+          }
+        });
+      }
     }
 
     // ACTIVE CBT EXAM ENVIRONMENT (NTA / MARKS APP QUESTION PALETTE)
@@ -6021,7 +6029,7 @@
       // Reset Question Exposure History
       const resetExposure = e.target.closest('[data-action="reset-question-exposure"]');
       if (resetExposure) {
-        if (confirm('Reset your question exposure history? All 335 questions will be treated as fresh and unattempted.')) {
+        if (confirm('Reset your question exposure history? All 318 questions will be treated as fresh and unattempted.')) {
           resetQuestionExposureHistory();
           showToast('Question exposure history reset to 0!', 'success');
           renderApp();
