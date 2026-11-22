@@ -1,7 +1,7 @@
 import http from 'http';
 import net from 'net';
 import dns from 'dns';
-import { execSync } from 'child_process';
+import { spawn } from 'child_process';
 
 const resolver = new dns.promises.Resolver();
 resolver.setServers(['8.8.8.8', '1.1.1.1']);
@@ -32,18 +32,27 @@ server.on('connect', async (req, clientSocket, head) => {
 server.listen(0, '127.0.0.1', () => {
   const port = server.address().port;
   console.log(`DNS bypass proxy listening on 127.0.0.1:${port}`);
-  try {
-    console.log('Executing git push origin main with HTTPS_PROXY...');
-    const out = execSync('git push origin main', {
-      env: { ...process.env, HTTPS_PROXY: `http://127.0.0.1:${port}` },
-      encoding: 'utf8',
-      stdio: 'inherit'
-    });
-    console.log('✅ Git push completed successfully!');
-  } catch (err) {
-    console.error('Git push failed:', err.message);
-    process.exit(1);
-  } finally {
+  console.log('Executing git push origin main with HTTPS_PROXY...');
+
+  const child = spawn('git', ['push', 'origin', 'main'], {
+    env: { ...process.env, HTTPS_PROXY: `http://127.0.0.1:${port}` },
+    stdio: 'inherit'
+  });
+
+  child.on('close', code => {
     server.close();
-  }
+    if (code === 0) {
+      console.log('✅ Git push completed successfully!');
+      process.exit(0);
+    } else {
+      console.error(`Git push exited with code ${code}`);
+      process.exit(code || 1);
+    }
+  });
+
+  child.on('error', err => {
+    server.close();
+    console.error('Git push spawn error:', err);
+    process.exit(1);
+  });
 });

@@ -386,6 +386,30 @@
 </head>
 <body class="font-sans antialiased min-h-screen flex flex-col selection:bg-indigo-500/25">
 
+  <!-- INITIAL SESSION HYDRATION GATE LOADER (Sleek dark screen while verifying Supabase session) -->
+  <div id="appAuthHydrationLoader" class="fixed inset-0 z-[100] bg-slate-950 flex flex-col items-center justify-center transition-opacity duration-300 select-none">
+    <div class="relative flex flex-col items-center space-y-5 animate-in fade-in zoom-in duration-300">
+      <div class="relative w-16 h-16 rounded-2xl flex items-center justify-center">
+        <div class="absolute inset-0 rounded-2xl bg-gradient-to-tr from-indigo-500 via-purple-500 to-cyan-400 blur-lg opacity-75 animate-pulse"></div>
+        <div class="relative z-10 w-14 h-14 rounded-2xl bg-slate-900 flex items-center justify-center border border-white/20 shadow-2xl">
+          <span class="font-serif italic font-bold text-white text-2xl tracking-tight drop-shadow-[0_2px_8px_rgba(0,0,0,0.6)]">∫∂</span>
+        </div>
+      </div>
+      <div class="flex flex-col items-center gap-2">
+        <h2 class="text-base font-extrabold tracking-tight bg-gradient-to-r from-white via-indigo-200 to-cyan-300 bg-clip-text text-transparent">Maths Master Studio</h2>
+        <div class="flex items-center gap-2 text-xs font-mono text-slate-400">
+          <svg class="animate-spin h-3.5 w-3.5 text-indigo-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path>
+          </svg>
+          <span>Verifying student session...</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Primary Application Wrapper (Blurred & Non-Interactive When Locked Behind Auth Gate) -->
+  <div id="appContainer" class="flex-1 flex flex-col min-h-screen transition-all duration-300">
   <!-- Sticky Editorial Header -->
   <header class="sticky top-0 z-40 ed-header">
     <div class="max-w-[1440px] mx-auto px-3 sm:px-5 py-2 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-2">
@@ -465,6 +489,7 @@
   <footer class="border-t border-slate-200/80 dark:border-slate-800/80 py-3 px-4 text-center text-[11px] text-slate-500 dark:text-slate-400">
     Maths Master Studio · Interactive Calculus &amp; Differential Equations · Aligned with Kreyszig (10th Ed.) &amp; Narayan–Mittal.
   </footer>
+  </div>
 
   <!-- Instant Search Modal -->
   <div id="searchModal" class="fixed inset-0 z-50 hidden items-start justify-center pt-14 sm:pt-24 px-3 bg-slate-950/70 backdrop-blur-sm">
@@ -5063,6 +5088,14 @@
     if (resetProgBtn) resetProgBtn.onclick = resetProgress;
 
     document.addEventListener('keydown', e => {
+      const authM = document.getElementById('authModal');
+      if (authM && !authM.classList.contains('hidden') && authM.dataset.mandatory === 'true') {
+        if (e.key === 'Escape') {
+          e.preventDefault();
+          e.stopPropagation();
+        }
+        return;
+      }
       const modalOpen = !document.getElementById('searchModal').classList.contains('hidden');
       const pModalOpen = !document.getElementById('progressModal').classList.contains('hidden');
       if (e.key === 'Escape') {
@@ -5490,9 +5523,21 @@
     let authMode = 'signin'; // 'signin' or 'signup'
     let pendingAuthSession = null;
 
+    function hideHydrationLoader() {
+      const loader = document.getElementById('appAuthHydrationLoader');
+      if (loader && !loader.classList.contains('hidden')) {
+        loader.style.opacity = '0';
+        loader.style.pointerEvents = 'none';
+        setTimeout(() => {
+          loader.classList.add('hidden');
+        }, 300);
+      }
+    }
+
     async function initAuth() {
       let supabaseUrl = '';
       let supabaseAnonKey = '';
+      let activeSession = null;
 
       try {
         const cfgRes = await fetch('/api/auth-config');
@@ -5513,26 +5558,51 @@
           supabaseClient.auth.onAuthStateChange(async (event, session) => {
             if (session && session.user) {
               await handleSessionDetected(session);
+              hideHydrationLoader();
             } else if (event === 'SIGNED_OUT') {
               state.authUser = null;
               saveState();
               updateAuthUI();
+              hideHydrationLoader();
+              openAuthModal('signin', true);
             }
           });
 
           // Check current active session
-          const { data } = await supabaseClient.auth.getSession();
-          if (data && data.session && data.session.user) {
+          const { data, error } = await supabaseClient.auth.getSession();
+          if (!error && data && data.session && data.session.user) {
+            activeSession = data.session;
             await handleSessionDetected(data.session);
           } else {
+            // No active session in Supabase!
+            state.authUser = null;
+            saveState();
             updateAuthUI();
           }
         } catch (e) {
           console.error('Supabase initialization error:', e);
+          state.authUser = null;
+          saveState();
           updateAuthUI();
         }
       } else {
-        updateAuthUI();
+        // Fallback for static local offline development
+        if (state.authUser && state.authUser.email) {
+          activeSession = { user: { email: state.authUser.email } };
+        } else {
+          updateAuthUI();
+        }
+      }
+
+      // Hide initial loader smoothly
+      hideHydrationLoader();
+
+      // Enforce Mandatory Auth Wall:
+      // If no active session exists, immediately pop the mandatory login gate with blurred backdrop
+      if (!activeSession && (!state.authUser || !state.authUser.email)) {
+        openAuthModal('signin', true);
+      } else {
+        closeAuthModal();
       }
 
       // Ensure existing logged-in user syncs to Google Sheet on every browser refresh / load
@@ -6116,26 +6186,59 @@
           </button>
         `;
         const aBtn = document.getElementById('openAuthModalBtn');
-        if (aBtn) aBtn.onclick = openAuthModal;
+        if (aBtn) aBtn.onclick = () => openAuthModal('signin', true);
       }
       refreshIcons();
     }
 
-    function openAuthModal() {
+    function openAuthModal(mode = 'signin', isMandatory = false) {
       const m = document.getElementById('authModal');
+      const closeBtn = document.getElementById('closeAuthModalBtn');
+      const appContainer = document.getElementById('appContainer');
+
       if (m) {
+        m.dataset.mandatory = isMandatory ? 'true' : 'false';
+        if (closeBtn) {
+          if (isMandatory) {
+            closeBtn.classList.add('hidden');
+          } else {
+            closeBtn.classList.remove('hidden');
+          }
+        }
         m.classList.remove('hidden');
         m.classList.add('flex');
         setAuthAlert('', '');
         refreshIcons();
       }
+
+      if (isMandatory) {
+        document.body.style.overflow = 'hidden';
+        if (appContainer) {
+          appContainer.style.filter = 'blur(12px)';
+          appContainer.style.pointerEvents = 'none';
+          appContainer.style.userSelect = 'none';
+          appContainer.setAttribute('aria-hidden', 'true');
+        }
+      }
     }
 
-    function closeAuthModal() {
+    function closeAuthModal(force = false) {
       const m = document.getElementById('authModal');
+      const appContainer = document.getElementById('appContainer');
       if (m) {
+        if (!force && m.dataset.mandatory === 'true' && (!state.authUser || !state.authUser.email)) {
+          return;
+        }
+        m.dataset.mandatory = 'false';
         m.classList.remove('flex');
         m.classList.add('hidden');
+      }
+      document.body.style.overflow = '';
+      if (appContainer) {
+        appContainer.style.filter = '';
+        appContainer.style.pointerEvents = '';
+        appContainer.style.userSelect = '';
+        appContainer.removeAttribute('aria-hidden');
       }
     }
 
@@ -6253,9 +6356,22 @@
       if (tabUp) tabUp.onclick = () => setMode('signup');
 
       const closeAuthBtn = document.getElementById('closeAuthModalBtn');
-      if (closeAuthBtn) closeAuthBtn.onclick = closeAuthModal;
+      if (closeAuthBtn) {
+        closeAuthBtn.onclick = () => {
+          const authM = document.getElementById('authModal');
+          if (authM && authM.dataset.mandatory === 'true') return;
+          closeAuthModal();
+        };
+      }
       const authM = document.getElementById('authModal');
-      if (authM) authM.onclick = e => { if (e.target.id === 'authModal') closeAuthModal(); };
+      if (authM) {
+        authM.onclick = e => {
+          if (e.target.id === 'authModal') {
+            if (authM.dataset.mandatory === 'true') return;
+            closeAuthModal();
+          }
+        };
+      }
 
       const closeProfBtn = document.getElementById('closeProfileModalBtn');
       if (closeProfBtn) closeProfBtn.onclick = closeProfileModal;
@@ -6425,6 +6541,7 @@
           updateAuthUI();
           closeProfileModal();
           showToast('Signed out of Maths Master Studio.', 'info');
+          openAuthModal('signin', true);
         };
       }
     }
@@ -6573,29 +6690,40 @@
     </div>
   </div>
 
-  <!-- SUPABASE USER AUTHENTICATION MODAL (GOOGLE + EMAIL) -->
-  <div id="authModal" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm hidden items-center justify-center p-3 sm:p-5" role="dialog" aria-modal="true" aria-labelledby="authModalTitle">
-    <div class="ed-card rounded-2xl max-w-md w-full shadow-2xl border border-slate-200 dark:border-slate-800 flex flex-col p-5 sm:p-6 space-y-4 animate-in fade-in zoom-in duration-200 relative">
+  <!-- SUPABASE USER AUTHENTICATION MODAL (MANDATORY GATE FOR LOGGED-OUT USERS) -->
+  <div id="authModal" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-xl hidden items-center justify-center p-3 sm:p-5" role="dialog" aria-modal="true" aria-labelledby="authModalTitle" data-mandatory="false">
+    <div class="ed-card rounded-3xl max-w-md w-full shadow-2xl border border-slate-200 dark:border-slate-800 flex flex-col p-6 sm:p-7 space-y-4 animate-in fade-in zoom-in duration-200 relative bg-white dark:bg-slate-900">
       <div class="flex items-start justify-between gap-3">
         <div class="flex items-center gap-3">
-          <div class="w-10 h-10 rounded-xl bg-indigo-500/15 border border-indigo-500/30 flex items-center justify-center text-indigo-600 dark:text-indigo-400">
-            <i data-lucide="user-check" class="w-5 h-5"></i>
+          <div class="relative w-11 h-11 rounded-2xl flex items-center justify-center shrink-0">
+            <div class="absolute inset-0 rounded-2xl bg-gradient-to-tr from-indigo-500 via-purple-500 to-cyan-400 blur-sm opacity-70"></div>
+            <div class="relative z-10 w-10 h-10 rounded-[14px] bg-gradient-to-br from-[#312e81] via-[#6d28d9] to-[#06b6d4] flex items-center justify-center border border-white/30 shadow-md">
+              <span class="font-serif italic font-bold text-white text-lg tracking-tight drop-shadow-[0_2px_4px_rgba(0,0,0,0.5)]">∫∂</span>
+            </div>
           </div>
           <div>
-            <h3 id="authModalTitle" class="text-base font-bold text-slate-800 dark:text-slate-100">Student Portal Access</h3>
-            <p id="authModalSub" class="text-xs text-slate-500">Sign in to sync your practice exams, streaks, and scores.</p>
+            <div class="flex items-center gap-2">
+              <h3 id="authModalTitle" class="text-base font-extrabold text-slate-900 dark:text-white tracking-tight">Maths Master Studio</h3>
+              <span class="px-2 py-0.5 rounded-full text-[10px] font-mono font-bold bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 border border-emerald-500/25">Free Access</span>
+            </div>
+            <p id="authModalSub" class="text-[11px] text-slate-500 dark:text-slate-400">Sign in to sync your practice exams, streaks, and scores.</p>
           </div>
         </div>
-        <button id="closeAuthModalBtn" class="p-2 rounded-xl border border-slate-200 dark:border-slate-700 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 cursor-pointer" title="Close">
+        <button id="closeAuthModalBtn" class="p-2 rounded-xl border border-slate-200 dark:border-slate-700 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 cursor-pointer hidden" title="Close">
           <i data-lucide="x" class="w-4 h-4"></i>
         </button>
+      </div>
+
+      <!-- Welcome Headline -->
+      <div class="p-3 rounded-2xl bg-indigo-500/10 border border-indigo-500/20 text-xs text-indigo-900 dark:text-indigo-200 leading-relaxed font-medium">
+        ⚡ <strong>Sign in free</strong> to unlock Formulas, 150 Flashcards, 100 Live Labs &amp; Test Studio.
       </div>
 
       <!-- Auth Alert / Feedback Box -->
       <div id="authAlert" class="hidden text-xs p-3 rounded-xl border"></div>
 
-      <!-- One-Click Google Sign-In Button -->
-      <button id="googleSignInBtn" type="button" class="w-full flex items-center justify-center gap-3 py-2.5 px-4 rounded-xl bg-white dark:bg-slate-800/90 hover:bg-slate-50 dark:hover:bg-slate-700/80 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-100 text-xs sm:text-sm font-semibold shadow-sm transition-all active:scale-[0.98] cursor-pointer">
+      <!-- One-Click Google Sign-In Button (Prominent at top) -->
+      <button id="googleSignInBtn" type="button" class="w-full flex items-center justify-center gap-3 py-3 px-4 rounded-xl bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700/80 border border-slate-300 dark:border-slate-700 text-slate-800 dark:text-slate-100 text-xs sm:text-sm font-bold shadow-sm transition-all active:scale-[0.98] cursor-pointer">
         <svg class="w-4 h-4" viewBox="0 0 24 24">
           <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
           <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
