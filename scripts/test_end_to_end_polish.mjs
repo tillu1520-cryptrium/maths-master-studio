@@ -2,7 +2,7 @@ import fs from 'fs';
 
 console.log('--- EXECUTING END-TO-END POLISH VERIFICATION SUITE ---');
 
-const html = fs.readFileSync('index.html', 'utf8');
+const html = fs.readFileSync('index.html', 'utf8').replace(/\r/g, '');
 
 // 1. Header Verification
 const headerBlockMatch = html.match(/<header[\s\S]*?<\/header>/);
