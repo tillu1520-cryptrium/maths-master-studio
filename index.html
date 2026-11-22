@@ -26,6 +26,11 @@
   <script src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
   <script src="https://unpkg.com/lucide@0.460.0/dist/umd/lucide.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <!-- Sakuga VFX: 4 Selective Micro-Interactions ONLY (button, progress, slider, toast) -->
+  <script defer src="/sakuga-vfx/button.js"></script>
+  <script defer src="/sakuga-vfx/progress.js"></script>
+  <script defer src="/sakuga-vfx/slider.js"></script>
+  <script defer src="/sakuga-vfx/toast.js"></script>
   <script>
     tailwind.config = {
       darkMode: 'class',
@@ -54,8 +59,28 @@
       --text-primary: #0f172a;
       --text-secondary: #475569;
       --shadow-card: 0 8px 28px -10px rgba(15, 23, 42, 0.08), 0 1px 3px rgba(15, 23, 42, 0.04);
+
+      /* Sakuga VFX Light Palette */
+      --sk-card: #ffffff;
+      --sk-ink: #0f172a;
+      --sk-dim: #64748b;
+      --sk-soft: #c7d2fe;
+      --sk-pri: #7c3aed;
+      --sk-pri-ink: #ffffff;
+      --sk-acc: #ec4899;
+      --sk-track: #e2e8f0;
+      --sk-r: 12px;
+      --sk-bw: 2.5px;
+      --sk-sh: 4px 5px 0 var(--sk-soft);
+      --sk-btn-sh: 3px 4px 0 rgba(124, 58, 237, 0.25);
+      --sk-btn-line: #0f172a;
+      --sk-alt-sh: 3px 4px 0 rgba(15, 23, 42, 0.1);
+      --sk-alt-line: #cbd5e1;
+      --sk-tick: #0f172a;
+      --sk-fill: #ec4899;
+      --sk-on-pri: #ffffff;
     }
-    html.dark {
+    html.dark, .dark {
       --bg-canvas: #070b18;
       --bg-header: rgba(11, 16, 33, 0.86);
       --bg-card: rgba(17, 24, 46, 0.92);
@@ -65,6 +90,51 @@
       --text-primary: #f1f5f9;
       --text-secondary: #94a3b8;
       --shadow-card: 0 12px 32px -12px rgba(0, 0, 0, 0.55);
+
+      /* Sakuga VFX Obsidian Dark Palette */
+      --sk-card: #11142a;
+      --sk-ink: #f8fafc;
+      --sk-dim: #94a3b8;
+      --sk-soft: #3b3663;
+      --sk-pri: #7c3aed;
+      --sk-pri-ink: #ffffff;
+      --sk-acc: #06b6d4;
+      --sk-track: #1e2440;
+      --sk-r: 12px;
+      --sk-bw: 2.5px;
+      --sk-sh: 4px 5px 0 #1f2347;
+      --sk-btn-sh: 3px 4px 0 rgba(6, 182, 212, 0.35);
+      --sk-btn-line: #38bdf8;
+      --sk-alt-sh: 3px 4px 0 rgba(0, 0, 0, 0.5);
+      --sk-alt-line: #334155;
+      --sk-tick: #f8fafc;
+      --sk-fill: #06b6d4;
+      --sk-on-pri: #ffffff;
+    }
+
+    /* Prevent clipping of Sakuga impact bursts and glints */
+    .overflow-visible {
+      overflow: visible !important;
+    }
+    sakuga-button {
+      overflow: visible;
+      vertical-align: middle;
+      display: inline-block;
+    }
+    sakuga-progress {
+      overflow: visible;
+      display: block;
+    }
+    sakuga-slider {
+      width: 100%;
+      display: block;
+    }
+    sakuga-toast {
+      position: fixed;
+      bottom: 24px;
+      left: 24px;
+      z-index: 99999;
+      pointer-events: auto;
     }
     /* KaTeX & High-Contrast Typography in Dark Mode */
     html.dark .katex {
@@ -450,6 +520,10 @@
             <i data-lucide="sun" class="w-4 h-4 hidden dark:block text-amber-400"></i>
             <i data-lucide="moon" class="w-4 h-4 block dark:hidden text-indigo-600"></i>
           </button>
+          <button id="vfxToggleBtn" class="flex items-center gap-1 px-2.5 py-1.5 rounded-xl bg-purple-500/15 border border-purple-500/40 text-purple-600 dark:text-purple-300 shadow-sm transition-all text-xs font-bold cursor-pointer active:scale-95" title="Toggle Anime VFX Micro-interactions" aria-label="Toggle VFX">
+            <span id="vfxIcon">✨</span>
+            <span id="vfxLabel" class="text-[11px] font-mono">VFX</span>
+          </button>
 
           <!-- Supabase Auth / Student Profile Trigger -->
           <div id="authNavCluster" class="flex items-center">
@@ -567,6 +641,7 @@
       labCoFilter: 'all',
       labSearch: '',
       theme: 'light',
+      vfxEnabled: localStorage.getItem('mms_vfx_enabled') !== 'false' && !window.matchMedia('(prefers-reduced-motion: reduce)').matches,
       mastered: {},
       bookmarks: {},
       solvedQs: {},
@@ -689,13 +764,18 @@
 
       EXAM_BANK = Array.from(qMap.values());
 
-      // Fetch verified master question bank (335 items with 4 options and KaTeX math)
+      // Fetch verified master question bank (all 318 verified questions)
       const bankUrls = [
+        './exam_questions_bank_verified.json?t=' + Date.now(),
+        '/exam_questions_bank_verified.json?t=' + Date.now(),
+        './src/data/exam_questions_bank_verified.json?t=' + Date.now(),
+        '/src/data/exam_questions_bank_verified.json?t=' + Date.now(),
+        './exam_questions_bank.json?t=' + Date.now(),
+        '/exam_questions_bank.json?t=' + Date.now(),
         './src/data/verified_question_bank.json?t=' + Date.now(),
         '/src/data/verified_question_bank.json?t=' + Date.now(),
         './verified_question_bank.json?t=' + Date.now(),
-        '/verified_question_bank.json?t=' + Date.now(),
-        './exam_questions_bank.json?t=' + Date.now()
+        '/verified_question_bank.json?t=' + Date.now()
       ];
 
       async function loadBankFromUrls() {
@@ -719,13 +799,15 @@
                     ? ['A', 'B', 'C', 'D'][q.correctOptionIndex]
                     : (q.correctOption || 'A');
 
-                  const solText = Array.isArray(q.detailedSolutionSteps)
+                  const solText = q.solution || (Array.isArray(q.detailedSolutionSteps)
                     ? q.detailedSolutionSteps.join('\n\n')
-                    : (q.solution || '');
+                    : '');
 
-                  const stepsList = Array.isArray(q.detailedSolutionSteps)
-                    ? q.detailedSolutionSteps.map(s => ({ text: s, math: '' }))
-                    : (q.steps || [{ text: solText, math: '' }]);
+                  const stepsList = Array.isArray(q.steps) && q.steps.length > 0
+                    ? q.steps
+                    : (Array.isArray(q.detailedSolutionSteps)
+                      ? q.detailedSolutionSteps.map(s => ({ text: s, math: '' }))
+                      : [{ text: solText, math: '' }]);
 
                   qMap.set(q.id, {
                     id: q.id,
@@ -736,14 +818,14 @@
                     marksLabel: q.marksLabel || (q.marks + 'M'),
                     level: q.level || (q.marks === 1 ? 'Rapid' : q.marks === 6 ? 'Comprehensive' : 'Standard'),
                     topic: q.topic || '',
-                    prompt: q.questionLatex || q.prompt,
+                    prompt: q.prompt || q.questionLatex,
                     promptMath: q.promptMath || '',
                     options: opts,
                     correctOption: correctOptLetter,
                     hint: q.hint || 'Review the core theorem, substitution method, or standard recurrence.',
                     solution: solText,
                     steps: stepsList,
-                    answer: q.finalAnswerLatex || q.answer || '',
+                    answer: q.answer || q.finalAnswerLatex || '',
                     sillyTrap: q.sillyTrap || 'Watch for algebraic signs (+/-) and power indices in the denominator.',
                     tag: q.tag || ((q.chapter ? q.chapter.toUpperCase() : 'CO') + ' · ' + (q.marks || 4) + 'M')
                   });
@@ -1174,6 +1256,11 @@
     }
 
     function showToast(msg, type = 'info') {
+      const skToast = document.getElementById('globalSakugaToast');
+      if (state.vfxEnabled && skToast && typeof skToast.show === 'function') {
+        skToast.show(msg);
+        return;
+      }
       const container = document.getElementById('toastContainer');
       if (!container) return;
       const el = document.createElement('div');
@@ -1183,6 +1270,41 @@
       el.textContent = msg;
       container.appendChild(el);
       setTimeout(() => { el.style.opacity = '0'; el.style.transition = 'opacity 0.2s'; setTimeout(() => el.remove(), 220); }, 2000);
+    }
+
+    function updateVfxUI() {
+      const btn = document.getElementById('vfxToggleBtn');
+      const icon = document.getElementById('vfxIcon');
+      const label = document.getElementById('vfxLabel');
+      if (!btn) return;
+      if (state.vfxEnabled) {
+        btn.className = 'flex items-center gap-1 px-2.5 py-1.5 rounded-xl bg-purple-500/15 border border-purple-500/40 text-purple-600 dark:text-purple-300 shadow-sm transition-all text-xs font-bold cursor-pointer active:scale-95';
+        if (icon) icon.textContent = '✨';
+        if (label) label.textContent = 'VFX';
+        btn.title = 'Anime VFX Active (Click to switch to standard controls)';
+      } else {
+        btn.className = 'flex items-center gap-1 px-2.5 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800/90 border border-slate-200 dark:border-slate-700 text-slate-500 dark:text-slate-400 hover:border-slate-400 transition-all text-xs font-bold cursor-pointer active:scale-95';
+        if (icon) icon.textContent = '⚡';
+        if (label) label.textContent = 'VFX OFF';
+        btn.title = 'Standard Controls Active (Click to enable Anime VFX)';
+      }
+    }
+
+    function toggleVfx() {
+      state.vfxEnabled = !state.vfxEnabled;
+      localStorage.setItem('mms_vfx_enabled', state.vfxEnabled ? 'true' : 'false');
+      updateVfxUI();
+      if (window.SakugaFX) {
+        window.SakugaFX.paused = !state.vfxEnabled;
+      }
+      const skCanvas = document.querySelector('canvas.sakuga-fx');
+      if (skCanvas) {
+        skCanvas.style.display = state.vfxEnabled ? 'block' : 'none';
+      }
+      showToast(state.vfxEnabled ? '✨ Anime VFX Micro-interactions Enabled' : '⚡ Standard Controls Mode', 'info');
+      if (state.view === 'studio' || state.view === 'labs') {
+        renderApp();
+      }
     }
 
     // =========================================================================
@@ -1334,6 +1456,11 @@
         const banPct = document.getElementById('chBannerPct_' + c.id), banBar = document.getElementById('chBannerBar_' + c.id);
         if (banPct) banPct.textContent = cs.pct + '%';
         if (banBar) banBar.style.width = cs.pct + '%';
+
+        const skProg = document.getElementById('chapterMasteryProgress');
+        if (skProg && typeof skProg.set === 'function' && state.chapterId === c.id) {
+          skProg.set(cs.pct / 100);
+        }
 
         const rmPct = document.getElementById('chRoadmapPct_' + c.id), rmBar = document.getElementById('chRoadmapBar_' + c.id), rmTop = document.getElementById('chRoadmapTopics_' + c.id);
         if (rmPct) rmPct.textContent = cs.pct + '%';
@@ -1655,17 +1782,18 @@
         const formulasHtml = t.formulas.map(f => {
           const isM = !!state.mastered[f.id], isB = !!state.bookmarks[f.id];
           return `
-            <div class="ed-card rounded-2xl p-4 flex flex-col justify-between gap-3 min-w-0">
-              <div class="min-w-0">
-                <div class="flex items-start justify-between gap-2 mb-2">
+            <div class="ed-card rounded-2xl p-4 flex flex-col justify-between gap-3 min-w-0 overflow-visible">
+              <div class="min-w-0 overflow-visible">
+                <div class="flex items-start justify-between gap-2 mb-2 overflow-visible">
                   <h4 class="text-sm font-bold leading-snug">${escHtml(f.name)}</h4>
-                  <div class="flex items-center gap-1 shrink-0">
+                  <div class="flex items-center gap-1 shrink-0 overflow-visible">
                     <button data-toggle-bookmark="${f.id}" class="p-1.5 rounded-lg border transition-colors ${isB ? 'bg-amber-500/15 border-amber-500/40 text-amber-500' : 'border-slate-200 dark:border-slate-700 text-slate-400 hover:text-amber-500'}" title="Bookmark">
                       <i data-lucide="bookmark" class="w-3.5 h-3.5"></i>
                     </button>
-                    <button data-toggle-master="${f.id}" class="px-2 py-1 rounded-lg border text-[11px] font-bold flex items-center gap-1 transition-all ${isM ? 'bg-emerald-500/15 border-emerald-500/40 text-emerald-600 dark:text-emerald-400' : 'border-slate-200 dark:border-slate-700 text-slate-500 dark:text-slate-400'}">
-                      <i data-lucide="check-circle-2" class="w-3.5 h-3.5"></i><span>${isM ? 'Mastered' : 'Mark'}</span>
-                    </button>
+                    ${state.vfxEnabled
+                      ? `<sakuga-button ${isM ? '' : 'primary'} data-toggle-master="${f.id}" class="overflow-visible cursor-pointer" style="--sk-r:8px; font-size:11px; padding: 4px 10px;">${isM ? 'Mastered ✓' : 'Mark'}</sakuga-button>`
+                      : `<button data-toggle-master="${f.id}" class="px-2 py-1 rounded-lg border text-[11px] font-bold flex items-center gap-1 transition-all ${isM ? 'bg-emerald-500/15 border-emerald-500/40 text-emerald-600 dark:text-emerald-400' : 'border-slate-200 dark:border-slate-700 text-slate-500 dark:text-slate-400'}"><i data-lucide="check-circle-2" class="w-3.5 h-3.5"></i><span>${isM ? 'Mastered' : 'Mark'}</span></button>`
+                    }
                   </div>
                 </div>
                 <div class="math-well my-2">${texNode(f.math, true)}</div>
@@ -1831,7 +1959,7 @@
 
           <div class="min-w-0 space-y-5">
             <!-- Signature PDF Solid Gradient Chapter Header -->
-            <div class="rounded-3xl p-5 sm:p-6 text-white shadow-xl relative overflow-hidden" style="background:${ch.gradCss}">
+            <div class="rounded-3xl p-5 sm:p-6 text-white shadow-xl relative overflow-visible" style="background:${ch.gradCss}">
               <div class="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div class="space-y-1.5 min-w-0">
                   <div class="flex flex-wrap items-center gap-2">
@@ -1850,15 +1978,20 @@
                   </button>
                 </div>
               </div>
-              <div class="mt-4 pt-3 border-t border-white/20 flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs">
+              <div class="mt-4 pt-3 border-t border-white/20 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs overflow-visible">
                 <div class="flex items-center gap-2">
                   <span class="font-bold">Chapter Study Progress:</span>
                   <span id="chBannerPct_${ch.id}" class="font-mono font-extrabold text-sm">${chStats.pct}%</span>
                   <span class="text-white/80 font-mono">(${chStats.doneTopics}/${chStats.totalTopics} Topics Completed)</span>
                 </div>
-                <div class="w-full sm:w-48 h-2 rounded-full bg-black/25 overflow-hidden">
-                  <div id="chBannerBar_${ch.id}" class="h-full rounded-full bg-white transition-all duration-500" style="width:${chStats.pct}%"></div>
-                </div>
+                ${state.vfxEnabled
+                  ? `<div class="w-full sm:w-64 overflow-visible flex items-center justify-end">
+                       <sakuga-progress id="chapterMasteryProgress" label="Chapter Mastery" value="${(chStats.pct / 100).toFixed(2)}" style="--sk-progress-width: 240px;" class="overflow-visible"></sakuga-progress>
+                     </div>`
+                  : `<div class="w-full sm:w-48 h-2 rounded-full bg-black/25 overflow-hidden">
+                       <div id="chBannerBar_${ch.id}" class="h-full rounded-full bg-white transition-all duration-500" style="width:${chStats.pct}%"></div>
+                     </div>`
+                }
               </div>
             </div>
 
@@ -2478,6 +2611,16 @@
       if (eRev) eRev.textContent = rev;
       if (eNotVis) eNotVis.textContent = notVis;
 
+      // Update submit confirmation button based on VFX toggle state
+      const subContainer = document.getElementById('submitBtnContainer');
+      if (subContainer) {
+        if (state.vfxEnabled) {
+          subContainer.innerHTML = `<sakuga-button primary id="confirmSubmitExamBtn" data-confirm-submit-exam class="overflow-visible text-xs font-bold" style="--sk-r: 10px; font-size: 12px; padding: 6px 16px;">Yes, Submit Now</sakuga-button>`;
+        } else {
+          subContainer.innerHTML = `<button id="confirmSubmitExamBtn" data-confirm-submit-exam class="px-4 py-2 rounded-xl text-xs font-bold bg-indigo-600 hover:bg-indigo-700 text-white shadow-sm transition-all active:scale-95 cursor-pointer">Yes, Submit Now</button>`;
+        }
+      }
+
       const m = document.getElementById('examSubmitModal');
       if (m) {
         m.classList.remove('hidden');
@@ -2627,6 +2770,8 @@
       if (typeof saveTestAttemptToSupabase === 'function') {
         saveTestAttemptToSupabase(scorecard);
       }
+
+      showToast('Test Saved to Lifetime History!', 'success');
 
       if (state.authUser && state.authUser.email) {
         syncStudentToSheet({
@@ -4041,18 +4186,52 @@
       if (typeof ResizeObserver !== 'undefined') { activeRO = new ResizeObserver(syncSize); activeRO.observe(wrap); }
 
       const buildSliders = () => {
-        controls.innerHTML = `
-          <div>
-            <div class="flex justify-between mb-1"><span class="font-semibold">${fmtMathProse(concept.p1.label)}</span><span id="labV1" class="font-mono font-bold" style="color:${accent}">${st.v1.toFixed(2)}</span></div>
-            <input id="labS1" type="range" min="${concept.p1.min}" max="${concept.p1.max}" step="${concept.p1.step}" value="${st.v1}" class="w-full" />
-          </div>
-          <div>
-            <div class="flex justify-between mb-1"><span class="font-semibold">${fmtMathProse(concept.p2.label)}</span><span id="labV2" class="font-mono font-bold text-cyan-600 dark:text-cyan-400">${st.v2.toFixed(2)}</span></div>
-            <input id="labS2" type="range" min="${concept.p2.min}" max="${concept.p2.max}" step="${concept.p2.step}" value="${st.v2}" class="w-full" />
-          </div>
-          ${concept.engine === 'slopefield' ? '<div class="callout-shortcut rounded-xl p-2 text-[11px]">Tap/click anywhere on the slope field to drop a new IVP seed (x₀, y₀)!</div>' : ''}`;
-        document.getElementById('labS1').oninput = e => { st.v1 = +e.target.value; document.getElementById('labV1').textContent = st.v1.toFixed(2); };
-        document.getElementById('labS2').oninput = e => { st.v2 = +e.target.value; if (concept.engine === 'slopefield') st.sy = st.v2; document.getElementById('labV2').textContent = st.v2.toFixed(2); };
+        if (state.vfxEnabled) {
+          controls.innerHTML = `
+            <div class="space-y-1 overflow-visible">
+              <div class="flex justify-between mb-1 text-xs"><span class="font-semibold">${fmtMathProse(concept.p1.label)}</span><span id="labV1" class="font-mono font-bold" style="color:${accent}">${st.v1.toFixed(2)}</span></div>
+              <sakuga-slider id="labS1" min="${concept.p1.min}" max="${concept.p1.max}" step="${concept.p1.step}" value="${st.v1}" label="${concept.p1.label}" class="w-full block"></sakuga-slider>
+            </div>
+            <div class="space-y-1 overflow-visible">
+              <div class="flex justify-between mb-1 text-xs"><span class="font-semibold">${fmtMathProse(concept.p2.label)}</span><span id="labV2" class="font-mono font-bold text-cyan-600 dark:text-cyan-400">${st.v2.toFixed(2)}</span></div>
+              <sakuga-slider id="labS2" min="${concept.p2.min}" max="${concept.p2.max}" step="${concept.p2.step}" value="${st.v2}" label="${concept.p2.label}" class="w-full block"></sakuga-slider>
+            </div>
+            ${concept.engine === 'slopefield' ? '<div class="callout-shortcut rounded-xl p-2 text-[11px]">Tap/click anywhere on the slope field to drop a new IVP seed (x₀, y₀)!</div>' : ''}`;
+        } else {
+          controls.innerHTML = `
+            <div>
+              <div class="flex justify-between mb-1"><span class="font-semibold">${fmtMathProse(concept.p1.label)}</span><span id="labV1" class="font-mono font-bold" style="color:${accent}">${st.v1.toFixed(2)}</span></div>
+              <input id="labS1" type="range" min="${concept.p1.min}" max="${concept.p1.max}" step="${concept.p1.step}" value="${st.v1}" class="w-full" />
+            </div>
+            <div>
+              <div class="flex justify-between mb-1"><span class="font-semibold">${fmtMathProse(concept.p2.label)}</span><span id="labV2" class="font-mono font-bold text-cyan-600 dark:text-cyan-400">${st.v2.toFixed(2)}</span></div>
+              <input id="labS2" type="range" min="${concept.p2.min}" max="${concept.p2.max}" step="${concept.p2.step}" value="${st.v2}" class="w-full" />
+            </div>
+            ${concept.engine === 'slopefield' ? '<div class="callout-shortcut rounded-xl p-2 text-[11px]">Tap/click anywhere on the slope field to drop a new IVP seed (x₀, y₀)!</div>' : ''}`;
+        }
+
+        const s1 = document.getElementById('labS1');
+        const s2 = document.getElementById('labS2');
+        const updateV1 = val => {
+          st.v1 = +val;
+          const v1El = document.getElementById('labV1');
+          if (v1El) v1El.textContent = Number(st.v1).toFixed(2);
+        };
+        const updateV2 = val => {
+          st.v2 = +val;
+          if (concept.engine === 'slopefield') st.sy = st.v2;
+          const v2El = document.getElementById('labV2');
+          if (v2El) v2El.textContent = Number(st.v2).toFixed(2);
+        };
+
+        if (s1) {
+          s1.oninput = e => updateV1(e.target.value ?? e.target.valueAsNumber);
+          s1.onchange = e => updateV1(e.target.value ?? e.target.valueAsNumber);
+        }
+        if (s2) {
+          s2.oninput = e => updateV2(e.target.value ?? e.target.valueAsNumber);
+          s2.onchange = e => updateV2(e.target.value ?? e.target.valueAsNumber);
+        }
       };
       buildSliders();
 
@@ -4834,7 +5013,15 @@
       if (cse) { closeExamSubmitModal(); return; }
 
       const cfse = e.target.closest('[data-confirm-submit-exam]');
-      if (cfse) { finishExam(); return; }
+      if (cfse) {
+        if (state.vfxEnabled && typeof cfse.impact === 'function') {
+          cfse.impact();
+          setTimeout(() => { finishExam(); }, 350);
+        } else {
+          finishExam();
+        }
+        return;
+      }
 
       const nav = e.target.closest('[data-view]');
       if (nav) { state.view = nav.dataset.view; renderApp(); window.scrollTo({ top: 0, behavior: 'smooth' }); return; }
@@ -4925,13 +5112,34 @@
       const tm = e.target.closest('[data-toggle-master]');
       if (tm) {
         const id = tm.dataset.toggleMaster;
-        state.mastered[id] = !state.mastered[id];
+        const nowMastered = !state.mastered[id];
+        state.mastered[id] = nowMastered;
         saveState();
         updateMasteryUI();
-        if (state.view === 'studio') {
-          renderStudioView(document.getElementById('appMain'));
-          refreshIcons();
-          renderAllTex(document.getElementById('appMain'));
+        if (state.vfxEnabled) {
+          if (nowMastered) {
+            if (typeof tm.done === 'function') {
+              tm.done(1.8);
+            }
+            showToast('Topic Mastered!', 'success');
+          } else {
+            showToast('Formula unmarked', 'info');
+          }
+          if (state._masterReRenderTimer) clearTimeout(state._masterReRenderTimer);
+          state._masterReRenderTimer = setTimeout(() => {
+            if (state.view === 'studio') {
+              renderStudioView(document.getElementById('appMain'));
+              refreshIcons();
+              renderAllTex(document.getElementById('appMain'));
+            }
+          }, 1800);
+        } else {
+          showToast(nowMastered ? 'Topic Mastered!' : 'Formula unmarked', nowMastered ? 'success' : 'info');
+          if (state.view === 'studio') {
+            renderStudioView(document.getElementById('appMain'));
+            refreshIcons();
+            renderAllTex(document.getElementById('appMain'));
+          }
         }
         return;
       }
@@ -4943,7 +5151,7 @@
         saveState();
         const isB = !!state.bookmarks[id];
         tb.className = `p-1.5 rounded-lg border transition-colors ${isB ? 'bg-amber-500/15 border-amber-500/40 text-amber-500' : 'border-slate-200 dark:border-slate-700 text-slate-400 hover:text-amber-500'}`;
-        showToast(isB ? 'Bookmarked!' : 'Bookmark removed');
+        showToast(isB ? 'Formula Bookmarked!' : 'Bookmark removed', isB ? 'success' : 'info');
         return;
       }
 
@@ -5066,6 +5274,11 @@
       document.documentElement.classList.toggle('dark', state.theme === 'dark');
       saveState();
     };
+    const vfxBtn = document.getElementById('vfxToggleBtn');
+    if (vfxBtn) {
+      vfxBtn.onclick = toggleVfx;
+    }
+    updateVfxUI();
     document.getElementById('openSearchBtn').onclick = openSearchModal;
     document.getElementById('closeSearchBtn').onclick = closeSearchModal;
     document.getElementById('searchModal').onclick = e => { if (e.target.id === 'searchModal') closeSearchModal(); };
@@ -6589,6 +6802,10 @@
 
     initExamBank();
     loadState();
+    updateVfxUI();
+    if (window.SakugaFX) {
+      window.SakugaFX.paused = !state.vfxEnabled;
+    }
     renderApp();
     updateStreakUI();
     initAuth();
@@ -6600,7 +6817,7 @@
           console.log('New Service Worker controller activated. Reloading page...');
           window.location.reload();
         });
-        navigator.serviceWorker.register('/sw.js?v=6').then(reg => {
+        navigator.serviceWorker.register('/sw.js?v=7').then(reg => {
           if (reg) reg.update();
         }).catch(() => {});
       }
@@ -6692,7 +6909,7 @@
 
   <!-- CBT EXAM SUBMISSION CONFIRMATION MODAL -->
   <div id="examSubmitModal" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm hidden items-center justify-center p-3 sm:p-5" role="dialog" aria-modal="true">
-    <div class="ed-card rounded-2xl max-w-md w-full shadow-2xl border border-slate-200 dark:border-slate-800 p-5 sm:p-6 space-y-4 animate-in fade-in zoom-in duration-200">
+    <div class="ed-card rounded-2xl max-w-md w-full shadow-2xl border border-slate-200 dark:border-slate-800 p-5 sm:p-6 space-y-4 animate-in fade-in zoom-in duration-200 overflow-visible">
       <div class="flex items-center gap-3">
         <div class="w-10 h-10 rounded-xl bg-indigo-500/15 border border-indigo-500/30 flex items-center justify-center text-indigo-600 dark:text-indigo-400 font-bold">
           <i data-lucide="check-circle-2" class="w-5 h-5"></i>
@@ -6724,9 +6941,11 @@
 
       <p class="text-[11px] text-slate-500 leading-relaxed">Once submitted, your final score will be calculated and full step-by-step LaTeX worked solutions will be unlocked.</p>
 
-      <div class="flex items-center justify-end gap-2 pt-2 border-t border-slate-200 dark:border-slate-800">
-        <button id="cancelSubmitExamBtn" data-cancel-submit-exam class="px-4 py-2 rounded-xl text-xs font-semibold border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">Return to Test</button>
-        <button id="confirmSubmitExamBtn" data-confirm-submit-exam class="px-4 py-2 rounded-xl text-xs font-bold bg-indigo-600 hover:bg-indigo-700 text-white shadow-sm transition-all active:scale-95">Yes, Submit Now</button>
+      <div class="flex items-center justify-end gap-2 pt-2 border-t border-slate-200 dark:border-slate-800 overflow-visible">
+        <button id="cancelSubmitExamBtn" data-cancel-submit-exam class="px-4 py-2 rounded-xl text-xs font-semibold border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer">Return to Test</button>
+        <div id="submitBtnContainer" class="overflow-visible inline-block">
+          <button id="confirmSubmitExamBtn" data-confirm-submit-exam class="px-4 py-2 rounded-xl text-xs font-bold bg-indigo-600 hover:bg-indigo-700 text-white shadow-sm transition-all active:scale-95 cursor-pointer">Yes, Submit Now</button>
+        </div>
       </div>
     </div>
   </div>
@@ -6933,6 +7152,9 @@
       </div>
     </div>
   </div>
+
+  <!-- Sakuga Global Feedback Toast Component -->
+  <sakuga-toast id="globalSakugaToast" duration="3"></sakuga-toast>
 
 </body>
 </html>

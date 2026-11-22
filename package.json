@@ -1,0 +1,20 @@
+{
+  "name": "maths-master-studio",
+  "version": "3.2.0",
+  "description": "Maths Master Studio — Interactive Calculus & Differential Equations Web App",
+  "type": "module",
+  "scripts": {
+    "build": "node scripts/test_phase2.mjs",
+    "test": "node scripts/test_phase2.mjs",
+    "start": "node scripts/server.mjs"
+  },
+  "keywords": [
+    "mathematics",
+    "calculus",
+    "differential-equations",
+    "cbt",
+    "exam-simulator"
+  ],
+  "author": "Maths Master Studio",
+  "license": "MIT"
+}

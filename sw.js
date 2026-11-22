@@ -1,10 +1,15 @@
-const CACHE_NAME = 'maths-master-studio-v14';
+const CACHE_NAME = 'maths-master-studio-v15';
 const STATIC_ASSETS = [
   '/',
   '/index.html',
   '/favicon.svg',
   '/manifest.json',
   '/exam_questions_bank.json',
+  '/exam_questions_bank_verified.json',
+  '/sakuga-vfx/button.js',
+  '/sakuga-vfx/progress.js',
+  '/sakuga-vfx/slider.js',
+  '/sakuga-vfx/toast.js',
   'https://cdn.tailwindcss.com/3.4.17',
   'https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css',
   'https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js',

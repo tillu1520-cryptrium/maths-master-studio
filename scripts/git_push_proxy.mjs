@@ -32,9 +32,10 @@ server.on('connect', async (req, clientSocket, head) => {
 server.listen(0, '127.0.0.1', () => {
   const port = server.address().port;
   console.log(`DNS bypass proxy listening on 127.0.0.1:${port}`);
-  console.log('Executing git push origin main with HTTPS_PROXY...');
+  const gitArgs = process.argv.slice(2).length > 0 ? process.argv.slice(2) : ['push', 'origin', 'main'];
+  console.log(`Executing git ${gitArgs.join(' ')} with HTTPS_PROXY...`);
 
-  const child = spawn('git', ['push', 'origin', 'main'], {
+  const child = spawn('git', gitArgs, {
     env: { ...process.env, HTTPS_PROXY: `http://127.0.0.1:${port}` },
     stdio: 'inherit'
   });
