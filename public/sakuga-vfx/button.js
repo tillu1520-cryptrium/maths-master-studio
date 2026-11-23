@@ -118,12 +118,13 @@ function ensureFront() {
   front.c = Object.assign(document.createElement('canvas'), { className: 'sakuga-fx' });
   front.c.setAttribute('aria-hidden', 'true');
   front.c.style.pointerEvents = 'none';
+  front.c.style.display = 'none';
   document.body.append(front.c);
   front.g = front.c.getContext('2d');
   size();
 }
 function size() {
-  dpr = Math.min(2, Math.max(1, window.devicePixelRatio || 1));
+  dpr = Math.min(1.5, Math.min(2, Math.max(1, window.devicePixelRatio || 1)));
   if (front.c) {
     const w = window.innerWidth, h = window.innerHeight;
     const tw = Math.round(w * dpr), th = Math.round(h * dpr);
@@ -135,7 +136,7 @@ function size() {
 }
 addEventListener('resize', size);
 function backLayer(canvas) { const L = { c: canvas, g: canvas.getContext('2d'), live: [], dirty: false }; layers.push(L); return L; }
-const add = (life, draw, L) => { const p = { t: 0, life, draw }; if (!calm) { L = L || front; if (L === front) ensureFront(); L.live.push(p); start(45); } return p; };
+const add = (life, draw, L) => { const p = { t: 0, life, draw }; if (!calm) { L = L || front; if (L === front) ensureFront(); L.live.push(p); start(isFinite(life) ? 45 : 12); } return p; };
 // an effect with no end: it draws every frame until its handle is marked dead. layer puts it on a component's back layer.
 const persist = (draw, layer) => add(Infinity, draw, layer);
 function tick(dt) {
@@ -175,6 +176,7 @@ function clearCanvas() {
   for (const L of layers) {
     if (L.c && L.g) {
       try { L.g.clearRect(0, 0, L.c.width, L.c.height); } catch(e){}
+      if (L === front) L.c.style.display = 'none';
     }
     L.live = [];
     L.dirty = false;
@@ -209,9 +211,15 @@ function loop(ms) {
 
   if (!isBusy) {
     idleCounter++;
-    if (idleCounter > 20) {
+    if (idleCounter > 2) {
       running = false;
-      return; // IDLE-SLEEP: Zero CPU/GPU burn when calm!
+      for (const L of layers) {
+        if (L.c && L.g) {
+          try { L.g.clearRect(0, 0, L.c.width, L.c.height); } catch(e){}
+          if (L === front) L.c.style.display = 'none';
+        }
+      }
+      return; // IDLE-SLEEP: Zero CPU/GPU burn when calm! idleCounter > 20
     }
   } else {
     idleCounter = 0;
@@ -221,6 +229,7 @@ function loop(ms) {
 function start(framesCount = 45) {
   idleCounter = 0;
   activeFrames = Math.max(activeFrames, framesCount);
+  if (front.c) front.c.style.display = 'block';
   if (running || api.paused) return;
   running = true;
   last = performance.now();
@@ -381,7 +390,7 @@ class Base extends HTMLElement {
     // a component built from its <option>s waits until the parser has read them
     if (!this.ready && this.constructor.fromChildren && document.readyState === 'loading') { if (!this.waiting) { this.waiting = true; document.addEventListener('DOMContentLoaded', () => { this.waiting = false; if (this.isConnected) this.connectedCallback(); }, { once: true }); } return; }
     if (!this.ready) { this.ready = true; this.root.innerHTML = `<style>${BASE_CSS}${this.constructor.css || ''}</style>${this.render()}`; this.setup(); }
-    this.tickFn ||= (dt) => this.frame(dt); frames.add(this.tickFn); start();
+    this.tickFn ||= (dt) => this.frame(dt); frames.add(this.tickFn); start(8);
   }
   disconnectedCallback() { frames.delete(this.tickFn); }
   $(s) { return this.root.querySelector(s); }

@@ -77,7 +77,7 @@ class SakugaProgress extends fx.Base {
     this.t += dt; const r = this.box.getBoundingClientRect(); this.vis = r.bottom > -80 && r.top < innerHeight + 80;
     const demo = this.hasAttribute('demo');
     if (demo && !this.doneAt) this.goal = Math.min(1, this.goal + dt * (0.14 + 0.115 * Math.sin(this.t * 2.1) + 0.07 * Math.sin(this.t * 4.7)));   // it loads in surges, not at one speed
-    const was = this.p; if (!this.doneAt && this.p < this.goal) this.p = Math.min(this.goal, this.p + dt * clamp((this.goal - this.p) * 3, 0.12, 0.9));
+    const was = this.p; if (!this.doneAt && this.p < this.goal) this.p = Math.min(this.goal, this.p + dt * clamp((this.goal - this.p) * 6, 0.35, 1.2));
     this.spd = lerp(this.spd, dt > 0 ? (this.p - was) / dt : 0, Math.min(1, dt * 8));
     const b = at(this.bar), L = b.x - b.w / 2, lead = L + 4 + (b.w - 8) * this.p, top = b.y - b.h / 2, p = this.p, spd = this.spd;
     const settled = !demo && Math.abs(this.p - this.goal) < 0.002;

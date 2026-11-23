@@ -1,0 +1,225 @@
+[
+  {
+    "viewName": "syllabus",
+    "totalDomNodes": 625,
+    "katexNodes": 0,
+    "idleRafsIn3s": 88,
+    "idleRafPerSec": 29,
+    "idleCanvasPaints": 88,
+    "canvases": [
+      {
+        "id": "roadmapHeroCanvas",
+        "width": 1203,
+        "height": 334,
+        "displayWidth": 1243,
+        "displayHeight": 1609,
+        "visible": true
+      },
+      {
+        "id": "sakuga-fx",
+        "width": 1258,
+        "height": 646,
+        "displayWidth": 1258,
+        "displayHeight": 646,
+        "visible": true
+      }
+    ],
+    "backdropBlurCount": 8,
+    "dropShadowCount": 5,
+    "heavyShadowCount": 31,
+    "willChangeTransformCount": 0,
+    "switchLongTasks": [],
+    "scrollLongTasks": []
+  },
+  {
+    "viewName": "studio",
+    "totalDomNodes": 10255,
+    "katexNodes": 204,
+    "idleRafsIn3s": 0,
+    "idleRafPerSec": 0,
+    "idleCanvasPaints": 28,
+    "canvases": [
+      {
+        "id": "sakuga-fx",
+        "width": 1258,
+        "height": 646,
+        "displayWidth": 1258,
+        "displayHeight": 646,
+        "visible": true
+      }
+    ],
+    "backdropBlurCount": 10,
+    "dropShadowCount": 5,
+    "heavyShadowCount": 84,
+    "willChangeTransformCount": 0,
+    "switchLongTasks": [
+      {
+        "name": "self",
+        "duration": 310,
+        "startTime": 6676
+      },
+      {
+        "name": "self",
+        "duration": 213,
+        "startTime": 6988
+      }
+    ],
+    "scrollLongTasks": []
+  },
+  {
+    "viewName": "flashcards",
+    "totalDomNodes": 684,
+    "katexNodes": 3,
+    "idleRafsIn3s": 46,
+    "idleRafPerSec": 15,
+    "idleCanvasPaints": 46,
+    "canvases": [
+      {
+        "id": "fcHeroCanvas",
+        "width": 768,
+        "height": 120,
+        "displayWidth": 1243,
+        "displayHeight": 862,
+        "visible": true
+      },
+      {
+        "id": "sakuga-fx",
+        "width": 1258,
+        "height": 646,
+        "displayWidth": 1258,
+        "displayHeight": 646,
+        "visible": true
+      }
+    ],
+    "backdropBlurCount": 8,
+    "dropShadowCount": 5,
+    "heavyShadowCount": 47,
+    "willChangeTransformCount": 3,
+    "switchLongTasks": [
+      {
+        "name": "self",
+        "duration": 155,
+        "startTime": 11894
+      },
+      {
+        "name": "self",
+        "duration": 76,
+        "startTime": 12052
+      }
+    ],
+    "scrollLongTasks": []
+  },
+  {
+    "viewName": "labs",
+    "totalDomNodes": 1301,
+    "katexNodes": 3,
+    "idleRafsIn3s": 57,
+    "idleRafPerSec": 19,
+    "idleCanvasPaints": 0,
+    "canvases": [
+      {
+        "id": "labCanvas",
+        "width": 855,
+        "height": 375,
+        "displayWidth": 853,
+        "displayHeight": 373,
+        "visible": true
+      },
+      {
+        "id": "sakuga-fx",
+        "width": 1258,
+        "height": 646,
+        "displayWidth": 1258,
+        "displayHeight": 646,
+        "visible": true
+      }
+    ],
+    "backdropBlurCount": 8,
+    "dropShadowCount": 5,
+    "heavyShadowCount": 39,
+    "willChangeTransformCount": 0,
+    "switchLongTasks": [
+      {
+        "name": "self",
+        "duration": 218,
+        "startTime": 16640
+      },
+      {
+        "name": "self",
+        "duration": 182,
+        "startTime": 16859
+      }
+    ],
+    "scrollLongTasks": []
+  },
+  {
+    "viewName": "tables",
+    "totalDomNodes": 24080,
+    "katexNodes": 838,
+    "idleRafsIn3s": 0,
+    "idleRafPerSec": 0,
+    "idleCanvasPaints": 32,
+    "canvases": [
+      {
+        "id": "sakuga-fx",
+        "width": 1258,
+        "height": 646,
+        "displayWidth": 1258,
+        "displayHeight": 646,
+        "visible": true
+      }
+    ],
+    "backdropBlurCount": 8,
+    "dropShadowCount": 5,
+    "heavyShadowCount": 49,
+    "willChangeTransformCount": 0,
+    "switchLongTasks": [
+      {
+        "name": "self",
+        "duration": 492,
+        "startTime": 21476
+      },
+      {
+        "name": "self",
+        "duration": 668,
+        "startTime": 21974
+      }
+    ],
+    "scrollLongTasks": []
+  },
+  {
+    "viewName": "test",
+    "totalDomNodes": 535,
+    "katexNodes": 0,
+    "idleRafsIn3s": 0,
+    "idleRafPerSec": 0,
+    "idleCanvasPaints": 0,
+    "canvases": [
+      {
+        "id": "sakuga-fx",
+        "width": 1258,
+        "height": 646,
+        "displayWidth": 1258,
+        "displayHeight": 646,
+        "visible": true
+      }
+    ],
+    "backdropBlurCount": 8,
+    "dropShadowCount": 5,
+    "heavyShadowCount": 27,
+    "willChangeTransformCount": 0,
+    "switchLongTasks": [
+      {
+        "name": "self",
+        "duration": 213,
+        "startTime": 26879
+      },
+      {
+        "name": "self",
+        "duration": 99,
+        "startTime": 27094
+      }
+    ],
+    "scrollLongTasks": []
+  }
+]

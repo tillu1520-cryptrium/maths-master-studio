@@ -328,18 +328,26 @@
     }
     .ed-header {
       background: var(--bg-header);
-      backdrop-filter: blur(16px);
-      -webkit-backdrop-filter: blur(16px);
       border-bottom: 1px solid var(--border-card);
     }
     .ed-card {
       background: var(--bg-card);
       border: 1px solid var(--border-card);
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-      transition: transform 0.18s ease, border-color 0.18s ease;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+      transition: border-color 0.18s ease;
       contain: content;
       content-visibility: auto;
       contain-intrinsic-size: 0 200px;
+    }
+    .table-card-section {
+      content-visibility: auto;
+      contain-intrinsic-size: auto 500px;
+      contain: content;
+    }
+    .formula-topic-card {
+      content-visibility: auto;
+      contain-intrinsic-size: auto 350px;
+      contain: content;
     }
     .ed-card:hover {
       border-color: rgba(99, 102, 241, 0.45);
@@ -2035,6 +2043,8 @@
       if (activeLabRaf !== null) { cancelAnimationFrame(activeLabRaf); activeLabRaf = null; }
       if (activeHeroRaf !== null) { cancelAnimationFrame(activeHeroRaf); activeHeroRaf = null; }
       if (activeRO) { activeRO.disconnect(); activeRO = null; }
+      const activeLabIO = window.__activeLabIO;
+      if (activeLabIO) { activeLabIO.disconnect(); window.__activeLabIO = null; }
       const skToast = document.getElementById('globalSakugaToast');
       if (skToast && typeof skToast.hide === 'function') skToast.hide(true);
       const toastBox = document.getElementById('toastContainer');
@@ -2050,33 +2060,28 @@
       const c = document.getElementById(canvasId);
       if (!c) return;
       const ctx = c.getContext('2d');
-      let t = 0;
-      const draw = () => {
-        if (!c.isConnected) { activeHeroRaf = null; return; }
-        if (document.hidden) { activeHeroRaf = requestAnimationFrame(draw); return; }
-        const rect = c.parentElement ? c.parentElement.getBoundingClientRect() : null;
-        if (!rect) return;
-        const w = Math.max(260, rect.width), h = Math.max(120, rect.height);
-        if (c.width !== Math.floor(w) || c.height !== Math.floor(h)) { c.width = Math.floor(w); c.height = Math.floor(h); }
-        ctx.clearRect(0, 0, w, h);
-        t += 0.018;
-        const waves = [
-          { amp: h * 0.20, freq: 0.012, speed: 1.0, col: 'rgba(56, 189, 248, 0.34)', lw: 2.2 },
-          { amp: h * 0.14, freq: 0.019, speed: -1.3, col: 'rgba(167, 139, 250, 0.30)', lw: 1.8 },
-          { amp: h * 0.11, freq: 0.026, speed: 0.8, col: 'rgba(52, 211, 153, 0.28)', lw: 1.6 }
-        ];
-        waves.forEach(wv => {
-          ctx.beginPath();
-          for (let x = 0; x <= w; x += 4) {
-            const env = Math.sin((x / w) * Math.PI);
-            const y = h * 0.52 + Math.sin(x * wv.freq + t * wv.speed) * wv.amp * env;
-            x === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
-          }
-          ctx.strokeStyle = wv.col; ctx.lineWidth = wv.lw; ctx.stroke();
-        });
-        activeHeroRaf = requestAnimationFrame(draw);
-      };
-      activeHeroRaf = requestAnimationFrame(draw);
+      if (!ctx || !c.isConnected || document.hidden) return;
+      const rect = c.parentElement ? c.parentElement.getBoundingClientRect() : null;
+      if (!rect) return;
+      const w = Math.max(260, rect.width), h = Math.max(120, rect.height);
+      if (c.width !== Math.floor(w) || c.height !== Math.floor(h)) { c.width = Math.floor(w); c.height = Math.floor(h); }
+      ctx.clearRect(0, 0, w, h);
+      const t = 1.0;
+      const waves = [
+        { amp: h * 0.20, freq: 0.012, speed: 1.0, col: 'rgba(56, 189, 248, 0.34)', lw: 2.2 },
+        { amp: h * 0.14, freq: 0.019, speed: -1.3, col: 'rgba(167, 139, 250, 0.30)', lw: 1.8 },
+        { amp: h * 0.11, freq: 0.026, speed: 0.8, col: 'rgba(52, 211, 153, 0.28)', lw: 1.6 }
+      ];
+      waves.forEach(wv => {
+        ctx.beginPath();
+        for (let x = 0; x <= w; x += 4) {
+          const env = Math.sin((x / w) * Math.PI);
+          const y = h * 0.52 + Math.sin(x * wv.freq + t * wv.speed) * wv.amp * env;
+          x === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+        }
+        ctx.strokeStyle = wv.col; ctx.lineWidth = wv.lw; ctx.stroke();
+      });
+      activeHeroRaf = null; // Statically rendered with 0 rAF ticks
     }
 
     function updateNavButtons() {
@@ -2146,13 +2151,13 @@
 
     let scrollEndTimer = null;
     window.addEventListener('scroll', () => {
-      if (window.SakugaFX) {
+      if (window.SakugaFX && window.SakugaFX.running) {
         if (typeof window.SakugaFX.clearTransient === 'function') window.SakugaFX.clearTransient();
         if (typeof window.SakugaFX.clear === 'function') window.SakugaFX.clear();
       }
       if (scrollEndTimer) clearTimeout(scrollEndTimer);
       scrollEndTimer = setTimeout(() => {
-        if (window.SakugaFX) {
+        if (window.SakugaFX && window.SakugaFX.running) {
           if (typeof window.SakugaFX.clearTransient === 'function') window.SakugaFX.clearTransient();
           if (typeof window.SakugaFX.clear === 'function') window.SakugaFX.clear();
         }
@@ -2395,7 +2400,7 @@
         }).join('') : `<div class="col-span-full ed-card rounded-2xl p-5 text-center text-xs text-slate-400">No questions match this filter in Topic ${t.code}.</div>`;
 
         return `
-          <section class="space-y-4 anim-in" style="animation-delay:${tIdx * 40}ms">
+          <section class="formula-topic-card space-y-4 anim-in" style="animation-delay:${tIdx * 40}ms">
             <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 rounded-2xl p-3.5 sm:p-4 bg-slate-100/90 dark:bg-slate-800/70 border border-slate-200/80 dark:border-slate-700/80 border-l-4 transition-all" style="border-left-color:${ch.accentHex}">
               <div class="min-w-0">
                 <div class="flex items-center gap-2">
@@ -4111,7 +4116,7 @@
       container.innerHTML = `
         <div class="space-y-4 animate-in fade-in duration-200">
           <!-- Sticky Exam Topbar -->
-          <div class="sticky top-14 z-30 -mx-3 sm:-mx-5 px-3 sm:px-5 py-2.5 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border-b border-slate-200/80 dark:border-slate-800 shadow-sm flex items-center justify-between gap-3">
+          <div class="sticky top-14 z-30 -mx-3 sm:-mx-5 px-3 sm:px-5 py-2.5 bg-white/95 dark:bg-slate-900/95 border-b border-slate-200/80 dark:border-slate-800 shadow-sm flex items-center justify-between gap-3">
             <div class="flex items-center gap-2.5 min-w-0">
               <span class="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-indigo-600 text-white shrink-0">CBT EXAM</span>
               <h2 class="text-xs sm:text-sm font-bold truncate max-w-[200px] sm:max-w-md">${escHtml(test.title)}</h2>
@@ -4484,7 +4489,7 @@
       container.innerHTML = `
         <div class="space-y-6 animate-in fade-in duration-300">
           <!-- Top Global Quick-Action Navigation Bar -->
-          <div class="flex flex-wrap items-center justify-between gap-3 p-4 rounded-2xl bg-white/90 dark:bg-slate-900/90 backdrop-blur-md border border-slate-200 dark:border-slate-800 shadow-md">
+          <div class="flex flex-wrap items-center justify-between gap-3 p-4 rounded-2xl bg-white/95 dark:bg-slate-900/95 border border-slate-200 dark:border-slate-800 shadow-md">
             <div class="flex items-center gap-2">
               <button data-action="return-cbt-builder" class="px-3.5 sm:px-4 py-2 rounded-xl text-xs sm:text-sm font-bold bg-indigo-600 hover:bg-indigo-700 text-white flex items-center gap-1.5 transition-all shadow-sm active:scale-95 cursor-pointer">
                 <i data-lucide="arrow-left" class="w-4 h-4"></i>
@@ -4805,7 +4810,7 @@
           </div>
 
           <!-- Bottom Global Navigation Bar -->
-          <div class="flex flex-wrap items-center justify-between gap-3 p-5 rounded-2xl bg-white/90 dark:bg-slate-900/90 backdrop-blur-md border border-slate-200 dark:border-slate-800 shadow-lg mt-8">
+          <div class="flex flex-wrap items-center justify-between gap-3 p-5 rounded-2xl bg-white/95 dark:bg-slate-900/95 border border-slate-200 dark:border-slate-800 shadow-lg mt-8">
             <div class="flex items-center gap-2">
               <button data-action="return-cbt-builder" class="px-4 py-2.5 rounded-xl text-xs sm:text-sm font-bold bg-indigo-600 hover:bg-indigo-700 text-white flex items-center gap-1.5 transition-all shadow-sm active:scale-95 cursor-pointer">
                 <i data-lucide="arrow-left" class="w-4 h-4"></i>
@@ -5177,14 +5182,31 @@
         vx: ((idx % 7) - 3) * 0.0025, vy: (((idx * 3) % 7) - 3) * 0.0025, life: idx * 3
       }));
 
+      let isLabInViewport = true;
+      let labIntersectionObserver = null;
+      if (typeof IntersectionObserver !== 'undefined' && wrap) {
+        labIntersectionObserver = new IntersectionObserver((entries) => {
+          for (const entry of entries) {
+            isLabInViewport = entry.isIntersecting;
+            if (!isLabInViewport && activeLabRaf !== null) {
+              cancelAnimationFrame(activeLabRaf);
+              activeLabRaf = null;
+            } else if (isLabInViewport && running && activeLabRaf === null && state.view === 'labs') {
+              activeLabRaf = requestAnimationFrame(renderFrame);
+            }
+          }
+        }, { threshold: 0.05 });
+        labIntersectionObserver.observe(wrap);
+      }
+
       // Single frame renderer (exposed for automated testing too!)
       function renderFrame() {
-        if (!canvas || !canvas.isConnected) {
+        if (!canvas || !canvas.isConnected || state.view !== 'labs' || !isLabInViewport) {
           if (activeLabRaf !== null) { cancelAnimationFrame(activeLabRaf); activeLabRaf = null; }
           return;
         }
         if (document.hidden) {
-          activeLabRaf = requestAnimationFrame(renderFrame);
+          if (activeLabRaf !== null) { cancelAnimationFrame(activeLabRaf); activeLabRaf = null; }
           return;
         }
         const { w, h } = dims;
@@ -5605,6 +5627,7 @@
     // =========================================================================
     // VIEW 4: MASTER TABLES VAULT (10 COMPLETE TABLES · 154 SYLLABUS FORMULAS)
     // =========================================================================
+    let cachedMasterTablesBaseHtml = null;
     function renderTablesView(container) {
       if (state.view !== 'tables' || !container || !container.isConnected) return;
       const q = (state.tableSearch || '').trim().toLowerCase();
@@ -5680,7 +5703,7 @@
 
           <!-- Rendered Master Tables -->
           ${tablesToShow.length ? tablesToShow.map(tbl => `
-            <div data-table-section="${tbl.id}" class="ed-card rounded-3xl overflow-hidden transition-all duration-200">
+            <div data-table-section="${tbl.id}" class="table-card-section ed-card rounded-3xl overflow-hidden transition-colors">
               <div class="px-4 sm:px-5 py-3.5 text-white flex flex-wrap items-center justify-between gap-2" style="background:${tbl.grad}">
                 <h3 class="text-sm sm:text-base font-extrabold">${escHtml(tbl.title)}</h3>
                 <span class="px-2.5 py-0.5 rounded-full text-[10px] font-mono font-bold bg-white/20">${tbl.filteredRows.length} Formulas</span>
