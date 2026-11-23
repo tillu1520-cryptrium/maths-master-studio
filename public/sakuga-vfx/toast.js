@@ -29,7 +29,18 @@ class SakugaToast extends fx.Base {
     this.toast.classList.add('on'); this.sx.x = -280; this.sx.v = 1000; this.sx.to = 0; this.ss.x = 1; this.ss.to = 1; this.ss.k = 420; this.state = 1;
     if (fx.calm) { this.sx.x = 0; this.sx.v = 0; }
   }
-  hide() { if (!this.open) return; this.state = 3; this.ss.to = 0; this.ss.k = 500; const c = at(this.toast); puff(c.x, c.y, { size: 9, n: 4, life: 0.5 }); }
+  hide(instant) {
+    if (!this.open && this.state !== 2) return;
+    if (instant) {
+      this.state = 0;
+      if (this.toast) {
+        this.toast.classList.remove('on');
+        this.toast.style.transform = '';
+      }
+      return;
+    }
+    this.state = 3; this.ss.to = 0; this.ss.k = 500; const c = at(this.toast); puff(c.x, c.y, { size: 9, n: 4, life: 0.5 });
+  }
   frame(dt) {
     this.t += dt; if (!this.state) return; const x = this.sx.step(dt), sc = this.ss.step(dt), st = 1 + Math.min(1.5, Math.abs(this.sx.v) * 0.0017);
     this.toast.style.transform = `translateX(${x}px) scale(${st * sc}, ${sc / Math.sqrt(st)})`;

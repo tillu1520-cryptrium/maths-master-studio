@@ -2006,7 +2006,7 @@
       if (activeHeroRaf !== null) { cancelAnimationFrame(activeHeroRaf); activeHeroRaf = null; }
       if (activeRO) { activeRO.disconnect(); activeRO = null; }
       const skToast = document.getElementById('globalSakugaToast');
-      if (skToast && typeof skToast.hide === 'function') skToast.hide();
+      if (skToast && typeof skToast.hide === 'function') skToast.hide(true);
       const toastBox = document.getElementById('toastContainer');
       if (toastBox) toastBox.innerHTML = '';
       if (window.SakugaFX) {
@@ -2114,16 +2114,17 @@
       }
     });
 
-    let scrollThrottle = null;
+    let scrollEndTimer = null;
     window.addEventListener('scroll', () => {
-      if (!scrollThrottle) {
-        scrollThrottle = setTimeout(() => {
-          scrollThrottle = null;
-          if (window.SakugaFX && typeof window.SakugaFX.clearTransient === 'function') {
-            window.SakugaFX.clearTransient();
-          }
-        }, 100);
+      if (window.SakugaFX && typeof window.SakugaFX.clearTransient === 'function') {
+        window.SakugaFX.clearTransient();
       }
+      if (scrollEndTimer) clearTimeout(scrollEndTimer);
+      scrollEndTimer = setTimeout(() => {
+        if (window.SakugaFX && typeof window.SakugaFX.clearTransient === 'function') {
+          window.SakugaFX.clearTransient();
+        }
+      }, 100);
     }, { passive: true });
 
     function renderApp() {
@@ -2431,7 +2432,7 @@
             </div>`;
         }
       } else {
-        renderedTopicsContent = topicsHtml.join('');
+        renderedTopicsContent = topicsHtml;
       }
 
       container.innerHTML = `
@@ -2564,6 +2565,7 @@
       if (prog && typeof prog.set === 'function') {
         prog.set(total ? (knownCount / total) : 0);
       }
+      const lvlEl = document.getElementById('fcLvlBadge');
       if (lvlEl) {
         lvlEl.textContent = card.level;
         lvlEl.className = `px-2 py-0.5 rounded-full text-[10px] font-mono font-bold border ${LEVEL_BADGE[card.level]}`;
@@ -2598,6 +2600,11 @@
       }
 
       const isKnown = !!state.fcKnown[card.id];
+      const mkB = document.getElementById('fcMarkKnownBtn');
+      if (mkB) {
+        mkB.className = `sakuga-anime-btn ${isKnown ? 'success' : 'primary'} px-4 py-2 text-xs cursor-pointer`;
+        mkB.innerHTML = `<i data-lucide="${isKnown ? 'check-check' : 'check'}" class="w-3.5 h-3.5"></i><span>${isKnown ? 'Mastered ✓' : 'Mark Known ⭐'}</span>`;
+      }
       const knowBtn = document.getElementById('fcKnowBtn');
       if (knowBtn) {
         knowBtn.className = `px-4 py-2.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 ${isKnown
@@ -2772,11 +2779,14 @@
                 <i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i><span>Reset</span>
               </button>
             </div>
+            <button type="button" id="fcMarkKnownBtn" class="sakuga-anime-btn ${isKnown ? 'success' : 'primary'} px-4 py-2 text-xs cursor-pointer">
+              <i data-lucide="${isKnown ? 'check-check' : 'check'}" class="w-3.5 h-3.5"></i>
+              <span>${isKnown ? 'Mastered ✓' : 'Mark Known ⭐'}</span>
+            </button>
             <!-- Hidden test compatibility hooks -->
             <div class="hidden">
               <sakuga-checkbox id="fcKnowCheckbox">Mastered</sakuga-checkbox>
               <button id="fcKnowBtn"></button>
-              <button id="fcMarkKnownBtn"></button>
             </div>
           </div>
         </div>

@@ -13,14 +13,14 @@ class SakugaSlider extends fx.Base {
   static formAssociated = true;
   static observedAttributes = ['value', 'min', 'max', 'step', 'disabled', 'label', 'unit'];
   static css = `
-    :host { margin: 30px 0 0; }
-    .sld { position: relative; width: var(--sk-slider-width, 230px); max-width: 100%; height: 46px; }
-    .trk { position: absolute; left: 0; right: 0; top: 16px; height: 14px; border: var(--sk-bw) solid var(--sk-ink); border-radius: 7px; background: var(--sk-card); overflow: hidden; }
-    .trk i { display: block; height: 100%; width: calc(var(--v, 0) * 100% + 6px); max-width: 100%; background: var(--sk-pri); }
-    .th { position: absolute; top: 9px; left: 0; width: 28px; height: 28px; border-radius: 50%; background: #fff; border: var(--sk-bw) solid var(--sk-ink); will-change: transform; }
-    .val { position: absolute; top: -30px; left: -9px; min-width: 46px; padding: 3px 4px; border: 2.6px solid var(--sk-ink); border-radius: 9px; background: var(--sk-card); text-align: center; font: 800 13px/1.1 -apple-system, "Segoe UI", system-ui, sans-serif; white-space: nowrap; transform-origin: 50% 160%; will-change: transform; }
-    .val::after { content: ""; position: absolute; left: 50%; top: 100%; margin-left: -5px; border: 5px solid transparent; border-top: 7px solid var(--sk-ink); }
-    input { position: absolute; inset: -8px 0; width: 100%; height: calc(100% + 16px); margin: 0; opacity: 0; cursor: ew-resize; }
+    :host { margin: 30px 0 0; touch-action: none; }
+    .sld { position: relative; width: var(--sk-slider-width, 230px); max-width: 100%; height: 46px; touch-action: none; }
+    .trk { position: absolute; left: 0; right: 0; top: 16px; height: 14px; border: var(--sk-bw) solid var(--sk-ink); border-radius: 7px; background: var(--sk-card); overflow: hidden; touch-action: none; }
+    .trk i { display: block; height: 100%; width: calc(var(--v, 0) * 100% + 6px); max-width: 100%; background: var(--sk-pri); pointer-events: none; }
+    .th { position: absolute; top: 9px; left: 0; width: 28px; height: 28px; border-radius: 50%; background: #fff; border: var(--sk-bw) solid var(--sk-ink); will-change: transform; touch-action: none; }
+    .val { position: absolute; top: -30px; left: -9px; min-width: 46px; padding: 3px 4px; border: 2.6px solid var(--sk-ink); border-radius: 9px; background: var(--sk-card); text-align: center; font: 800 13px/1.1 -apple-system, "Segoe UI", system-ui, sans-serif; white-space: nowrap; transform-origin: 50% 160%; will-change: transform; pointer-events: none; }
+    .val::after { content: ""; position: absolute; left: 50%; top: 100%; margin-left: -5px; border: 5px solid transparent; border-top: 7px solid var(--sk-ink); pointer-events: none; }
+    input { position: absolute; inset: -8px 0; width: 100%; height: calc(100% + 16px); margin: 0; opacity: 0; cursor: ew-resize; touch-action: none; -webkit-tap-highlight-color: transparent; }
     input:disabled { cursor: not-allowed; } :host([disabled]) .sld { opacity: .5; }
     .sld:has(input:focus-visible) { outline: 2.5px solid var(--sk-acc); outline-offset: 6px; border-radius: 8px; }`;
   get value() { return this.r ? this.r.value : this.getAttribute('value') || '50'; }
@@ -71,10 +71,12 @@ class SakugaSlider extends fx.Base {
     r.addEventListener('change', () => {
       if (fx.start) fx.start(45);
       const c = at(this.th), dir = Math.sign(this.peak) || 1;
+      const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
+      const scale = isMobile ? 0.50 : 0.65;
       if (Math.abs(this.peak) > 1.3) {
-        slash(c.x + dir * 20, c.y, { len: 70, ang: dir > 0 ? 0 : Math.PI, thick: 6, life: 0.35, col: '#b8b3ff' });
-        burst(c.x + dir * 4, c.y, { r: 14, spikes: 7, life: 0.22 });
-        later(200, () => { puff(c.x - dir * 18, c.y - 12, { size: 3, n: 1, vy: -5, life: 0.35 }); });
+        slash(c.x + dir * 20, c.y, { len: 70 * scale, ang: dir > 0 ? 0 : Math.PI, thick: 6 * scale, life: 0.35, col: '#b8b3ff' });
+        burst(c.x + dir * 4, c.y, { r: 16 * scale, spikes: 7, life: 0.22 });
+        later(200, () => { puff(c.x - dir * 18, c.y - 12, { size: 7 * scale, n: 2, vy: -5, life: 0.35 }); });
       }
       this.peak = 0; this.dispatchEvent(new Event('change', { bubbles: true }));
     });
@@ -84,12 +86,21 @@ class SakugaSlider extends fx.Base {
     this.th.style.transformOrigin = v > 0 ? '100% 50%' : '0 50%'; this.th.style.transform = `translateX(${x * W}px) scale(${st}, ${1 / Math.sqrt(st)})`;
     this.val.style.transform = `translateX(${x * W - (this.val.offsetWidth - 46) / 2}px) rotate(${clamp(-v * 5, -14, 14)}deg)`; this.box.style.setProperty('--v', clamp(x));
     if (Math.abs(v) > Math.abs(this.peak)) this.peak = v; else this.peak *= 0.96;
-    if (Math.abs(v) > 0.5) {   // subtle anime trail that never obscures readouts
-      this.acc += dt * Math.abs(v) * 8; const c = at(this.th), dir = Math.sign(v);
+    if (Math.abs(v) > 0.35) {   // smoking throttle trail: punchy cumulus clouds scaled cleanly for mobile/desktop
+      const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
+      const scale = isMobile ? 0.50 : 0.65;
+      this.acc += dt * Math.abs(v) * 16; const c = at(this.th), dir = Math.sign(v), big = Math.min(1, Math.abs(v) / 2.2);
       while (this.acc > 1) {
         this.acc -= 1;
-        puff(c.x - dir * rnd(8, 16), c.y - rnd(2, 6), { size: rnd(2.5, 3.5), n: 1, vx: -dir * rnd(12, 28), vy: -rnd(8, 20), life: 0.35 });
-        lines(c.x - dir * 10, c.y + rnd(-2, 6), { n: 1, dir: dir > 0 ? Math.PI : 0, len: 24, spread: 1, life: 0.18 });
+        puff(c.x - dir * rnd(12, 24), c.y - rnd(2, 10) - big * 6, {
+          size: (rnd(6, 9) + big * 8) * scale,
+          n: 3,
+          vx: -dir * rnd(20, 50),
+          vy: -rnd(16, 42) * (0.5 + big),
+          life: rnd(0.55, 0.95)
+        });
+        lines(c.x - dir * 14, c.y + rnd(-3, 8), { n: 1, dir: dir > 0 ? Math.PI : 0, len: (40 + big * 40) * scale, spread: 2, life: 0.20 });
+        if (Math.random() < 0.25) shards(c.x - dir * 18, c.y + 4, { n: 1, size: 3 * scale, speed: 100 * scale, dir: dir > 0 ? Math.PI + 0.5 : -0.5, arc: 1 });
       }
     }
   }

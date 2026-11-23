@@ -48,19 +48,18 @@ if (!html.includes('id="fcRecallBar"') || !html.includes('event.stopPropagation(
 if (!html.includes('fcDeckMasteryTxt')) {
   throw new Error('STEP 4 FAIL: Missing fcDeckMasteryTxt');
 }
-// Confirm visible Mark Mastered button is removed
-const visibleMarkMasteredRegex = /<button[^>]+id="fcMarkKnownBtn"[^>]*>[\s\S]*?<\/button>\s*<!-- Hidden/i;
-if (visibleMarkMasteredRegex.test(html)) {
-  throw new Error('STEP 4 FAIL: fcMarkKnownBtn is still visible outside hidden container');
+// Confirm Mark Known button is present and wired
+if (!html.includes('id="fcMarkKnownBtn"')) {
+  throw new Error('STEP 4 FAIL: fcMarkKnownBtn missing in Flashcards');
 }
-console.log('PASS: Step 4 Flashcards recall grade stopPropagation, mastery counter sync & clean UI verified');
+console.log('PASS: Step 4 Flashcards recall grade stopPropagation, mastery counter sync & Mark Known button verified');
 
-// 6. STEP 5: Live Labs Slider Smoke & Tooltip Sync
+// 6. STEP 5: Live Labs Slider Smoking Throttle VFX & Mobile Touch
 const sliderJs = fs.readFileSync('sakuga-vfx/slider.js', 'utf8');
-if (!sliderJs.includes('rnd(2.5, 3.5)')) {
-  throw new Error('STEP 5 FAIL: Slider smoke not toned down in sakuga-vfx/slider.js');
+if (!sliderJs.includes('touch-action: none') || !sliderJs.includes('smoking throttle trail')) {
+  throw new Error('STEP 5 FAIL: Slider smoking throttle trail or touch-action: none missing in sakuga-vfx/slider.js');
 }
-console.log('PASS: Step 5 Slider smoke toned down to subtle ~3px puffs');
+console.log('PASS: Step 5 Slider smoking throttle VFX and touch-action: none verified');
 
 // 7. STEP 6: Floating Scroll Clouds, Toast Polish, Mobile Viewport
 const progressJs = fs.readFileSync('sakuga-vfx/progress.js', 'utf8');
@@ -74,8 +73,8 @@ const toastJs = fs.readFileSync('sakuga-vfx/toast.js', 'utf8');
 if (!toastJs.includes('min-width: 240px')) {
   throw new Error('STEP 6 FAIL: Toast does not have flexible min-width');
 }
-if (!html.includes('scrollThrottle')) {
-  throw new Error('STEP 6 FAIL: Throttled scroll listener missing in index.html');
+if (!html.includes('addEventListener(\'scroll\'')) {
+  throw new Error('STEP 6 FAIL: Scroll listener missing in index.html');
 }
 console.log('PASS: Step 6 Floating scroll clouds, toast polish, and scroll cleanup verified');
 
