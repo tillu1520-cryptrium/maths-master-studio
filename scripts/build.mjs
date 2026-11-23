@@ -33,6 +33,7 @@ execSync('node scripts/test_tab_mounting.mjs', { stdio: 'inherit' });
 execSync('node scripts/scan_katex_errors.mjs', { stdio: 'inherit' });
 execSync('node scripts/test_final_polish_bugs.mjs', { stdio: 'inherit' });
 execSync('node scripts/verify_all_7_steps.mjs', { stdio: 'inherit' });
+execSync('node scripts/verify_user_screenshot_fixes.mjs', { stdio: 'inherit' });
 
 // 2. Ensure public/ directory has all root assets
 if (!fs.existsSync('public')) {
