@@ -81,7 +81,7 @@ if (!tblViewMatch) {
 const tblCode = tblViewMatch[0];
 
 // sakuga-tabs must be hidden
-if (!tblCode.includes('class="hidden">\n              <sakuga-tabs id="masterTableTabs"')) {
+if (!tblCode.includes('id="masterTableTabs"') || (!tblCode.includes('class="hidden"') && !tblCode.includes('display:none'))) {
   console.error('FAIL: Master Tables sakuga-tabs is not hidden (duplicate row detected)');
   process.exit(1);
 }

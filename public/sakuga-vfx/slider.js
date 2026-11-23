@@ -42,12 +42,26 @@ class SakugaSlider extends fx.Base {
       <input type="range" min="${a('min', 0)}" max="${a('max', 100)}" step="${a('step', 1)}" value="${a('value', 50)}" aria-label="${a('label', 'Slider')}"${this.disabled ? ' disabled' : ''}></div>`;
   }
   frac() { const r = this.r, lo = +r.min || 0, hi = r.max === '' ? 100 : +r.max; return hi > lo ? (+r.value - lo) / (hi - lo) : 0; }
-  sync() { this.s.to = this.frac(); this.val.textContent = this.r.value + (this.getAttribute('unit') ?? '%'); this.internals.setFormValue(this.r.value); }
+  sync() {
+    this.s.to = this.frac();
+    const unitAttr = this.getAttribute('unit');
+    const u = unitAttr !== null ? (unitAttr.startsWith('%') ? unitAttr : ' ' + unitAttr) : '';
+    const num = Number(this.r.value);
+    const step = this.r.getAttribute('step') || '';
+    const decimals = step.includes('.') ? (step.split('.')[1] || '').length : (num % 1 !== 0 ? 2 : 0);
+    const formatted = (!isNaN(num) && decimals > 0) ? num.toFixed(decimals) : this.r.value;
+    this.val.textContent = formatted + u;
+    this.internals.setFormValue(this.r.value);
+  }
   setup() {
     const box = this.box = this.$('.sld'), r = this.r = this.$('input'); this.th = this.$('.th'); this.val = this.$('.val');
     this.s = new Spring(0, 420, 30); this.sync(); this.s.x = this.s.to; this.acc = 0; this.peak = 0; this.said = 0; this.t = 0;
-    r.addEventListener('input', () => this.sync());
+    r.addEventListener('input', () => {
+      this.sync();
+      if (fx.start) fx.start(45);
+    });
     r.addEventListener('change', () => {
+      if (fx.start) fx.start(45);
       const c = at(this.th), dir = Math.sign(this.peak) || 1;
       if (Math.abs(this.peak) > 1.3) { slash(c.x + dir * 34, c.y, { len: 150, ang: dir > 0 ? 0 : Math.PI, thick: 12, life: 0.5, col: '#b8b3ff' }); burst(c.x + dir * 4, c.y, { r: 24, spikes: 11, life: 0.28 }); shards(c.x + dir * 10, c.y, { n: 4, size: 4, dir: dir > 0 ? 0 : Math.PI, arc: 2.4 }); ticks(c.x + dir * 52, c.y - 30, { dir: dir > 0 ? -0.6 : -2.5, n: 3, r: 4, len: 10 });
         later(520, () => { puff(c.x - dir * 60, c.y - 34, { size: 11, n: 4, vy: -10, life: 0.8 }); puff(c.x - dir * 22, c.y - 22, { size: 6, n: 3, vy: -8, life: 0.6 }); wob(c.x - dir * 82, c.y - 34, { dir: -1, r: 9 }); }); }

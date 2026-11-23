@@ -102,9 +102,15 @@ const front = { c: null, g: null, live: [], dirty: false }, layers = [front];
 function ensureFront() {
   if (front.c && front.c.isConnected) return;
   const existing = document.querySelector('canvas.sakuga-fx');
-  if (existing) {
+  const existingList = document.querySelectorAll('canvas.sakuga-fx');
+  if (existingList.length > 0) {
     front.c = existing;
-    front.g = existing.getContext('2d');
+    front.c.setAttribute('aria-hidden', 'true');
+    front.c.style.pointerEvents = 'none';
+    front.g = front.c.getContext('2d');
+    for (let i = 1; i < existingList.length; i++) {
+      try { existingList[i].remove(); } catch(e){}
+    }
     size();
     return;
   }
@@ -129,7 +135,7 @@ function size() {
 }
 addEventListener('resize', size);
 function backLayer(canvas) { const L = { c: canvas, g: canvas.getContext('2d'), live: [], dirty: false }; layers.push(L); return L; }
-const add = (life, draw, L) => { const p = { t: 0, life, draw }; if (!calm) { L = L || front; if (L === front) ensureFront(); L.live.push(p); start(); } return p; };
+const add = (life, draw, L) => { const p = { t: 0, life, draw }; if (!calm) { L = L || front; if (L === front) ensureFront(); L.live.push(p); start(45); } return p; };
 // an effect with no end: it draws every frame until its handle is marked dead. layer puts it on a component's back layer.
 const persist = (draw, layer) => add(Infinity, draw, layer);
 function tick(dt) {
@@ -145,7 +151,7 @@ function tick(dt) {
     g.translate(-ox, -oy); g.lineJoin = g.lineCap = 'round';
     L.live = L.live.filter((p) => !p.dead && (p.t += dt) < p.life);
     for (const p of L.live) { g.save(); p.draw(p.t / p.life, p.t, dt); g.restore(); }
-    L.dirty = L.live.length > 0;
+    L.dirty = L.live.some(p => isFinite(p.life) && !p.dead);
   }
 }
 
@@ -153,7 +159,7 @@ function tick(dt) {
 // One loop for every component. later() runs on this clock, not on setTimeout, so a film can step it a frame at a time.
 let now = 0, last = 0, running = false;
 const frames = new Set(), timers = [];
-const later = (ms, f) => { timers.push({ at: now + ms / 1000, f }); start(); };
+const later = (ms, f) => { timers.push({ at: now + ms / 1000, f }); start(Math.ceil(ms / 16) + 15); };
 function advance(dt) {
   now += dt;
   const due = timers.filter((q) => q.at <= now).sort((a, b) => a.at - b.at); if (due.length) for (const q of due) timers.splice(timers.indexOf(q), 1);
@@ -161,15 +167,29 @@ function advance(dt) {
   for (const f of frames) f(dt);
   tick(dt);
 }
-let idleCounter = 0;
+let idleCounter = 0, activeFrames = 0;
 function clearCanvas() {
+  running = false;
+  idleCounter = 999;
+  activeFrames = 0;
   for (const L of layers) {
     if (L.c && L.g) {
-      L.live = [];
-      L.dirty = false;
-      L.g.clearRect(0, 0, L.c.width, L.c.height);
+      try { L.g.clearRect(0, 0, L.c.width, L.c.height); } catch(e){}
+    }
+    L.live = [];
+    L.dirty = false;
+  }
+  timers.length = 0;
+}
+function clearTransient() {
+  for (const L of layers) {
+    L.live = L.live.filter(p => !isFinite(p.life) && !p.dead);
+    L.dirty = false;
+    if (L.c && L.g && !L.live.length) {
+      try { L.g.clearRect(0, 0, L.c.width, L.c.height); } catch(e){}
     }
   }
+  timers.length = 0;
 }
 function loop(ms) {
   if (!running) return;
@@ -182,9 +202,12 @@ function loop(ms) {
   last = ms;
   advance(dt);
 
-  const hasLive = layers.some(L => L.c && (L.live.length > 0 || L.dirty));
+  if (activeFrames > 0) activeFrames--;
+  const hasLiveTransient = layers.some(L => L.c && (L.live.some(p => isFinite(p.life) && !p.dead) || L.dirty));
   const hasTimers = timers.length > 0;
-  if (!hasLive && !hasTimers) {
+  const isBusy = hasLiveTransient || hasTimers || (activeFrames > 0);
+
+  if (!isBusy) {
     idleCounter++;
     if (idleCounter > 20) {
       running = false;
@@ -195,8 +218,9 @@ function loop(ms) {
   }
   requestAnimationFrame(loop);
 }
-function start() {
+function start(framesCount = 45) {
   idleCounter = 0;
+  activeFrames = Math.max(activeFrames, framesCount);
   if (running || api.paused) return;
   running = true;
   last = performance.now();
@@ -375,6 +399,17 @@ const api = window.SakugaFX = {
   advance, later, persist, blob, shape, get g() { return g; },
   puff, burst, shards, ring, splash, slash, lines, ticks, donut, wob, kira, sfx, hollow, dotted,
   at, esc, squashy, Base, define,
+  start,
+  stop: function() {
+    running = false;
+    idleCounter = 999;
+    activeFrames = 0;
+    clearTransient();
+  },
+  clear: function() {
+    clearCanvas();
+  },
+  clearTransient: clearTransient
 };
 })();
 // <<< sakuga core

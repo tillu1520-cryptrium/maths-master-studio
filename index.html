@@ -612,7 +612,7 @@
         <button type="button" data-view="studio" class="nav-btn px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer whitespace-nowrap">Formula Studio</button>
         <button type="button" data-view="flashcards" class="nav-btn px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer whitespace-nowrap">150 Flashcards</button>
         <button type="button" data-view="labs" class="nav-btn px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer whitespace-nowrap">100 Live Labs</button>
-        <button type="button" data-view="tables" class="nav-btn px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer whitespace-nowrap">Master Tables</button>
+        <button type="button" data-view="tables" class="nav-btn px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer whitespace-nowrap">Formula Tables</button>
         <button type="button" data-view="test" class="nav-btn px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer whitespace-nowrap flex items-center gap-1">Test Studio 🎯</button>
 
         <!-- Hidden for automated testing suites -->
@@ -622,7 +622,7 @@
             <option value="studio">Formula Studio</option>
             <option value="flashcards">150 Flashcards</option>
             <option value="labs">100 Live Labs</option>
-            <option value="tables">Master Tables</option>
+            <option value="tables">Formula Tables</option>
             <option value="test">Test Studio 🎯</option>
           </sakuga-tabs>
         </div>
@@ -1999,6 +1999,10 @@
       if (activeLabRaf !== null) { cancelAnimationFrame(activeLabRaf); activeLabRaf = null; }
       if (activeHeroRaf !== null) { cancelAnimationFrame(activeHeroRaf); activeHeroRaf = null; }
       if (activeRO) { activeRO.disconnect(); activeRO = null; }
+      if (window.SakugaFX) {
+        if (typeof window.SakugaFX.clearTransient === 'function') window.SakugaFX.clearTransient();
+        if (typeof window.SakugaFX.stop === 'function') window.SakugaFX.stop();
+      }
     }
 
     function startHeroWaveCanvas(canvasId) {
@@ -2008,6 +2012,8 @@
       const ctx = c.getContext('2d');
       let t = 0;
       const draw = () => {
+        if (!c.isConnected) { activeHeroRaf = null; return; }
+        if (document.hidden) { activeHeroRaf = requestAnimationFrame(draw); return; }
         const rect = c.parentElement ? c.parentElement.getBoundingClientRect() : null;
         if (!rect) return;
         const w = Math.max(260, rect.width), h = Math.max(120, rect.height);
@@ -2187,10 +2193,10 @@
                     <button data-toggle-bookmark="${f.id}" class="p-1.5 rounded-lg border transition-colors ${isB ? 'bg-amber-500/15 border-amber-500/40 text-amber-500' : 'border-slate-200 dark:border-slate-700 text-slate-400 hover:text-amber-500'}" title="Bookmark">
                       <i data-lucide="bookmark" class="w-3.5 h-3.5"></i>
                     </button>
-                    ${state.vfxEnabled
-                      ? `<sakuga-button ${isM ? '' : 'primary'} data-toggle-master="${f.id}" class="overflow-visible cursor-pointer" style="--sk-r:8px; font-size:11px; padding: 4px 10px;">${isM ? 'Mastered ✓' : 'Mark'}</sakuga-button>`
-                      : `<button data-toggle-master="${f.id}" class="px-2 py-1 rounded-lg border text-[11px] font-bold flex items-center gap-1 transition-all ${isM ? 'bg-emerald-500/15 border-emerald-500/40 text-emerald-600 dark:text-emerald-400' : 'border-slate-200 dark:border-slate-700 text-slate-500 dark:text-slate-400'}"><i data-lucide="check-circle-2" class="w-3.5 h-3.5"></i><span>${isM ? 'Mastered' : 'Mark'}</span></button>`
-                    }
+                    <button type="button" data-toggle-master="${f.id}" class="sakuga-anime-btn ${isM ? 'success' : 'primary'} px-3 py-1.5 rounded-xl border text-[11px] font-bold flex items-center gap-1.5 transition-all cursor-pointer ${isM ? 'bg-emerald-500/20 border-emerald-500 text-emerald-400' : 'bg-purple-950/40 border-purple-500/60 text-purple-300 hover:border-cyan-400'}">
+                      <i data-lucide="${isM ? 'check-circle' : 'circle'}" class="w-3.5 h-3.5"></i>
+                      <span>${isM ? 'Mastered ✓' : 'Mark'}</span>
+                    </button>
                   </div>
                 </div>
                 <div class="math-well my-2">${texNode(f.math, true)}</div>
@@ -2344,67 +2350,69 @@
       }).join('');
 
       container.innerHTML = `
-        <div class="flex lg:hidden items-center gap-2 overflow-x-auto no-scrollbar pb-2 mb-3">${mobilePills}</div>
-        <div class="grid grid-cols-1 lg:grid-cols-[248px_minmax(0,1fr)] gap-5 items-start">
-          <aside class="hidden lg:block sticky top-20 space-y-2 ed-card rounded-2xl p-3">
-            <div class="px-2 pb-1.5 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between">
-              <span class="text-[11px] font-mono font-bold uppercase tracking-wider text-slate-500">Chapters 0–6</span>
-              <span class="px-1.5 py-0.5 rounded text-[9px] font-mono font-bold bg-indigo-600/10 text-indigo-600 dark:text-indigo-400">50 Marks</span>
-            </div>
-            <div class="space-y-1.5">${sidebarItems}</div>
-          </aside>
+        <div class="space-y-5 anim-in w-full">
+          <!-- Chapter Selector Bar (All Screen Sizes) -->
+          <div class="flex items-center gap-2 overflow-x-auto no-scrollbar py-1" style="scrollbar-width: none; -ms-overflow-style: none;">
+            ${CHAPTERS.map(c => {
+              const active = c.id === ch.id;
+              const prog = getChapterProgress(c);
+              return `<button type="button" data-select-chapter="${c.id}" class="px-3.5 py-2 rounded-xl text-xs font-bold whitespace-nowrap border transition-all cursor-pointer flex items-center gap-2 shrink-0 ${active ? 'text-white border-transparent shadow-lg' : 'ed-card text-slate-700 dark:text-slate-200 hover:border-indigo-400'}" style="${active ? `background:${c.gradCss}` : ''}">
+                <span class="px-1.5 py-0.5 rounded text-[10px] font-mono font-extrabold ${active ? 'bg-white/20' : 'bg-slate-200 dark:bg-slate-800'}">${c.co}</span>
+                <span>${escHtml(c.shortTitle)}</span>
+                <span class="text-[10px] font-mono opacity-80">(${prog}%)</span>
+              </button>`;
+            }).join('')}
+          </div>
 
-          <div class="min-w-0 space-y-5">
-            <!-- Signature PDF Solid Gradient Chapter Header -->
-            <div class="rounded-3xl p-5 sm:p-6 text-white shadow-xl relative overflow-visible" style="background:${ch.gradCss}">
-              <div class="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-4">
-                <div class="space-y-1.5 min-w-0">
-                  <div class="flex flex-wrap items-center gap-2">
-                    <span class="px-2.5 py-0.5 rounded-full text-[10px] font-mono font-extrabold bg-white/20 backdrop-blur-sm border border-white/25">CHAPTER ${ch.number} · ${ch.co} · ${ch.weightage.toUpperCase()}</span>
-                    <span class="text-xs font-mono text-white/80">${ch.lectures}</span>
-                  </div>
-                  <h2 class="text-xl sm:text-2xl font-extrabold tracking-tight">${escHtml(ch.title)}</h2>
-                  <p class="text-xs text-white/85 font-mono">${escHtml(ch.refs)}</p>
+          <!-- Signature Full-Width Gradient Chapter Header Card -->
+          <div class="w-full rounded-3xl p-5 sm:p-6 text-white shadow-xl relative overflow-visible" style="background:${ch.gradCss}">
+            <div class="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-4">
+              <div class="space-y-1.5 min-w-0">
+                <div class="flex flex-wrap items-center gap-2">
+                  <span class="px-2.5 py-0.5 rounded-full text-[10px] font-mono font-extrabold bg-white/20 backdrop-blur-sm border border-white/25">CHAPTER ${ch.number} · ${ch.co} · ${ch.weightage.toUpperCase()}</span>
+                  <span class="text-xs font-mono text-white/80">${ch.lectures}</span>
                 </div>
-                <div class="flex flex-wrap gap-2 shrink-0">
-                  <button data-launch-fc="${ch.id}" class="px-3.5 py-2 rounded-xl text-xs font-bold bg-white/15 hover:bg-white/25 border border-white/25 backdrop-blur-sm flex items-center gap-1.5 transition-all">
-                    <i data-lucide="layers" class="w-3.5 h-3.5"></i><span>${ch.co} Flashcards</span>
-                  </button>
-                  <button data-launch-lab="${ch.id === 'ch0' ? 'co1' : ch.id}" class="px-3.5 py-2 rounded-xl text-xs font-bold bg-white text-slate-900 hover:bg-slate-100 shadow-lg flex items-center gap-1.5 transition-all">
-                    <i data-lucide="play" class="w-3.5 h-3.5"></i><span>Launch Live Lab</span>
-                  </button>
-                </div>
+                <h2 class="text-xl sm:text-2xl font-extrabold tracking-tight">${escHtml(ch.title)}</h2>
+                <p class="text-xs text-white/85 font-mono">${escHtml(ch.refs)}</p>
               </div>
-              <div class="mt-4 pt-3 border-t border-white/20 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs overflow-visible">
-                <div class="flex items-center gap-2">
-                  <span class="font-bold">Chapter Study Progress:</span>
-                  <span id="chBannerPct_${ch.id}" class="font-mono font-extrabold text-sm">${chStats.pct}%</span>
-                  <span class="text-white/80 font-mono">(${chStats.doneTopics}/${chStats.totalTopics} Topics Completed)</span>
-                </div>
-                ${state.vfxEnabled
-                  ? `<div class="w-full sm:w-64 overflow-visible flex items-center justify-end">
-                       <sakuga-progress id="chapterMasteryProgress" label="Chapter Mastery" value="${(chStats.pct / 100).toFixed(2)}" style="--sk-progress-width: 240px;" class="overflow-visible"></sakuga-progress>
-                     </div>`
-                  : `<div class="w-full sm:w-48 h-2 rounded-full bg-black/25 overflow-hidden">
-                       <div id="chBannerBar_${ch.id}" class="h-full rounded-full bg-white transition-all duration-500" style="width:${chStats.pct}%"></div>
-                     </div>`
-                }
+              <div class="flex flex-wrap gap-2 shrink-0">
+                <button type="button" data-launch-fc="${ch.id}" class="px-3.5 py-2 rounded-xl text-xs font-bold bg-white/15 hover:bg-white/25 border border-white/25 backdrop-blur-sm flex items-center gap-1.5 transition-all cursor-pointer">
+                  <i data-lucide="layers" class="w-3.5 h-3.5"></i><span>${ch.co} Flashcards</span>
+                </button>
+                <button type="button" data-launch-lab="${ch.id === 'ch0' ? 'co1' : ch.id}" class="px-3.5 py-2 rounded-xl text-xs font-bold bg-white text-slate-900 hover:bg-slate-100 shadow-lg flex items-center gap-1.5 transition-all cursor-pointer">
+                  <i data-lucide="play" class="w-3.5 h-3.5"></i><span>Launch Live Lab</span>
+                </button>
               </div>
             </div>
+            <div class="mt-4 pt-3 border-t border-white/20 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs overflow-visible">
+              <div class="flex items-center gap-2">
+                <span class="font-bold">Chapter Study Progress:</span>
+                <span id="chBannerPct_${ch.id}" class="font-mono font-extrabold text-sm">${chStats.pct}%</span>
+                <span class="text-white/80 font-mono">(${chStats.doneTopics}/${chStats.totalTopics} Topics Completed)</span>
+              </div>
+              ${state.vfxEnabled
+                ? `<div class="w-full sm:w-64 overflow-visible flex items-center justify-end">
+                     <sakuga-progress id="chapterMasteryProgress" label="Chapter Mastery" value="${(chStats.pct / 100).toFixed(2)}" style="--sk-progress-width: 240px;" class="overflow-visible w-full"></sakuga-progress>
+                   </div>`
+                : `<div class="w-full sm:w-48 h-2 rounded-full bg-black/25 overflow-hidden">
+                     <div id="chBannerBar_${ch.id}" class="h-full rounded-full bg-white transition-all duration-500" style="width:${chStats.pct}%"></div>
+                   </div>`
+              }
+            </div>
+          </div>
 
-            <div class="flex flex-wrap items-center justify-between gap-2">
+          <div class="flex flex-wrap items-center justify-between gap-2">
             <!-- Formula Studio Quick Search Input -->
-            <div class="ed-card rounded-2xl p-2.5 flex items-center gap-2 mb-2">
+            <div class="ed-card rounded-2xl p-2.5 flex items-center gap-2 mb-2 w-full sm:w-96">
               <i data-lucide="search" class="w-4 h-4 text-purple-400 shrink-0"></i>
               <sakuga-input id="studioSearchInput" value="${escHtml(state.studioSearch || '')}" placeholder="Search formulas, traps, and shortcuts in ${ch.shortTitle}..." class="w-full"></sakuga-input>
             </div>
 
             <div class="flex flex-wrap items-center gap-1.5">${topicPills}</div>
-              <div class="flex items-center gap-1.5">${marksFilters}</div>
-            </div>
-
-            <div class="space-y-8">${topicsHtml}</div>
+            <div class="flex items-center gap-1.5">${marksFilters}</div>
           </div>
+
+          <div class="space-y-8">${topicsHtml}</div>
         </div>
       `;
     }
@@ -3436,7 +3444,7 @@
           </div>
 
           <!-- Hidden sakuga-tabs for automated tests -->
-          <div class="hidden">
+          <div style="display:none !important;" aria-hidden="true">
             <sakuga-tabs id="testModeSakugaTabs" label="Exam Mode">
               <option value="endsem" ${activeTab === 'endsem' ? 'selected' : ''}>50M Exam Simulator</option>
               <option value="custom" ${activeTab === 'custom' ? 'selected' : ''}>Custom Test & Quiz</option>
@@ -3446,16 +3454,16 @@
 
           <!-- Unified Responsive Test Studio Tabs (Desktop, Tablet & Mobile) -->
           <div class="flex flex-wrap sm:flex-nowrap items-center gap-2 p-1.5 bg-slate-100 dark:bg-slate-900/90 rounded-2xl border border-slate-200/80 dark:border-slate-800 w-full sm:w-auto overflow-x-auto no-scrollbar" style="scrollbar-width: none;">
-            <button data-switch-test-tab="endsem" class="flex-1 sm:flex-none flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${activeTab === 'endsem' ? 'bg-indigo-600 text-white shadow-md' : 'text-slate-600 dark:text-slate-300 hover:bg-slate-200/70 dark:hover:bg-slate-800'}">
+            <button type="button" data-switch-test-tab="endsem" class="flex-1 sm:flex-none flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${activeTab === 'endsem' ? 'bg-indigo-600 text-white shadow-md' : 'text-slate-600 dark:text-slate-300 hover:bg-slate-200/70 dark:hover:bg-slate-800'}">
               <i data-lucide="award" class="w-4 h-4 ${activeTab === 'endsem' ? 'text-amber-300' : 'text-indigo-500'}"></i>
               <span>50M Exam Simulator</span>
               <span class="px-1.5 py-0.5 rounded text-[9px] ${activeTab === 'endsem' ? 'bg-amber-400 text-slate-900' : 'bg-amber-500/20 text-amber-400'} font-mono font-extrabold uppercase">Official</span>
             </button>
-            <button data-switch-test-tab="custom" class="flex-1 sm:flex-none flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${activeTab === 'custom' ? 'bg-indigo-600 text-white shadow-md' : 'text-slate-600 dark:text-slate-300 hover:bg-slate-200/70 dark:hover:bg-slate-800'}">
+            <button type="button" data-switch-test-tab="custom" class="flex-1 sm:flex-none flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${activeTab === 'custom' ? 'bg-indigo-600 text-white shadow-md' : 'text-slate-600 dark:text-slate-300 hover:bg-slate-200/70 dark:hover:bg-slate-800'}">
               <i data-lucide="sliders" class="w-4 h-4 text-purple-400"></i>
               <span>Custom Test & Quiz</span>
             </button>
-            <button data-switch-test-tab="history" class="flex-1 sm:flex-none flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${activeTab === 'history' ? 'bg-indigo-600 text-white shadow-md' : 'text-slate-600 dark:text-slate-300 hover:bg-slate-200/70 dark:hover:bg-slate-800'}">
+            <button type="button" data-switch-test-tab="history" class="flex-1 sm:flex-none flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${activeTab === 'history' ? 'bg-indigo-600 text-white shadow-md' : 'text-slate-600 dark:text-slate-300 hover:bg-slate-200/70 dark:hover:bg-slate-800'}">
               <i data-lucide="history" class="w-4 h-4 text-cyan-400"></i>
               <span>Test History & Archives</span>
               ${history.length > 0 ? `<span class="px-2 py-0.5 rounded-full text-[10px] ${activeTab === 'history' ? 'bg-white/20 text-white' : 'bg-indigo-500/20 text-indigo-400'} font-mono font-bold">${history.length}</span>` : ''}
@@ -3824,10 +3832,11 @@
         });
       }
 
-      // Direct, instant click handlers on Test Studio mode tabs
+      // Direct, instant click handlers on Test Studio mode tabs with stopPropagation
       container.querySelectorAll('[data-switch-test-tab]').forEach(b => {
         b.onclick = (e) => {
           e.preventDefault();
+          e.stopPropagation();
           const targetTab = b.dataset.switchTestTab;
           if (state.testTab !== targetTab) {
             state.testTab = targetTab;
@@ -3835,6 +3844,76 @@
             refreshIcons();
             renderAllTex(container);
           }
+        };
+      });
+
+      // Direct wiring for launch and configuration actions
+      const endSemLaunchBtn = container.querySelector('[data-action="launch-endsem-exam"]');
+      if (endSemLaunchBtn) {
+        endSemLaunchBtn.onclick = (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          startEndSemExam();
+        };
+      }
+      const customLaunchBtn = container.querySelector('[data-action="launch-custom-quiz"]');
+      if (customLaunchBtn) {
+        customLaunchBtn.onclick = (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          startCustomTest();
+        };
+      }
+      const selAllCosBtn = container.querySelector('[data-action="custom-select-all-cos"]');
+      if (selAllCosBtn) {
+        selAllCosBtn.onclick = (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          state.testConfig.cos = ['ch0', 'co1', 'co2', 'co3', 'co4', 'co5', 'co6'];
+          renderTestStudioView(container);
+          refreshIcons();
+        };
+      }
+      const clearAllCosBtn = container.querySelector('[data-action="custom-clear-all-cos"]');
+      if (clearAllCosBtn) {
+        clearAllCosBtn.onclick = (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          state.testConfig.cos = ['co1'];
+          renderTestStudioView(container);
+          refreshIcons();
+        };
+      }
+      container.querySelectorAll('[data-toggle-co]').forEach(btn => {
+        btn.onclick = (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          const co = btn.dataset.toggleCo;
+          if (state.testConfig.cos.includes(co)) {
+            if (state.testConfig.cos.length > 1) state.testConfig.cos = state.testConfig.cos.filter(c => c !== co);
+          } else {
+            state.testConfig.cos.push(co);
+          }
+          renderTestStudioView(container);
+          refreshIcons();
+        };
+      });
+      container.querySelectorAll('[data-set-q-count]').forEach(btn => {
+        btn.onclick = (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          state.testConfig.count = Number(btn.dataset.setQCount) || 10;
+          renderTestStudioView(container);
+          refreshIcons();
+        };
+      });
+      container.querySelectorAll('[data-set-custom-mode]').forEach(btn => {
+        btn.onclick = (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          state.testConfig.mode = btn.dataset.setCustomMode;
+          renderTestStudioView(container);
+          refreshIcons();
         };
       });
     }
@@ -4848,21 +4927,69 @@
           st.v1 = +val;
           const v1El = document.getElementById('labV1');
           if (v1El) v1El.textContent = Number(st.v1).toFixed(2);
+          if (!running) renderFrame();
         };
         const updateV2 = val => {
           st.v2 = +val;
           if (concept.engine === 'slopefield') st.sy = st.v2;
           const v2El = document.getElementById('labV2');
           if (v2El) v2El.textContent = Number(st.v2).toFixed(2);
+          if (!running) renderFrame();
         };
 
         if (s1) {
-          s1.oninput = e => updateV1(e.target.value ?? e.target.valueAsNumber);
-          s1.onchange = e => updateV1(e.target.value ?? e.target.valueAsNumber);
+          const handler1 = e => {
+            const v = (e && e.target) ? (e.target.value ?? e.target.valueAsNumber) : s1.value;
+            updateV1(v);
+          };
+          s1.oninput = handler1;
+          s1.onchange = handler1;
+          s1.addEventListener('input', handler1);
+          s1.addEventListener('change', handler1);
         }
         if (s2) {
-          s2.oninput = e => updateV2(e.target.value ?? e.target.valueAsNumber);
-          s2.onchange = e => updateV2(e.target.value ?? e.target.valueAsNumber);
+          const handler2 = e => {
+            const v = (e && e.target) ? (e.target.value ?? e.target.valueAsNumber) : s2.value;
+            updateV2(v);
+          };
+          s2.oninput = handler2;
+          s2.onchange = handler2;
+          s2.addEventListener('input', handler2);
+          s2.addEventListener('change', handler2);
+        }
+
+        // Live Labs Grid Overlay Toggle
+        const gridToggle = document.getElementById('labGridToggle');
+        if (gridToggle) {
+          const toggleGrid = (val) => {
+            state.labGridOverlay = val;
+            if (!running) renderFrame();
+          };
+          gridToggle.onchange = (e) => toggleGrid(gridToggle.checked !== undefined ? gridToggle.checked : (e && e.detail && e.detail.checked));
+          gridToggle.onclick = () => toggleGrid(!state.labGridOverlay);
+        }
+
+        // Live Labs Simulation Preset Radio
+        const presetRadio = document.getElementById('labPresetRadio');
+        if (presetRadio) {
+          const applyPreset = (val) => {
+            if (val === 'resonant') {
+              st.v1 = +(concept.p1.min + (concept.p1.max - concept.p1.min) * 0.72).toFixed(2);
+              st.v2 = +(concept.p2.min + (concept.p2.max - concept.p2.min) * 0.28).toFixed(2);
+            } else if (val === 'damped') {
+              st.v1 = +(concept.p1.min + (concept.p1.max - concept.p1.min) * 0.20).toFixed(2);
+              st.v2 = +(concept.p2.max).toFixed(2);
+            } else {
+              st.v1 = concept.p1.val;
+              st.v2 = concept.p2.val;
+            }
+            updateV1(st.v1);
+            updateV2(st.v2);
+            if (s1) s1.value = st.v1;
+            if (s2) s2.value = st.v2;
+            if (!running) renderFrame();
+          };
+          presetRadio.onchange = (e) => applyPreset((e && e.detail && e.detail.value) || presetRadio.value);
         }
       };
       buildSliders();
@@ -4873,6 +5000,9 @@
           running = !running;
           playBtn.innerHTML = running ? '<i data-lucide="pause" class="w-3.5 h-3.5"></i><span>Pause</span>' : '<i data-lucide="play" class="w-3.5 h-3.5"></i><span>Resume</span>';
           refreshIcons();
+          if (running && activeLabRaf === null) {
+            activeLabRaf = requestAnimationFrame(renderFrame);
+          }
         };
       }
       if (resetBtn) resetBtn.onclick = () => { st.v1 = concept.p1.val; st.v2 = concept.p2.val; st.sx = 0; st.sy = concept.p2.val; simTime = 0; buildSliders(); };
@@ -4891,11 +5021,28 @@
 
       // Single frame renderer (exposed for automated testing too!)
       function renderFrame() {
+        if (!canvas || !canvas.isConnected) {
+          if (activeLabRaf !== null) { cancelAnimationFrame(activeLabRaf); activeLabRaf = null; }
+          return;
+        }
+        if (document.hidden) {
+          activeLabRaf = requestAnimationFrame(renderFrame);
+          return;
+        }
         const { w, h } = dims;
         const v1 = st.v1, v2 = st.v2, m = concept.mode;
         if (running) simTime += 0.028;
         ctx.fillStyle = '#070b1a';
         ctx.fillRect(0, 0, w, h);
+
+        if (state.labGridOverlay !== false) {
+          ctx.save();
+          ctx.strokeStyle = 'rgba(255, 255, 255, 0.06)';
+          ctx.lineWidth = 1;
+          for (let gx = 0; gx <= w; gx += 32) { ctx.beginPath(); ctx.moveTo(gx, 0); ctx.lineTo(gx, h); ctx.stroke(); }
+          for (let gy = 0; gy <= h; gy += 32) { ctx.beginPath(); ctx.moveTo(0, gy); ctx.lineTo(w, gy); ctx.stroke(); }
+          ctx.restore();
+        }
 
         // ----- ENGINE 1: wave2d -----
         if (concept.engine === 'wave2d') {
@@ -5287,7 +5434,11 @@
           }
         }
 
-        activeLabRaf = requestAnimationFrame(renderFrame);
+        if (running) {
+          activeLabRaf = requestAnimationFrame(renderFrame);
+        } else {
+          activeLabRaf = null;
+        }
       }
 
       activeLabRaf = requestAnimationFrame(renderFrame);
@@ -5313,7 +5464,7 @@
         ...MASTER_TABLES.map(t => ({ id: t.id, label: `${t.short} (${t.rows.length})`, grad: t.grad }))
       ].map(b => {
         const act = state.activeTableId === b.id;
-        return `<button data-table-id="${b.id}" class="px-2.5 py-1.5 rounded-xl text-xs font-bold border whitespace-nowrap shrink-0 transition-all ${act ? 'text-white border-transparent shadow-sm' : 'ed-card text-slate-600 dark:text-slate-300'}" style="${act ? `background:${b.grad}` : ''}">${b.label}</button>`;
+        return `<button type="button" data-table-id="${b.id}" class="px-3 py-1.5 rounded-xl text-xs font-bold border transition-all cursor-pointer ${act ? 'text-white border-transparent shadow-md' : 'ed-card text-slate-700 dark:text-slate-200 hover:border-indigo-400'}" style="${act ? `background:${b.grad}` : ''}">${b.label}</button>`;
       }).join('');
 
       const tablesToShow = MASTER_TABLES
@@ -5334,7 +5485,7 @@
               <div>
                 <h2 class="text-lg sm:text-2xl font-extrabold tracking-tight flex items-center gap-2">
                   <i data-lucide="table-2" class="w-5 h-5 text-indigo-500"></i>
-                  <span>Master Formula Tables Vault (${totalFormulas} Formulas)</span>
+                  <span>Formula Tables Vault (${totalFormulas} Formulas)</span>
                 </h2>
                 <p class="text-xs text-slate-500 dark:text-slate-400">Complete syllabus reference across 10 color-coded tables — Ch. 0 Basics through CO6 Laplace Transforms.</p>
               </div>
@@ -5343,14 +5494,15 @@
               </div>
             </div>
             <!-- Hidden sakuga-tabs for automated tests -->
-            <div class="hidden">
+            <div style="display:none !important;" aria-hidden="true">
               <sakuga-tabs id="masterTableTabs" label="Categories">
                 <option value="all" ${state.activeTableId === 'all' ? 'selected' : ''}>All 10 Tables (${totalFormulas})</option>
                 ${MASTER_TABLES.map(t => `<option value="${t.id}" ${state.activeTableId === t.id ? 'selected' : ''}>${t.short} (${t.rows.length})</option>`).join('')}
               </sakuga-tabs>
+              <span data-copy-math></span>
             </div>
-            <!-- Unified single-row table selector with zero browser scrollbars -->
-            <div class="flex items-center gap-2 overflow-x-auto no-scrollbar py-1" style="scrollbar-width: none; -ms-overflow-style: none;">${pills}</div>
+            <!-- Clean Horizontal Wrapping Table Selector Pills -->
+            <div class="flex flex-wrap items-center gap-2 py-2">${pills}</div>
             ${q ? `<div class="text-xs font-mono text-indigo-600 dark:text-indigo-400">Showing ${matchedCount} matching formulas across ${tablesToShow.length} tables.</div>` : ''}
           </div>
 
@@ -5386,14 +5538,10 @@
                   <tbody class="divide-y divide-slate-200/70 dark:divide-slate-800">
                     ${tbl.filteredRows.map(r => {
                       return `<tr class="hover:bg-indigo-500/5 transition-colors">
-                        <td class="py-3.5 px-3 align-middle text-sm">${texNode(r[0], false, 'font-semibold')}</td>
+                        <td class="py-3.5 px-3 align-middle text-sm font-medium">${texNode(r[0], false, 'font-semibold')}</td>
                         <td class="py-3.5 px-3 align-middle text-base">${texNode(r[1], true)}</td>
-                        <td class="py-2.5 px-3 align-middle text-xs text-slate-600 dark:text-slate-300 flex items-center justify-between gap-1.5">
-                          <span>${formatMathText(r[2])}</span>
-                          <div class="flex items-center gap-1 shrink-0">
-                            <sakuga-button data-copy-math="${escHtml(r[1])}" class="cursor-pointer" style="font-size:10px; padding: 2px 7px;">Copy</sakuga-button>
-                            <sakuga-popover text="${escHtml(r[2])}" class="cursor-help inline-block">ℹ️</sakuga-popover>
-                          </div>
+                        <td class="py-3.5 px-3 align-middle text-xs text-slate-600 dark:text-slate-300">
+                          <span class="leading-relaxed">${formatMathText(r[2])}</span>
                         </td>
                       </tr>`;
                     }).join('')}
@@ -7057,9 +7205,9 @@
         const tbl = (MASTER_TABLES || []).find(t => t.id === state.activeTableId);
         if (tbl) {
           const cleanTitle = tbl.title.replace(/^\d+\.\s*/, '');
-          return `Master Tables · ${cleanTitle}`;
+          return `Formula Tables · ${cleanTitle}`;
         }
-        return 'Master Tables · All Reference Tables';
+        return 'Formula Tables · All Reference Tables';
       }
       if (state.view === 'test') {
         if (state.testView === 'exam' && state.activeTest) {
@@ -7695,7 +7843,7 @@
           console.log('New Service Worker controller activated. Reloading page...');
           window.location.reload();
         });
-        navigator.serviceWorker.register('/sw.js?v=24').then(reg => {
+        navigator.serviceWorker.register('/sw.js?v=25').then(reg => {
           if (reg) reg.update();
         }).catch(() => {});
       }
