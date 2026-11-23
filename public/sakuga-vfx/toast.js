@@ -10,8 +10,8 @@ const { Spring, rnd, at, esc, lines, puff, shards, ticks, sfx, wob, dotted } = f
 
 class SakugaToast extends fx.Base {
   static css = `
-    :host { width: 236px; height: 56px; }
-    .toast { position: absolute; left: 0; bottom: 0; display: flex; align-items: center; gap: 10px; width: 236px; padding: 12px 14px; border: var(--sk-bw) solid var(--sk-ink); border-radius: var(--sk-r); background: var(--sk-card); box-shadow: var(--sk-sh); font-weight: 700; font-size: 15px; white-space: nowrap; visibility: hidden; will-change: transform; }
+    :host { min-width: 240px; max-width: 380px; width: auto; height: 56px; }
+    .toast { position: absolute; left: 0; bottom: 0; display: flex; align-items: center; gap: 10px; min-width: 240px; max-width: 380px; width: max-content; padding: 10px 14px; border: var(--sk-bw) solid var(--sk-ink); border-radius: var(--sk-r); background: var(--sk-card); box-shadow: var(--sk-sh); font-weight: 700; font-size: 13px; white-space: nowrap; visibility: hidden; will-change: transform; }
     .toast.on { visibility: visible; }
     .ic { display: grid; place-items: center; flex: none; width: 28px; height: 28px; border-radius: 50%; background: var(--sk-pri); border: 2.4px solid var(--sk-ink); }
     .ic svg { width: 15px; height: 15px; fill: none; stroke: var(--sk-on-pri); stroke-width: 4; stroke-linecap: round; stroke-linejoin: round; }
@@ -38,7 +38,7 @@ class SakugaToast extends fx.Base {
         lines(c.x - c.w / 2 - 4, c.y, { n: 9, dir: Math.PI, len: 70, spread: 18, life: 0.4 }); for (const u of [-0.5, -0.36, -0.2]) puff(c.x + c.w * u, c.y + c.h / 2 + 4, { size: rnd(8, 12), n: 4, vx: -rnd(10, 30), vy: -8, life: rnd(0.7, 1) });
           puff(c.x + c.w / 2 + 8, c.y + 10, { size: 7, n: 3, vx: 20, life: 0.6 }); shards(c.x - c.w / 2, c.y + 12, { n: 4, size: 4, dir: Math.PI + 0.5, arc: 1.6 }); ticks(c.x + 30, c.y + c.h / 2 + 12, { dir: 0.5, n: 2, r: 4, len: 16 });
           sfx('zuza', c.x - 34, c.y - 58, { size: 124, rot: -0.1, ...dotted() }); wob(c.x + c.w / 2 + 6, c.y, { dir: 1 }); } }
-    else if (this.state === 2 && this.t - this.at0 > (+this.getAttribute('duration') || 2.6)) this.hide();
+    else if (this.state === 2 && this.t - this.at0 > (+this.getAttribute('duration') || 2.5)) this.hide();
     else if (this.state === 3 && (sc < 0.03 || fx.calm)) { this.state = 0; this.toast.classList.remove('on'); this.toast.style.transform = ''; }
   }
 }

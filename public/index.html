@@ -1286,6 +1286,7 @@
       if (!tex) return '';
       tex = tex.replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&quot;/g, '"');
       if (!tex.includes('\\begin{')) {
+        tex = tex.replace(/\\text\{([^}]*)\}/g, (m, inner) => '\\text{' + inner.replace(/&/g, 'and') + '}');
         tex = tex.replace(/(?<!\\)&/g, '\\&').replace(/(?<!\\)%/g, '\\%');
       }
       const cacheKey = `${display ? 'block' : 'inline'}:${tex}`;
@@ -1328,9 +1329,10 @@
     function isPureMathString(s) {
       if (!s) return false;
       const t = s.trim();
+      if (/\\[a-zA-Z]+/.test(t)) return true;
       // If it contains typical English prose words, it is NEVER pure math
       const englishProseRegex = /\b(the|for|and|with|using|from|where|when|state|solve|find|evaluate|reduce|also|test|degree|first|then|which|into|that|this|given|show|formula|method|equation|solution|points|calculate|determine|constant|initial|value|problem|homogeneous|linear|inverse|transform|functions?|derivatives?|variables?|integrals?|series|coefficients?|order|check|exact|separable|substitute|condition|notice|converges|diverges|between|along|about|over|after|before|time|salt|mixture|brine|water|rate|amount|temperature|reading|body|circuit|current|voltage|drops?|rule|step|refer|model|above)\b/i;
-      if (englishProseRegex.test(t)) return false;
+      if (englishProseRegex.test(t.replace(/\\text\{[^}]*\}/g, ''))) return false;
 
       // Extract all word tokens of length >= 2
       const words = t.match(/\b[A-Za-z]{2,}\b/g) || [];
@@ -1346,7 +1348,6 @@
       const nonMathWords = words.filter(w => !mathKeywords.has(w.toLowerCase()));
       if (nonMathWords.length > 0) return false;
 
-      if (/\\[a-zA-Z]+/.test(t)) return true;
       if (/[=<>^_]/.test(t) && /^[a-zA-Z0-9\s()+\-*=/^_{}\\.,'|<>±∓≤≥≠≈∞∫∑∏]+$/.test(t)) return true;
       return false;
     }
@@ -1380,12 +1381,16 @@
       if (lastIdx < str.length) {
         const remaining = str.substring(lastIdx);
         if (parts.length === 0) {
-          if (isPureMathString(remaining)) {
+          if (isPureMathString(remaining) || /\\[a-zA-Z]+/.test(remaining)) {
             return texNode(remaining, isBlock, isBlock ? 'my-2' : 'inline-block align-middle');
           }
           return fmtMathProse(remaining);
         }
-        parts.push(fmtMathProse(remaining));
+        if (/\\[a-zA-Z]+/.test(remaining)) {
+          parts.push(texNode(remaining, false, 'inline-block align-middle'));
+        } else {
+          parts.push(fmtMathProse(remaining));
+        }
       }
 
       return parts.join('');
@@ -1418,6 +1423,7 @@
     function showToast(msg, type = 'info') {
       const skToast = document.getElementById('globalSakugaToast');
       if (state.vfxEnabled && skToast && typeof skToast.show === 'function') {
+        skToast.setAttribute('duration', '2.5');
         skToast.show(msg);
         return;
       }
@@ -1429,7 +1435,7 @@
         : 'bg-slate-900 text-white border-indigo-400/40'}`;
       el.textContent = msg;
       container.appendChild(el);
-      setTimeout(() => { el.style.opacity = '0'; el.style.transition = 'opacity 0.2s'; setTimeout(() => el.remove(), 220); }, 2000);
+      setTimeout(() => { el.style.opacity = '0'; el.style.transition = 'opacity 0.2s'; setTimeout(() => el.remove(), 220); }, 2500);
     }
 
     function updateVfxUI() {
@@ -1999,6 +2005,10 @@
       if (activeLabRaf !== null) { cancelAnimationFrame(activeLabRaf); activeLabRaf = null; }
       if (activeHeroRaf !== null) { cancelAnimationFrame(activeHeroRaf); activeHeroRaf = null; }
       if (activeRO) { activeRO.disconnect(); activeRO = null; }
+      const skToast = document.getElementById('globalSakugaToast');
+      if (skToast && typeof skToast.hide === 'function') skToast.hide();
+      const toastBox = document.getElementById('toastContainer');
+      if (toastBox) toastBox.innerHTML = '';
       if (window.SakugaFX) {
         if (typeof window.SakugaFX.clearTransient === 'function') window.SakugaFX.clearTransient();
         if (typeof window.SakugaFX.stop === 'function') window.SakugaFX.stop();
@@ -2087,6 +2097,35 @@
     window.navigateToView = navigateToView;
     window.switchView = navigateToView;
 
+    function syncFromHash() {
+      const hash = (window.location.hash || '').replace(/^#/, '');
+      const viewMap = { home: 'syllabus', syllabus: 'syllabus', studio: 'studio', flashcards: 'flashcards', labs: 'labs', tables: 'tables', test: 'test' };
+      const target = viewMap[hash];
+      if (target && target !== state.view) {
+        navigateToView(target);
+      }
+    }
+    window.addEventListener('hashchange', syncFromHash);
+    window.addEventListener('popstate', e => {
+      if (e.state && e.state.appView) {
+        navigateToView(e.state.appView);
+      } else {
+        syncFromHash();
+      }
+    });
+
+    let scrollThrottle = null;
+    window.addEventListener('scroll', () => {
+      if (!scrollThrottle) {
+        scrollThrottle = setTimeout(() => {
+          scrollThrottle = null;
+          if (window.SakugaFX && typeof window.SakugaFX.clearTransient === 'function') {
+            window.SakugaFX.clearTransient();
+          }
+        }, 100);
+      }
+    }, { passive: true });
+
     function renderApp() {
       try {
         stopAllAnimations();
@@ -2135,7 +2174,24 @@
     function renderStudioView(container) {
       const ch = CHAPTERS.find(c => c.id === state.chapterId) || CHAPTERS[1];
       const chStats = getChapterStats(ch);
-      const topicsToShow = state.topicFilter === 'all' ? ch.topics : ch.topics.filter(t => t.id === state.topicFilter);
+      const sq = (state.studioSearch || '').trim().toLowerCase();
+
+      // Find matching chapters across entire syllabus when searching
+      const matchingChapters = sq ? CHAPTERS.filter(c => {
+        return c.topics.some(t => {
+          return `${t.title} ${t.code} ${t.summary}`.toLowerCase().includes(sq) ||
+            t.formulas.some(f => `${f.name} ${f.math} ${f.note} ${f.trick}`.toLowerCase().includes(sq)) ||
+            (t.questions || []).some(q => `${q.id} ${q.prompt} ${q.promptMath || ''} ${q.hint} ${q.answer}`.toLowerCase().includes(sq));
+        });
+      }) : [];
+
+      const rawTopics = state.topicFilter === 'all' ? ch.topics : ch.topics.filter(t => t.id === state.topicFilter);
+      const topicsToShow = !sq ? rawTopics : rawTopics.filter(t => {
+        const matchTitle = `${t.title} ${t.code} ${t.summary}`.toLowerCase().includes(sq);
+        const matchFormulas = t.formulas.some(f => `${f.name} ${f.math} ${f.note} ${f.trick}`.toLowerCase().includes(sq));
+        const matchQuestions = (t.questions || []).some(q => `${q.id} ${q.prompt} ${q.promptMath || ''} ${q.hint} ${q.answer} ${q.tag}`.toLowerCase().includes(sq));
+        return matchTitle || matchFormulas || matchQuestions;
+      });
 
       const sidebarItems = CHAPTERS.map(c => {
         const active = c.id === ch.id, prog = getChapterProgress(c);
@@ -2182,7 +2238,9 @@
 
       const topicsHtml = topicsToShow.map((t, tIdx) => {
         const topicStats = getTopicStats(t);
-        const formulasHtml = t.formulas.map(f => {
+        const rawFormulas = t.formulas;
+        const formulasList = !sq ? rawFormulas : rawFormulas.filter(f => `${f.name} ${f.math} ${f.note} ${f.trick}`.toLowerCase().includes(sq));
+        const formulasHtml = (formulasList.length ? formulasList : rawFormulas).map(f => {
           const isM = !!state.mastered[f.id], isB = !!state.bookmarks[f.id];
           return `
             <div class="ed-card rounded-2xl p-4 flex flex-col justify-between gap-3 min-w-0 overflow-visible">
@@ -2210,6 +2268,9 @@
         }).join('');
 
         const filteredQs = (t.questions || []).filter(q => {
+          if (sq && !`${q.id} ${q.prompt} ${q.promptMath || ''} ${q.hint} ${q.answer} ${q.tag}`.toLowerCase().includes(sq)) {
+            if (!`${t.title} ${t.code}`.toLowerCase().includes(sq)) return false;
+          }
           if (state.qMarksFilter === 'all') return true;
           if (state.qMarksFilter === 'review') return state.solvedQs[q.id] === 'review';
           if (state.qMarksFilter === 'notes') return !!(state.studentNotes && state.studentNotes[q.id] && state.studentNotes[q.id].trim());
@@ -2349,6 +2410,30 @@
           </section>`;
       }).join('');
 
+      let renderedTopicsContent = '';
+      if (topicsToShow.length === 0) {
+        if (matchingChapters.length > 0) {
+          renderedTopicsContent = `
+            <div class="ed-card rounded-3xl p-6 sm:p-8 text-center space-y-4">
+              <p class="text-sm text-slate-500 dark:text-slate-400">No formulas, traps, or questions match "<strong>${escHtml(state.studioSearch)}</strong>" in ${ch.shortTitle}.</p>
+              <div class="space-y-2">
+                <span class="text-xs font-bold text-indigo-600 dark:text-indigo-400">Found matching results in other chapters:</span>
+                <div class="flex flex-wrap items-center justify-center gap-2 pt-1">
+                  ${matchingChapters.map(mc => `<button type="button" data-select-chapter="${mc.id}" class="px-3.5 py-2 rounded-xl text-xs font-bold text-white shadow-md transition-all cursor-pointer hover:scale-105" style="background:${mc.gradCss}">${mc.co}: ${mc.shortTitle}</button>`).join('')}
+                </div>
+              </div>
+            </div>`;
+        } else {
+          renderedTopicsContent = `
+            <div class="ed-card rounded-3xl p-8 text-center space-y-2">
+              <p class="text-sm font-semibold text-slate-500 dark:text-slate-400">No formulas, traps, or questions match "${escHtml(state.studioSearch)}".</p>
+              <p class="text-xs text-slate-400">Try searching "Laplace", "Euler", "Wronskian", "Taylor", "Maxima", "Separable", or "Gamma".</p>
+            </div>`;
+        }
+      } else {
+        renderedTopicsContent = topicsHtml.join('');
+      }
+
       container.innerHTML = `
         <div class="space-y-5 anim-in w-full">
           <!-- Chapter Selector Bar (All Screen Sizes) -->
@@ -2412,9 +2497,28 @@
             <div class="flex items-center gap-1.5">${marksFilters}</div>
           </div>
 
-          <div class="space-y-8">${topicsHtml}</div>
+          <div class="space-y-8">${renderedTopicsContent}</div>
         </div>
       `;
+
+      const sInp = document.getElementById('studioSearchInput');
+      if (sInp) {
+        sInp.addEventListener('input', (e) => {
+          const val = (e && e.target && e.target.value !== undefined) ? e.target.value : (sInp.value || '');
+          if (state.studioSearch === val) return;
+          state.studioSearch = val;
+          renderStudioView(container);
+          const ref = document.getElementById('studioSearchInput');
+          if (ref) {
+            ref.focus();
+            if (ref.setSelectionRange && typeof ref.value === 'string') {
+              ref.setSelectionRange(ref.value.length, ref.value.length);
+            }
+          }
+          refreshIcons();
+          renderAllTex(container);
+        });
+      }
     }
 
     // =========================================================================
@@ -2454,8 +2558,12 @@
       setTxt('fcCatBack', card.cat);
       setTxt('fcCounter', `${idx + 1} / ${total}`);
       setTxt('fcKnownCount', `${knownCount} / ${total} Mastered`);
-
-      const lvlEl = document.getElementById('fcLvlBadge');
+      const masteryPct = total ? Math.round((knownCount / total) * 100) : 0;
+      setTxt('fcDeckMasteryTxt', `${knownCount} / ${total} (${masteryPct}%)`);
+      const prog = document.getElementById('fcSakugaProgress');
+      if (prog && typeof prog.set === 'function') {
+        prog.set(total ? (knownCount / total) : 0);
+      }
       if (lvlEl) {
         lvlEl.textContent = card.level;
         lvlEl.className = `px-2 py-0.5 rounded-full text-[10px] font-mono font-bold border ${LEVEL_BADGE[card.level]}`;
@@ -2534,7 +2642,7 @@
       const card = deck[state.fcIndex] || FLASHCARDS[0];
       const knownCount = deck.filter(c => state.fcKnown[c.id]).length;
       const isKnown = card ? !!state.fcKnown[card.id] : false;
-      const pct = deck.length ? ((state.fcIndex + 1) / deck.length).toFixed(2) : 0;
+      const pct = deck.length ? (knownCount / deck.length).toFixed(2) : 0;
 
       const coBtns = [{ id: 'all', label: `All (${FLASHCARDS.length})`, grad: 'linear-gradient(135deg,#312e81,#4f46e5)' }, ...CHAPTERS.map(c => ({
         id: c.id, label: `${c.co} (${FLASHCARDS.filter(x => x.co === c.id).length})`, grad: c.gradCss
@@ -2567,9 +2675,9 @@
           <div class="space-y-2">
             <div class="flex items-center justify-between text-xs font-mono font-bold text-slate-400 px-1">
               <span>Deck Mastery Progress:</span>
-              <span>${state.fcIndex + 1} / ${deck.length} (${Math.round(pct * 100)}%)</span>
+              <span id="fcDeckMasteryTxt">${knownCount} / ${deck.length} (${Math.round(pct * 100)}%)</span>
             </div>
-            <sakuga-progress id="fcSakugaProgress" label="Deck Progress" value="${pct}" class="w-full block"></sakuga-progress>
+            <sakuga-progress id="fcSakugaProgress" label="Deck Mastery" value="${pct}" no-pct class="w-full block"></sakuga-progress>
             <div id="fcProgressBar" style="display:none;" style="width:${Math.round(pct * 100)}%;"></div>
             <span id="fcCounter" style="display:none;">${state.fcIndex + 1} / ${deck.length}</span>
           </div>
@@ -2627,12 +2735,12 @@
                     <div id="fcTip" class="callout-shortcut rounded-xl px-3 py-2 text-xs text-slate-700 dark:text-slate-200"></div>
                     
                     <!-- Anki Active Recall Response Bar -->
-                    <div class="pt-2.5 border-t border-slate-200/80 dark:border-slate-800 flex flex-wrap items-center justify-between gap-2 text-xs">
-                      <div class="flex items-center gap-1.5">
+                    <div id="fcRecallBar" class="pt-2.5 border-t border-slate-200/80 dark:border-slate-800 flex flex-wrap items-center justify-between gap-2 text-xs" onclick="event.stopPropagation();">
+                      <div class="flex items-center gap-1.5" onclick="event.stopPropagation();">
                         <span class="text-slate-400 font-mono font-bold">Recall Grade:</span>
-                        <sakuga-rating id="fcConfidenceRating" value="${state.fcRatings && state.fcRatings[card.id] || 0}" label="Confidence"></sakuga-rating>
+                        <sakuga-rating id="fcConfidenceRating" value="${state.fcRatings && state.fcRatings[card.id] || 0}" label="Confidence" onclick="event.stopPropagation();"></sakuga-rating>
                       </div>
-                      <div class="flex items-center gap-1.5">
+                      <div class="flex items-center gap-1.5" onclick="event.stopPropagation();">
                         <button type="button" data-fc-grade="again" class="sakuga-anime-btn danger px-2.5 py-1 text-[11px]">Again (1m)</button>
                         <button type="button" data-fc-grade="hard" class="sakuga-anime-btn warning px-2.5 py-1 text-[11px]">Hard (1d)</button>
                         <button type="button" data-fc-grade="good" class="sakuga-anime-btn primary px-2.5 py-1 text-[11px]">Good (3d)</button>
@@ -2664,14 +2772,11 @@
                 <i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i><span>Reset</span>
               </button>
             </div>
-            <button type="button" id="fcMarkKnownBtn" class="sakuga-anime-btn ${isKnown ? 'success' : 'primary'} px-4 py-2 text-xs">
-              <i data-lucide="${isKnown ? 'check-check' : 'check'}" class="w-3.5 h-3.5"></i>
-              <span>${isKnown ? 'Mastered ✓' : 'Mark Known ⭐'}</span>
-            </button>
             <!-- Hidden test compatibility hooks -->
             <div class="hidden">
               <sakuga-checkbox id="fcKnowCheckbox">Mastered</sakuga-checkbox>
               <button id="fcKnowBtn"></button>
+              <button id="fcMarkKnownBtn"></button>
             </div>
           </div>
         </div>
@@ -2687,7 +2792,7 @@
       };
       if (flipEl) {
         flipEl.onclick = (e) => {
-          if (e.target.closest('button') || e.target.closest('sakuga-rating') || e.target.closest('[data-fc-grade]')) return;
+          if (e.target.closest('#fcRecallBar') || e.target.closest('button') || e.target.closest('sakuga-rating') || e.target.closest('[data-fc-grade]')) return;
           toggleFlip();
         };
       }
@@ -5448,6 +5553,7 @@
     // VIEW 4: MASTER TABLES VAULT (10 COMPLETE TABLES · 154 SYLLABUS FORMULAS)
     // =========================================================================
     function renderTablesView(container) {
+      if (state.view !== 'tables' || !container || !container.isConnected) return;
       const q = (state.tableSearch || '').trim().toLowerCase();
       const totalFormulas = MASTER_TABLES.reduce((acc, t) => acc + t.rows.length, 0);
 
@@ -5464,7 +5570,7 @@
         ...MASTER_TABLES.map(t => ({ id: t.id, label: `${t.short} (${t.rows.length})`, grad: t.grad }))
       ].map(b => {
         const act = state.activeTableId === b.id;
-        return `<button type="button" data-table-id="${b.id}" class="px-3 py-1.5 rounded-xl text-xs font-bold border transition-all cursor-pointer ${act ? 'text-white border-transparent shadow-md' : 'ed-card text-slate-700 dark:text-slate-200 hover:border-indigo-400'}" style="${act ? `background:${b.grad}` : ''}">${b.label}</button>`;
+        return `<button type="button" data-table-id="${b.id}" class="px-3.5 py-2 rounded-xl text-xs font-bold border transition-all cursor-pointer whitespace-nowrap shrink-0 min-h-[36px] flex items-center justify-center leading-tight ${act ? 'text-white border-transparent shadow-md' : 'ed-card text-slate-700 dark:text-slate-200 hover:border-indigo-400'}" style="${act ? `background:${b.grad}` : ''}">${b.label}</button>`;
       }).join('');
 
       const tablesToShow = MASTER_TABLES
@@ -5490,7 +5596,7 @@
                 <p class="text-xs text-slate-500 dark:text-slate-400">Complete syllabus reference across 10 color-coded tables — Ch. 0 Basics through CO6 Laplace Transforms.</p>
               </div>
               <div class="flex items-center gap-2 shrink-0">
-                <input id="masterTableSearch" type="text" value="${escHtml(state.tableSearch)}" placeholder="Search ${totalFormulas} formulas (e.g. Gamma, Euler, sec, Volterra)..." class="px-3.5 py-2 rounded-xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-xs outline-none focus:border-indigo-500 w-full sm:w-72" />
+                <input id="masterTableSearch" type="text" value="${escHtml(state.tableSearch || '')}" placeholder="Search ${totalFormulas} formulas (e.g. Gamma, Euler, sec, Volterra)..." class="px-3.5 py-2 rounded-xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-xs outline-none focus:border-indigo-500 w-full sm:w-72 cursor-text" />
               </div>
             </div>
             <!-- Hidden sakuga-tabs for automated tests -->
@@ -5556,6 +5662,7 @@
       const tblTabs = document.getElementById('masterTableTabs');
       if (tblTabs) {
         tblTabs.addEventListener('change', () => {
+          if (state.view !== 'tables' || !container.isConnected) return;
           state.activeTableId = tblTabs.value;
           renderTablesView(container);
           refreshIcons(); renderAllTex(container);
@@ -5578,6 +5685,7 @@
 
       const inp = document.getElementById('masterTableSearch');
       if (inp) {
+        inp.onclick = () => inp.focus();
         inp.oninput = e => {
           state.tableSearch = e.target.value;
           renderTablesView(container);
@@ -6215,9 +6323,7 @@
     });
 
     document.getElementById('brandHomeBtn').onclick = () => {
-      state.view = 'syllabus';
-      renderApp();
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+      navigateToView('syllabus');
     };
     document.getElementById('themeToggleBtn').onclick = () => {
       state.theme = state.theme === 'dark' ? 'light' : 'dark';
@@ -8197,7 +8303,7 @@
   </div>
 
   <!-- Sakuga Global Feedback Toast Component -->
-  <sakuga-toast id="globalSakugaToast" duration="3"></sakuga-toast>
+  <sakuga-toast id="globalSakugaToast" duration="2.5"></sakuga-toast>
 
 </body>
 </html>

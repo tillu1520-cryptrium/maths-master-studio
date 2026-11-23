@@ -42,7 +42,9 @@ class SakugaTabs extends fx.Base {
       this.pending = true; this.up.x = -5;
     }
     const targetVal = t ? t.dataset.value : '';
-    this.dispatchEvent(new CustomEvent('change', { bubbles: true, composed: true, detail: { index: i, value: targetVal, label: t ? t.textContent : '' } }));
+    if (!quiet) {
+      this.dispatchEvent(new CustomEvent('change', { bubbles: true, composed: true, detail: { index: i, value: targetVal, label: t ? t.textContent : '' } }));
+    }
   }
   setup() {
     this.ind = this.$('.ind'); this.tabs = this.$$('button[role=tab]');
@@ -54,7 +56,17 @@ class SakugaTabs extends fx.Base {
       t.addEventListener('keydown', (e) => { const d = { ArrowRight: 1, ArrowLeft: -1, Home: -99, End: 99 }[e.key]; if (!d) return; e.preventDefault(); const n = Math.abs(d) > 1 ? (d < 0 ? 0 : this.tabs.length - 1) : (i + d + this.tabs.length) % this.tabs.length; this.go(n); this.tabs[n].focus(); });
     });
     this.go(+(this.getAttribute('selected') || 0), true);
-    new ResizeObserver(() => this.go(this.selected, true)).observe(this.$('.tabs'));
+    if (this.$('.tabs')) {
+      this.ro = new ResizeObserver(() => this.go(this.selected, true));
+      this.ro.observe(this.$('.tabs'));
+    }
+  }
+  disconnectedCallback() {
+    super.disconnectedCallback();
+    if (this.ro) {
+      this.ro.disconnect();
+      this.ro = null;
+    }
   }
   frame(dt) {
     if (window.SakugaFX && window.SakugaFX.paused) return;

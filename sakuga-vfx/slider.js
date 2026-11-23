@@ -46,16 +46,24 @@ class SakugaSlider extends fx.Base {
     this.s.to = this.frac();
     const unitAttr = this.getAttribute('unit');
     const u = unitAttr !== null ? (unitAttr.startsWith('%') ? unitAttr : ' ' + unitAttr) : '';
-    const num = Number(this.r.value);
-    const step = this.r.getAttribute('step') || '';
+    const valStr = this.r ? this.r.value : (this.getAttribute('value') ?? '50');
+    const num = Number(valStr);
+    const step = (this.r && this.r.getAttribute('step')) || this.getAttribute('step') || '';
     const decimals = step.includes('.') ? (step.split('.')[1] || '').length : (num % 1 !== 0 ? 2 : 0);
-    const formatted = (!isNaN(num) && decimals > 0) ? num.toFixed(decimals) : this.r.value;
-    this.val.textContent = formatted + u;
-    this.internals.setFormValue(this.r.value);
+    const formatted = (!isNaN(num) && decimals > 0) ? num.toFixed(decimals) : valStr;
+    if (this.val) this.val.textContent = formatted + u;
+    if (this.internals && this.internals.setFormValue && this.r) this.internals.setFormValue(this.r.value);
   }
   setup() {
     const box = this.box = this.$('.sld'), r = this.r = this.$('input'); this.th = this.$('.th'); this.val = this.$('.val');
+    const attrVal = this.getAttribute('value');
+    if (attrVal !== null && attrVal !== '') {
+      r.value = attrVal;
+    }
     this.s = new Spring(0, 420, 30); this.sync(); this.s.x = this.s.to; this.acc = 0; this.peak = 0; this.said = 0; this.t = 0;
+    const frac = this.frac();
+    this.s.x = this.s.to = frac;
+    box.style.setProperty('--v', clamp(frac));
     r.addEventListener('input', () => {
       this.sync();
       if (fx.start) fx.start(45);
@@ -63,9 +71,11 @@ class SakugaSlider extends fx.Base {
     r.addEventListener('change', () => {
       if (fx.start) fx.start(45);
       const c = at(this.th), dir = Math.sign(this.peak) || 1;
-      if (Math.abs(this.peak) > 1.3) { slash(c.x + dir * 34, c.y, { len: 150, ang: dir > 0 ? 0 : Math.PI, thick: 12, life: 0.5, col: '#b8b3ff' }); burst(c.x + dir * 4, c.y, { r: 24, spikes: 11, life: 0.28 }); shards(c.x + dir * 10, c.y, { n: 4, size: 4, dir: dir > 0 ? 0 : Math.PI, arc: 2.4 }); ticks(c.x + dir * 52, c.y - 30, { dir: dir > 0 ? -0.6 : -2.5, n: 3, r: 4, len: 10 });
-        later(520, () => { puff(c.x - dir * 60, c.y - 34, { size: 11, n: 4, vy: -10, life: 0.8 }); puff(c.x - dir * 22, c.y - 22, { size: 6, n: 3, vy: -8, life: 0.6 }); wob(c.x - dir * 82, c.y - 34, { dir: -1, r: 9 }); }); }
-      if (this.frac() >= 1 || this.frac() <= 0) shards(c.x, c.y, { n: 5, dir: dir > 0 ? Math.PI : 0, arc: 2 });
+      if (Math.abs(this.peak) > 1.3) {
+        slash(c.x + dir * 20, c.y, { len: 70, ang: dir > 0 ? 0 : Math.PI, thick: 6, life: 0.35, col: '#b8b3ff' });
+        burst(c.x + dir * 4, c.y, { r: 14, spikes: 7, life: 0.22 });
+        later(200, () => { puff(c.x - dir * 18, c.y - 12, { size: 3, n: 1, vy: -5, life: 0.35 }); });
+      }
       this.peak = 0; this.dispatchEvent(new Event('change', { bubbles: true }));
     });
   }
@@ -74,11 +84,13 @@ class SakugaSlider extends fx.Base {
     this.th.style.transformOrigin = v > 0 ? '100% 50%' : '0 50%'; this.th.style.transform = `translateX(${x * W}px) scale(${st}, ${1 / Math.sqrt(st)})`;
     this.val.style.transform = `translateX(${x * W - (this.val.offsetWidth - 46) / 2}px) rotate(${clamp(-v * 5, -14, 14)}deg)`; this.box.style.setProperty('--v', clamp(x));
     if (Math.abs(v) > Math.abs(this.peak)) this.peak = v; else this.peak *= 0.96;
-    if (Math.abs(v) > 0.35) {   // fast: a bank of cloud rolls up behind the thumb, with speed lines and chips
-      this.acc += dt * Math.abs(v) * 20; const c = at(this.th), dir = Math.sign(v), big = Math.min(1, Math.abs(v) / 2.4);
-      while (this.acc > 1) { this.acc -= 1; puff(c.x - dir * rnd(14, 30), c.y - rnd(2, 12) - big * 8, { size: rnd(6, 9) + big * 9, n: 4, vx: -dir * rnd(26, 70), vy: -rnd(22, 58) * (0.5 + big), life: rnd(0.7, 1.15) });
-        lines(c.x - dir * 16, c.y + rnd(-4, 12), { n: 1, dir: dir > 0 ? Math.PI : 0, len: 50 + big * 50, spread: 2, life: 0.24 }); if (Math.random() < 0.3) shards(c.x - dir * 20, c.y + 6, { n: 1, size: 3.5, speed: 120, dir: dir > 0 ? Math.PI + 0.5 : -0.5, arc: 1 }); }
-      if (Math.abs(v) > 1.5 && this.t - this.said > 1.1) { this.said = this.t; sfx('shu', c.x - dir * 6, c.y - 78, { size: 104, life: 0.75, rot: -0.16, col: '#5a4fd8', edge: '#ffffff' }); }
+    if (Math.abs(v) > 0.5) {   // subtle anime trail that never obscures readouts
+      this.acc += dt * Math.abs(v) * 8; const c = at(this.th), dir = Math.sign(v);
+      while (this.acc > 1) {
+        this.acc -= 1;
+        puff(c.x - dir * rnd(8, 16), c.y - rnd(2, 6), { size: rnd(2.5, 3.5), n: 1, vx: -dir * rnd(12, 28), vy: -rnd(8, 20), life: 0.35 });
+        lines(c.x - dir * 10, c.y + rnd(-2, 6), { n: 1, dir: dir > 0 ? Math.PI : 0, len: 24, spread: 1, life: 0.18 });
+      }
     }
   }
 }

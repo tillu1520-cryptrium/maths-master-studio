@@ -19,8 +19,7 @@ class SakugaProgress extends fx.Base {
     :host([demo]) .prog { cursor: pointer; }
     .bar { position: relative; height: var(--sk-bar-h, 26px); border: var(--sk-bw, 3px) solid var(--sk-ink); border-radius: 9999px; background: var(--sk-card); overflow: hidden; }
     .bar i { position: relative; display: block; height: 100%; width: calc(var(--v, 0) * 100%); background: var(--sk-fill); }
-    .bar i::before, .bar i::after { content: ""; position: absolute; top: 3px; height: 9px; width: 8px; background: #fff; border-radius: 2px; transform: skewX(-28deg); left: 18px; opacity: .92; }
-    .bar i::after { left: 30px; width: 6px; }
+    .bar i::before, .bar i::after { display: none !important; }
     .pct { display: table; margin: 12px auto 0; padding: 2px 10px 3px; border: 2px solid var(--sk-ink); background: var(--sk-card); box-shadow: 3px 3px 0 var(--sk-fill); transform: skewX(-12deg); font: italic 900 13px/1.1 "Marker Felt", "Chalkboard SE", "Comic Sans MS", -apple-system, "Segoe UI", sans-serif; letter-spacing: -.01em; white-space: nowrap; will-change: transform; }
     :host([no-pct]) .pct, :host(.no-pct) .pct { display: none !important; }
     :host([no-pct]) .prog, :host(.no-pct) .prog { padding-top: 36px; padding-bottom: 2px; }`;
@@ -59,7 +58,8 @@ class SakugaProgress extends fx.Base {
     }
     this.rest.to = done ? 1 : 0; const rs = Math.max(0, this.rest.step(dt));   // the two small clouds left on the ground when it is over
     if (rs > 0.02) for (const [x, d] of [[L + 34, -1], [R - 40, 1]]) { blob([[x, gy - 9 * rs, 8 * rs], [x + 8 * d, gy - 6 * rs, 6 * rs], [x - 6 * d, gy - 5 * rs, 5.5 * rs], [x + 2 * d, gy - 15 * rs, 5.5 * rs]].map(([cx, cyy, r], n) => [cx, cyy, r * (1 + Math.sin(tt * 3 + n) * 0.06)]), 1.3, true, { lx: 1, arcs: true }); g.strokeStyle = P.line; g.lineWidth = 1.4; g.beginPath(); g.moveTo(x + d * 18, gy - 6); g.lineTo(x + d * 25, gy - 6); g.moveTo(x + d * 19, gy - 1.5); g.lineTo(x + d * 23, gy - 1.5); g.stroke(); }
-    this.size.to = done || p < 0.015 ? 0 : 10 + 25 * Math.sqrt(p); this.lag.to = this.spd; const S = Math.max(0, this.size.step(dt)), drag = this.lag.step(dt);   // the cloud
+    const demo = this.hasAttribute('demo'), settled = !demo && Math.abs(this.p - this.goal) < 0.002;
+    this.size.to = done || p < 0.015 || settled ? 0 : 10 + 25 * Math.sqrt(p); this.lag.to = this.spd; const S = Math.max(0, this.size.step(dt)), drag = this.lag.step(dt);   // the cloud
     if (S > 0.6) blob(this.lobes.map((l) => { const boil = 1 + 0.16 * Math.sin(tt * l.w + l.ph), roll = 0.82 + 0.22 * Math.sin(tt * 2.6 - l.i * 0.9);   // lobes swell in turn, so it reads as rolling forward
       return [lead + 3 + (l.x + Math.cos(tt * l.w * 0.7 + l.ph) * 0.1 - drag * 1.6 * Math.max(0, -l.y) * 0.5) * S, cy - 3 + (l.y + Math.sin(tt * l.w * 0.7 + l.ph) * 0.1) * S, l.r * S * boil * roll]; }), 1.6, true, { lx: 1, arcs: true, deep: 1.7 });
     this.ck.to = done ? 1 : 0; const c = Math.max(0, this.ck.step(dt));   // the check
@@ -75,7 +75,8 @@ class SakugaProgress extends fx.Base {
     const was = this.p; if (!this.doneAt && this.p < this.goal) this.p = Math.min(this.goal, this.p + dt * clamp((this.goal - this.p) * 3, 0.12, 0.9));
     this.spd = lerp(this.spd, dt > 0 ? (this.p - was) / dt : 0, Math.min(1, dt * 8));
     const b = at(this.bar), L = b.x - b.w / 2, lead = L + 4 + (b.w - 8) * this.p, top = b.y - b.h / 2, p = this.p, spd = this.spd;
-    if (!this.doneAt && this.vis) {
+    const settled = !demo && Math.abs(this.p - this.goal) < 0.002;
+    if (!this.doneAt && this.vis && !settled) {
       if (p > 0.06 && spd > 0.02) { this.acc += dt * (4 + spd * 60);   // wisps torn off the back of the cloud, and the lines of its speed
         while (this.acc > 1) { this.acc -= 1; const S = 10 + 25 * Math.sqrt(p);
           if (Math.random() < 0.5) puff(lead - S * rnd(0.9, 1.6), top - S * rnd(0.1, 0.9), { size: rnd(3, 5.5) + p * 3, n: 2, vx: -rnd(40, 90), vy: rnd(-12, 4), life: rnd(0.4, 0.7) });

@@ -2,25 +2,32 @@ import https from 'https';
 
 console.log('--- VERIFYING LIVE VERCEL DEPLOYMENT ---');
 
-https.get('https://maths-master-studio.vercel.app/?v=' + Date.now(), res => {
-  let data = '';
-  res.on('data', chunk => data += chunk);
-  res.on('end', () => {
-    console.log('Status Code:', res.statusCode);
-    console.log('Total response bytes:', data.length);
-    console.log('Contains sw.js?v=24:', data.includes('sw.js?v=24'));
-    console.log('Contains getCachedKatexHtml:', data.includes('getCachedKatexHtml'));
-    console.log('Contains profileVfxStatusBadge:', data.includes('profileVfxStatusBadge'));
-    console.log('Contains fcProgressBar:', data.includes('fcProgressBar'));
-    console.log('SoundEngine Completely Removed (Zero Audio Overhead):', !data.includes('class SoundEngine'));
-    console.log('Contains 318 Question Bank:', data.includes('exam_questions_bank_verified.json'));
+function check() {
+  const url = 'https://maths-master-studio.vercel.app/?v=' + Date.now();
+  https.get(url, res => {
+    let data = '';
+    res.on('data', chunk => data += chunk);
+    res.on('end', () => {
+      console.log('Status Code:', res.statusCode);
+      console.log('Total response bytes:', data.length);
+      console.log('Contains sw.js?v=25:', data.includes('sw.js?v=25'));
+      console.log('Contains Formula Tables in nav:', data.includes('>Formula Tables<'));
+      console.log('Contains Formula Tables Vault:', data.includes('Formula Tables Vault'));
+      console.log('Contains Full-Width Studio Layout:', data.includes('<!-- Chapter Selector Bar (All Screen Sizes) -->'));
+      console.log('Contains stopAllAnimations idle hook:', data.includes('window.SakugaFX.clearTransient'));
 
-    if (data.includes('getCachedKatexHtml') && data.includes('sw.js?v=24') && !data.includes('class SoundEngine')) {
-      console.log('>>> VERCEL LIVE DEPLOYMENT CONFIRMED AND ACTIVE WITH ALL FIXES! <<<');
-    } else {
-      console.log('>>> Vercel deployment in progress or waiting for CDN propagation... <<<');
-    }
+      if (data.includes('sw.js?v=25') && data.includes('>Formula Tables<')) {
+        console.log('\n>>> VERCEL LIVE DEPLOYMENT CONFIRMED AND ACTIVE WITH ALL LATEST FIXES! <<<');
+        process.exit(0);
+      } else {
+        console.log('Vercel deployment building or propagating on CDN... retrying in 5 seconds...');
+        setTimeout(check, 5000);
+      }
+    });
+  }).on('error', err => {
+    console.error('Error fetching live:', err.message);
+    setTimeout(check, 5000);
   });
-}).on('error', err => {
-  console.error('Error verifying live:', err.message);
-});
+}
+
+check();
