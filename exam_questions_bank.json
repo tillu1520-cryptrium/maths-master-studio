@@ -1506,7 +1506,7 @@
     ],
     "correctOption": "A",
     "answer": "\\sin x",
-    "solution": "Dividing by sin x givesy′ + (cotx)y = cscx, so I.F. = e \\int_{x}^{cotxd} = sin x.",
+    "solution": "Dividing by sin x givesy′ + (cotx)y = cscx, so I.F. = e $\\int$_{x}^{cotxd} = sin x.",
     "steps": [
       {
         "text": "Dividing by sin x givesy′ + (cotx)y = cscx, so I.F. = e",
@@ -1560,7 +1560,7 @@
     ],
     "correctOption": "A",
     "answer": "e2 lnx = x^2",
-    "solution": "With P (x) = 2 x, the integrating factor is I.F. = e \\int (2/x)dx =e2 lnx = x^2.",
+    "solution": "With P (x) = 2 x, the integrating factor is I.F. = e $\\int$ (2/x)dx =e2 lnx = x^2.",
     "steps": [
       {
         "text": "With P (x) = 2",
@@ -1618,7 +1618,7 @@
     ],
     "correctOption": "A",
     "answer": "y(1) = 0 \\implies C =- 1 2e2, so y^2(x) = 1 2x ( ex-e2-x)",
-    "solution": "Dividing by x gives 2yy′ + ( 1- 1 x ) y^2 =xex. Substitute u =y^2 \\implies u′ = 2yy′ to obtain the linear ODE du dx + ( 1- 1 x ) u =xex with I.F. = ex-lnx = ex x . Multiplying and integrating: uex x = \\int_{x}^{e2xd} +C = 1 2e2x +C \\implies y^2 = 1 2xex +Cxe-x. Applying y(1) = 0 \\implies C =- 1 2e2, so y^2(x) = 1 2x ( ex-e2-x) .",
+    "solution": "Dividing by x gives 2yy′ + ( 1- 1 x ) y^2 =xex. Substitute u =y^2 $\\implies$ u′ = 2yy′ to obtain the linear ODE du dx + ( 1- 1 x ) u =xex with I.F. = ex-lnx = ex x . Multiplying and integrating: uex x = $\\int$_{x}^{e2xd} +C = 1 2e2x +C $\\implies$ y^2 = 1 2xex +Cxe-x. Applying y(1) = 0 $\\implies$ C =- 1 2e2, so y^2(x) = 1 2x ( ex-e2-x) .",
     "steps": [
       {
         "text": "Dividing by x gives 2yy′ +",
@@ -1676,7 +1676,7 @@
     ],
     "correctOption": "A",
     "answer": "y^2(x) = 5x3-x^2",
-    "solution": "Dividing by x and substituting u = y^2 (u′ = 2yy′) gives du dx- 3 xu = x with I.F. = x-3. Integratingux-3 = \\int x-2dx +C =-x-1 +C givesy2 =-x^2 +Cx 3. Using y(1) = 2 \\implies 4 =-1 +C \\implies C = 5, hencey2(x) = 5x3-x^2.",
+    "solution": "Dividing by x and substituting u = y^2 (u′ = 2yy′) gives du dx- 3 xu = x with I.F. = x-3. Integratingux-3 = $\\int$ x-2dx +C =-x-1 +C givesy2 =-x^2 +Cx 3. Using y(1) = 2 $\\implies$ 4 =-1 +C $\\implies$ C = 5, hencey2(x) = 5x3-x^2.",
     "steps": [
       {
         "text": "Dividing by x and substituting u = y^2 (u′ = 2yy′) gives du",
@@ -1734,7 +1734,7 @@
     ],
     "correctOption": "A",
     "answer": "1 + Ce-x^2",
-    "solution": "Multiply by 2y: 2yy′ +2xy2 = 2x. Put u =y^2 \\implies u′ +2xu = 2x with I.F. =ex2 . Multiplying byex2 and integrating gives uex2 = \\int_{dx}^{2xex2} +C =ex2 +C \\implies y^2(x) = 1 + Ce-x^2 .",
+    "solution": "Multiply by 2y: 2yy′ +2xy2 = 2x. Put u =y^2 $\\implies$ u′ +2xu = 2x with I.F. =ex2 . Multiplying byex2 and integrating gives uex2 = $\\int$_{dx}^{2xex2} +C =ex2 +C $\\implies$ y^2(x) = 1 + Ce-x^2 .",
     "steps": [
       {
         "text": "Multiply by 2y: 2yy′ +2xy2 = 2x. Put u =y^2 \\implies u′ +2xu = 2x with I.F. =ex2",
@@ -1904,7 +1904,7 @@
     ],
     "correctOption": "A",
     "answer": "3y2 = 2x2",
-    "solution": "Rearranging gives 2 yy′- 2 xy2 =- 2 x2e1/x^3 . Putting u =y^2 gives du dx- 2 xu =- 2 x2e1/x^3 with I.F. =x-2. Multiplying by x-2 and integrating (t =x-3): u_x-2 =- \\int_{x}^{2} -4e1/x^3 dx +C = 2 3e1/x^3 +C. Using y(1) = 0 \\implies C =- 2 3e, hence 3y2 = 2x2 ( e1/x^3 -e ) .",
+    "solution": "Rearranging gives 2 yy′- 2 xy2 =- 2 x2e1/x^3 . Putting u =y^2 gives du dx- 2 xu =- 2 x2e1/x^3 with I.F. =x-2. Multiplying by x-2 and integrating (t =x-3): u_x-2 =- $\\int$_{x}^{2} -4e1/x^3 dx +C = 2 3e1/x^3 +C. Using y(1) = 0 $\\implies$ C =- 2 3e, hence 3y2 = 2x2 ( e1/x^3 -e ) .",
     "steps": [
       {
         "text": "Rearranging gives 2 yy′- 2",
@@ -1962,7 +1962,7 @@
     ],
     "correctOption": "A",
     "answer": "-3 \\ln|x| +C \\implies y-3 = x^3(C- 3 \\ln|x|)",
-    "solution": "Divide by y^4 and set u = y-3 \\implies du dx =-3y-4dy dx: du dx- 3 xu =-3x2, with I.F. = x-3. Multiplying by x-3 and integrating: u_x-3 =- \\int_{xdx}^{3} =-3 ln|x| +C \\implies y-3 = x^3(C- 3 ln|x|).",
+    "solution": "Divide by y^4 and set u = y-3 $\\implies$ du dx =-3y-4dy dx: du dx- 3 xu =-3x2, with I.F. = x-3. Multiplying by x-3 and integrating: u_x-3 =- $\\int$_{xdx}^{3} =-3 ln|x| +C $\\implies$ y-3 = x^3(C- 3 ln|x|).",
     "steps": [
       {
         "text": "Divide by y^4 and set u = y-3 \\implies du",
@@ -4742,7 +4742,7 @@
     ],
     "correctOption": "A",
     "answer": "4x2-x^3",
-    "solution": "Standard form gives p(x) = - 4 x and e- \\int p(x)dx = x^4. Reduction of Order: y^2(x) = x^2\\int x^4 x^4 dx =x^3. Thus y(x) =c1x2 +c2x3. Using y(1) =c1 +c2 = 3 and y′(1) = 2c1 + 3c2 = 5 gives c1 = 4,c 2 =-1, soy(x) = 4x2-x^3.",
+    "solution": "Standard form gives p(x) = - 4 x and e- $\\int$ p(x)dx = x^4. Reduction of Order: y^2(x) = x^2$\\int$ x^4 x^4 dx =x^3. Thus y(x) =c1x2 +c2x3. Using y(1) =c1 +c2 = 3 and y′(1) = 2c1 + 3c2 = 5 gives c1 = 4,c 2 =-1, soy(x) = 4x2-x^3.",
     "steps": [
       {
         "text": "Standard form gives p(x) = - 4",
@@ -4858,7 +4858,7 @@
     ],
     "correctOption": "A",
     "answer": "(1 + 2 lnx)x^3",
-    "solution": "With p(x) =- 5 x, e- \\int p(x)dx = x^5. Reduction of Order gives y^2(x) = x^3\\int_{x6}^{x^5} dx = x^3 lnx. General solution: y(x) = ( c1 +c2 lnx)x^3. Applying y(1) = c1 = 1 and y′(1) = 3 c1 +c2 = 5 = \\implies c2 = 2, so y(x) = (1 + 2 lnx)x^3.",
+    "solution": "With p(x) =- 5 x, e- $\\int$ p(x)dx = x^5. Reduction of Order gives y^2(x) = x^3$\\int$_{x6}^{x^5} dx = x^3 lnx. General solution: y(x) = ( c1 +c2 lnx)x^3. Applying y(1) = c1 = 1 and y′(1) = 3 c1 +c2 = 5 = $\\implies$ c2 = 2, so y(x) = (1 + 2 lnx)x^3.",
     "steps": [
       {
         "text": "With p(x) =- 5",
@@ -5082,7 +5082,7 @@
     ],
     "correctOption": "A",
     "answer": "y(x) = 2x2 + 2x-2",
-    "solution": "With p(x) = 1 x, e- \\int p(x)dx = x-1. Reduction of Order: y^2(x) = x^2\\int x-5dx =- 1 4x-2 \\implies take y^2(x) = x-2. Applying y(1) = c1 +c2 = 4 and y′(1) = 2 c1- 2c2 = 0 gives c1 = 2,c 2 = 2, hence y(x) = 2x2 + 2x-2.",
+    "solution": "With p(x) = 1 x, e- $\\int$ p(x)dx = x-1. Reduction of Order: y^2(x) = x^2$\\int$ x-5dx =- 1 4x-2 $\\implies$ take y^2(x) = x-2. Applying y(1) = c1 +c2 = 4 and y′(1) = 2 c1- 2c2 = 0 gives c1 = 2,c 2 = 2, hence y(x) = 2x2 + 2x-2.",
     "steps": [
       {
         "text": "With p(x) = 1",
@@ -5114,49 +5114,45 @@
     "marksLabel": "4M",
     "level": "Standard",
     "topic": "Second-Order Linear Differential Equations Problem",
-    "prompt": "Find a second linearly independent solution ofx2y′′-2x(x+1)y′ +2(x+1)y = 0 giveny1(x) =x, using reduction of order.",
+    "prompt": "Find a second linearly independent solution of $x^2 y'' - 2x(x+1)y' + 2(x+1)y = 0$ given $y_1(x) = x$, using reduction of order.",
     "promptMath": "",
     "options": [
       {
         "id": "A",
-        "text": "c1x +c2xe2x",
+        "text": "c_1 x + c_2 x e^{2x}",
         "isCorrect": true
       },
       {
         "id": "B",
-        "text": "c1x -c2xe2x",
+        "text": "c_1 x - c_2 x e^{2x}",
         "isCorrect": false
       },
       {
         "id": "C",
-        "text": "2c1x +c2xe2x",
+        "text": "2c_1 x + c_2 x e^{2x}",
         "isCorrect": false
       },
       {
         "id": "D",
-        "text": "-2c1x +c2xe2x",
+        "text": "-2c_1 x + c_2 x e^{2x}",
         "isCorrect": false
       }
     ],
     "correctOption": "A",
-    "answer": "c1x +c2xe2x",
-    "solution": "Standard form gives p(x) =-2- 2 x and e- \\int p(x)dx = x2e2x. Reduction of Order: y^2(x) = x \\int_{x}^{x2e2x} ^2 dx = 1 2xe2x \\implies takey2(x) =xe2x. General solution: y(x) =c1x +c2xe2x.",
+    "answer": "c_1 x + c_2 x e^{2x}",
+    "solution": "1. Standard form: $y'' - \\frac{2(x+1)}{x}y' + \\frac{2(x+1)}{x^2}y = 0$, giving $P(x) = -2 - \\frac{2}{x}$.\\n2. $e^{-\\int P(x)dx} = e^{\\int (2 + 2/x)dx} = x^2 e^{2x}$.\\n3. Reduction of order formula:\\n$$y_2(x) = x \\int \\frac{x^2 e^{2x}}{x^2} dx = x \\int e^{2x} dx = \\frac{1}{2} x e^{2x}$$\\nChoosing $y_2(x) = x e^{2x}$, the general solution is $y(x) = c_1 x + c_2 x e^{2x}$.",
     "steps": [
       {
-        "text": "Standard form gives p(x) =-2- 2",
-        "math": ""
+        "text": "Standard form gives P(x):",
+        "math": "P(x) = -2 - \\frac{2}{x}"
       },
       {
-        "text": "x and e-",
-        "math": ""
+        "text": "Calculate integrating factor:",
+        "math": "e^{-\\int P(x)dx} = x^2 e^{2x}"
       },
       {
-        "text": "\\int",
-        "math": ""
-      },
-      {
-        "text": "p(x)dx = x2e2x. Reduction of Order: y^2(x) =",
-        "math": ""
+        "text": "Apply reduction of order formula:",
+        "math": "y_2(x) = x \\int e^{2x} dx = \\frac{1}{2} x e^{2x} \\implies y(x) = c_1 x + c_2 x e^{2x}"
       }
     ],
     "hint": "Calculate the Wronskian determinant $W(y_1, y_2) = y_1 y_2' - y_2 y_1'$. A non-vanishing $W$ confirms linear independence.",
@@ -5198,7 +5194,7 @@
     ],
     "correctOption": "A",
     "answer": "2,c 1 =-e, hence y(x) =x(2ex-e)",
-    "solution": "Standard form gives p(x) =-1- 2 x and e- \\int p(x)dx = x2ex. Reduction of Order: y^2(x) = x \\int_{x}^{exd} =xex. General solution: y(x) = c1x +c2xex. Using y(1) = c1 +c2e =e and y′(1) = c1 + 2c2e = 3e yields c2 = 2,c 1 =-e, hence y(x) =x(2ex-e).",
+    "solution": "Standard form gives p(x) =-1- 2 x and e- $\\int$ p(x)dx = x2ex. Reduction of Order: y^2(x) = x $\\int$_{x}^{exd} =xex. General solution: y(x) = c1x +c2xex. Using y(1) = c1 +c2e =e and y′(1) = c1 + 2c2e = 3e yields c2 = 2,c 1 =-e, hence y(x) =x(2ex-e).",
     "steps": [
       {
         "text": "Standard form gives p(x) =-1- 2",
@@ -5858,7 +5854,7 @@
     ],
     "correctOption": "A",
     "answer": "(c1 +c2x-x \\sin x- 2 \\cos x)ex",
-    "solution": "For (D- 1)2y =xex \\sin x, yh = (c1 +c2x)ex. By the exponential-shift operator rule: yp = 1 (D- 1)^2 (exx \\sin x) =ex 1 D2 (x \\sin x) =ex \\int (-x \\cos x + \\sin x)dx =-ex(x \\sin x + 2 \\cos x). General solution: y(x) = (c1 +c2x-x \\sin x- 2 \\cos x)ex.",
+    "solution": "For (D- 1)2y =xex $\\sin$ x, yh = (c1 +c2x)ex. By the exponential-shift operator rule: yp = 1 (D- 1)^2 (exx $\\sin$ x) =ex 1 D2 (x $\\sin$ x) =ex $\\int$ (-x $\\cos$ x + $\\sin$ x)dx =-ex(x $\\sin$ x + 2 $\\cos$ x). General solution: y(x) = (c1 +c2x-x $\\sin$ x- 2 $\\cos$ x)ex.",
     "steps": [
       {
         "text": "For (D- 1)2y =xex \\sin x, yh = (c1 +c2x)ex. By the exponential-shift operator rule:",
@@ -6404,49 +6400,45 @@
     "marksLabel": "4M",
     "level": "Standard",
     "topic": "Second-Order Linear Differential Equations Problem",
-    "prompt": "Solve (D2 + 6D + 9I)y = e-3x x^2 + 1 by the method of variation of parameters.",
+    "prompt": "Solve $(D^2 + 6D + 9)y = \\frac{e^{-3x}}{x^2 + 1}$ by the method of variation of parameters.",
     "promptMath": "",
     "options": [
       {
         "id": "A",
-        "text": "y(x) = ( c1 +c2x- 1 2 \\ln(x^2 + 1) +x \\tan-1x ) e-3x",
+        "text": "y(x) = \\left(c_1 + c_2 x - \\frac{1}{2}\\ln(x^2 + 1) + x\\tan^{-1} x\\right)e^{-3x}",
         "isCorrect": true
       },
       {
         "id": "B",
-        "text": "y(x) = ( c1 -c2x- 1 2 \\ln(x^2 + 1) +x \\tan-1x ) e-3x",
+        "text": "y(x) = \\left(c_1 - c_2 x - \\frac{1}{2}\\ln(x^2 + 1) + x\\tan^{-1} x\\right)e^{-3x}",
         "isCorrect": false
       },
       {
         "id": "C",
-        "text": "y(x) = ( c1 +c2x- 1 4 \\ln(x^2 + 1) +x \\tan-1x ) e-3x",
+        "text": "y(x) = \\left(c_1 + c_2 x - \\frac{1}{4}\\ln(x^2 + 1) + x\\tan^{-1} x\\right)e^{-3x}",
         "isCorrect": false
       },
       {
         "id": "D",
-        "text": "y(x) = ( c1 -c2x+ 1 2 \\ln(x^2 - 1) -x \\tan+1x ) e+3x",
+        "text": "y(x) = \\left(c_1 - c_2 x + \\frac{1}{2}\\ln(x^2 - 1) - x\\tan^{-1} x\\right)e^{3x}",
         "isCorrect": false
       }
     ],
     "correctOption": "A",
-    "answer": "y(x) = ( c1 +c2x- 1 2 \\ln(x^2 + 1) +x \\tan-1x ) e-3x",
-    "solution": "Basis {e-3x,xe-3x}, W =e-6x. Variation of Parameters: yp =-e-3x \\int_{x}^{x} ^2 + 1dx +xe-3x \\int_{x}^{1} ^2 + 1dx =-1 2e-3x ln(x^2 + 1) +xe-3x tan-1x. General solution: y(x) = ( c1 +c2x- 1 2 ln(x^2 + 1) +x tan-1x ) e-3x.",
+    "answer": "y(x) = \\left(c_1 + c_2 x - \\frac{1}{2}\\ln(x^2 + 1) + x\\tan^{-1} x\\right)e^{-3x}",
+    "solution": "1. Basis ${e^{-3x}, x e^{-3x}}$, $W = e^{-6x}$.\\n2. Particular integral via Variation of Parameters:\\n$$y_p = -e^{-3x} \\int \\frac{x}{x^2 + 1} dx + x e^{-3x} \\int \\frac{1}{x^2 + 1} dx = \\left(-\\frac{1}{2}\\ln(x^2 + 1) + x\\tan^{-1} x\\right)e^{-3x}$$\\n3. General solution: $y(x) = \\left(c_1 + c_2 x - \\frac{1}{2}\\ln(x^2 + 1) + x\\tan^{-1} x\\right)e^{-3x}$.",
     "steps": [
       {
-        "text": "Basis {e-3x,xe-3x}, W =e-6x. Variation of Parameters:",
-        "math": ""
+        "text": "Find homogeneous basis and Wronskian:",
+        "math": "y_1 = e^{-3x},\\; y_2 = x e^{-3x},\\quad W = e^{-6x}"
       },
       {
-        "text": "yp =-e-3x",
-        "math": ""
+        "text": "Integrals for variation of parameters:",
+        "math": "u_1 = -\\frac{1}{2}\\ln(x^2 + 1),\\quad u_2 = \\tan^{-1} x"
       },
       {
-        "text": "\\int x",
-        "math": ""
-      },
-      {
-        "text": "x^2 + 1dx +xe-3x",
-        "math": ""
+        "text": "General solution y = y_h + y_p:",
+        "math": "y(x) = \\left(c_1 + c_2 x - \\frac{1}{2}\\ln(x^2 + 1) + x\\tan^{-1} x\\right)e^{-3x}"
       }
     ],
     "hint": "Find homogeneous basis $y_1, y_2$, compute Wronskian $W$, and evaluate $y_p = -y_1\\int \\frac{y_2 r}{W}dx + y_2\\int \\frac{y_1 r}{W}dx$.",
@@ -8428,7 +8420,7 @@
     ],
     "correctOption": "A",
     "answer": "\\frac{1}{2}\\left[\\frac{1}{s+3} + \\frac{s+3}{(s+3)^2 + 16}\\right]",
-    "solution": "1. Trig identity: $\\cos^2 2t = \\frac{1 + \\cos 4t}{2}$.\n2. Base Laplace transform: $\\mathcal{L}\\{\\cos^2 2t\\} = \\frac{1}{2}\\left(\\frac{1}{s} + \\frac{s}{s^2 + 16}\\right)$.\n3. By First Shifting Theorem $\\mathcal{L}\\{e^{at}f(t)\\} = F(s - a)$ with $a = -3 \\implies s \\to s + 3$:\n4. $\\mathcal{L}\\{e^{-3t}\\cos^2 2t\\} = \\frac{1}{2}\\left[\\frac{1}{s+3} + \\frac{s+3}{(s+3)^2 + 16}\\right]$.",
+    "solution": "1. Trig identity: $\\cos^2 2t = \\frac{1 + \\cos 4t}{2}$.\n2. Base Laplace transform: $\\mathcal{L}\\{\\\\cos^2 2t\\} = \\frac{1}{2}\\left(\\frac{1}{s} + \\frac{s}{s^2 + 16}\\right)$.\n3. By First Shifting Theorem $\\mathcal{L}\\{e^{at}f(t)\\} = F(s - a)$ with $a = -3 \\implies s \\to s + 3$:\n4. $\\mathcal{L}\\{e^{-3t}\\cos^2 2t\\} = \\frac{1}{2}\\left[\\frac{1}{s+3} + \\frac{s+3}{(s+3)^2 + 16}\\right]$.",
     "steps": [
       {
         "text": "Trig identity:",
@@ -8436,7 +8428,7 @@
       },
       {
         "text": "Base transform:",
-        "math": "\\mathcal{L}\\{\\cos^2 2t\\} = \\frac{1}{2}\\left(\\frac{1}{s} + \\frac{s}{s^2 + 16}\\right)"
+        "math": "\\mathcal{L}\\{\\\\cos^2 2t\\} = \\frac{1}{2}\\left(\\frac{1}{s} + \\frac{s}{s^2 + 16}\\right)"
       },
       {
         "text": "Apply First Shifting s -> s + 3:",
@@ -8456,7 +8448,7 @@
     "marksLabel": "1M",
     "level": "Rapid",
     "topic": "Laplace Transforms & Discontinuous Systems Problem",
-    "prompt": "Evaluate \\mathcal{L}\\{t2e^{-4t}}.",
+    "prompt": "Evaluate $\\mathcal{L}$\\{t2e^{-4t}}.",
     "promptMath": "",
     "options": [
       {
@@ -8482,10 +8474,10 @@
     ],
     "correctOption": "A",
     "answer": "(s + 4)^3",
-    "solution": "Base transform \\mathcal{L}\\{t^2} = 2! s^3 . Applying First Shifting ( s \\to s + 4) gives 2 (s + 4)^3 .",
+    "solution": "Base transform \\mathcal{L}\\{t^2\\} = 2! s^3 . Applying First Shifting ( s \\to s + 4) gives 2 (s + 4)^3 .",
     "steps": [
       {
-        "text": "Base transform \\mathcal{L}\\{t^2} = 2!",
+        "text": "Base transform \\mathcal{L}\\{t^2\\} = 2!",
         "math": ""
       },
       {
@@ -8590,15 +8582,15 @@
     ],
     "correctOption": "A",
     "answer": "\\frac{12}{169}",
-    "solution": "1. Recognize integral as Laplace transform: $\\int_0^\\infty e^{-st}(t \\sin 3t)dt = \\left.\\mathcal{L}\\{t \\sin 3t\\}\\right|_{s=2}$.\n2. Base transform: $\\mathcal{L}\\{\\sin 3t\\} = \\frac{3}{s^2 + 9}$.\n3. Multiplication by $t$: $\\mathcal{L}\\{t \\sin 3t\\} = -\\frac{d}{ds}\\left(\\frac{3}{s^2 + 9}\\right) = \\frac{6s}{(s^2 + 9)^2}$.\n4. Evaluate at $s = 2$: $\\frac{6(2)}{(2^2 + 9)^2} = \\frac{12}{169}$.",
+    "solution": "1. Recognize integral as Laplace transform: $\\int_0^\\infty e^{-st}(t \\sin 3t)dt = \\left.\\mathcal{L}\\{t \\\\sin 3t\\}\\right|_{s=2}$.\n2. Base transform: $\\mathcal{L}\\{\\\\sin 3t\\} = \\frac{3}{s^2 + 9}$.\n3. Multiplication by $t$: $\\mathcal{L}\\{t \\\\sin 3t\\} = -\\frac{d}{ds}\\left(\\frac{3}{s^2 + 9}\\right) = \\frac{6s}{(s^2 + 9)^2}$.\n4. Evaluate at $s = 2$: $\\frac{6(2)}{(2^2 + 9)^2} = \\frac{12}{169}$.",
     "steps": [
       {
         "text": "Identify integral as Laplace transform at s = 2:",
-        "math": "\\int_0^\\infty e^{-2t}(t\\sin 3t)dt = \\left.\\mathcal{L}\\{t\\sin 3t\\}\\right|_{s=2}"
+        "math": "\\int_0^\\infty e^{-2t}(t\\sin 3t)dt = \\left.\\mathcal{L}\\{t\\\\sin 3t\\}\\right|_{s=2}"
       },
       {
         "text": "Differentiate transform with respect to s:",
-        "math": "\\mathcal{L}\\{t\\sin 3t\\} = -\\frac{d}{ds}\\left(\\frac{3}{s^2 + 9}\\right) = \\frac{6s}{(s^2 + 9)^2}"
+        "math": "\\mathcal{L}\\{t\\\\sin 3t\\} = -\\frac{d}{ds}\\left(\\frac{3}{s^2 + 9}\\right) = \\frac{6s}{(s^2 + 9)^2}"
       },
       {
         "text": "Evaluate at s = 2:",
@@ -8618,7 +8610,7 @@
     "marksLabel": "1M",
     "level": "Rapid",
     "topic": "Laplace Transforms & Discontinuous Systems Problem",
-    "prompt": "Find $\\mathcal{L}\\{\\sin^2 3t\\}$.",
+    "prompt": "Find $\\mathcal{L}\\{\\\\sin^2 3t\\}$.",
     "promptMath": "",
     "options": [
       {
@@ -8672,7 +8664,7 @@
     "marksLabel": "1M",
     "level": "Rapid",
     "topic": "Laplace Transforms & Discontinuous Systems Problem",
-    "prompt": "Evaluate \\mathcal{L}\\{e^{-2t}(3 cos 4t- 5 sin 4t)}.",
+    "prompt": "Evaluate $\\mathcal{L}$\\{e^{-2t}(3 cos 4t- 5 sin 4t)}.",
     "promptMath": "",
     "options": [
       {
@@ -8864,7 +8856,7 @@
     ],
     "correctOption": "A",
     "answer": "\\frac{2}{(s + 1)(s^2 + 2s + 5)}",
-    "solution": "1. Rewrite $\\sin^2 t = \\frac{1 - \\cos 2t}{2}$.\n2. Base transform: $\\mathcal{L}\\{\\sin^2 t\\} = \\frac{1}{2}\\left(\\frac{1}{s} - \\frac{s}{s^2 + 4}\\right) = \\frac{2}{s(s^2 + 4)}$.\n3. Apply First Shifting Theorem ($s \\to s + 1$):\n$$\\frac{2}{(s + 1)((s + 1)^2 + 4)} = \\frac{2}{(s + 1)(s^2 + 2s + 5)}$$",
+    "solution": "1. Rewrite $\\sin^2 t = \\frac{1 - \\cos 2t}{2}$.\n2. Base transform: $\\mathcal{L}\\{\\\\sin^2 t\\} = \\frac{1}{2}\\left(\\frac{1}{s} - \\frac{s}{s^2 + 4}\\right) = \\frac{2}{s(s^2 + 4)}$.\n3. Apply First Shifting Theorem ($s \\to s + 1$):\n$$\\frac{2}{(s + 1)((s + 1)^2 + 4)} = \\frac{2}{(s + 1)(s^2 + 2s + 5)}$$",
     "steps": [
       {
         "text": "Express in linear form:",
@@ -8872,7 +8864,7 @@
       },
       {
         "text": "Compute base transform:",
-        "math": "\\mathcal{L}\\{\\sin^2 t\\} = \\frac{2}{s(s^2 + 4)}"
+        "math": "\\mathcal{L}\\{\\\\sin^2 t\\} = \\frac{2}{s(s^2 + 4)}"
       },
       {
         "text": "Apply first shifting s -> s + 1:",
@@ -8892,7 +8884,7 @@
     "marksLabel": "1M",
     "level": "Rapid",
     "topic": "Laplace Transforms & Discontinuous Systems Problem",
-    "prompt": "Find $\\mathcal{L}\\{\\cosh at \\cos at\\}$.",
+    "prompt": "Find $\\mathcal{L}\\{\\\\cosh at \\cos at\\}$.",
     "promptMath": "",
     "options": [
       {
@@ -8918,7 +8910,7 @@
     ],
     "correctOption": "A",
     "answer": "\\frac{s^3}{s^4 + 4a^4}",
-    "solution": "1. Write definition: $\\cosh at = \\frac{e^{at} + e^{-at}}{2}$.\n2. Product: $\\cosh at \\cos at = \\frac{1}{2}(e^{at}\\cos at + e^{-at}\\cos at)$.\n3. Apply First Shifting to $\\mathcal{L}\\{\\cos at\\} = \\frac{s}{s^2 + a^2}$:\n$$\\frac{1}{2}\\left[\\frac{s-a}{(s-a)^2 + a^2} + \\frac{s+a}{(s+a)^2 + a^2}\\right] = \\frac{s^3}{s^4 + 4a^4}$$",
+    "solution": "1. Write definition: $\\cosh at = \\frac{e^{at} + e^{-at}}{2}$.\n2. Product: $\\cosh at \\cos at = \\frac{1}{2}(e^{at}\\cos at + e^{-at}\\cos at)$.\n3. Apply First Shifting to $\\mathcal{L}\\{\\\\cos at\\} = \\frac{s}{s^2 + a^2}$:\n$$\\frac{1}{2}\\left[\\frac{s-a}{(s-a)^2 + a^2} + \\frac{s+a}{(s+a)^2 + a^2}\\right] = \\frac{s^3}{s^4 + 4a^4}$$",
     "steps": [
       {
         "text": "Write hyperbolic cosine definition:",
@@ -8946,7 +8938,7 @@
     "marksLabel": "1M",
     "level": "Rapid",
     "topic": "Laplace Transforms & Discontinuous Systems Problem",
-    "prompt": "Evaluate \\mathcal{L}^{-1}\\{ 1 (s- 2)^5 } .",
+    "prompt": "Evaluate $\\mathcal{L}^{-1}\\{ 1 (s- 2)^5 \\}$ .",
     "promptMath": "",
     "options": [
       {
@@ -8972,10 +8964,10 @@
     ],
     "correctOption": "A",
     "answer": "t^4 24e^{2t}",
-    "solution": "By Inverse First Shifting: e^{2t}\\mathcal{L}^{-1}\\{1 s^5 } = t^4 24e^{2t}.",
+    "solution": "By Inverse First Shifting: e^{2t}$\\mathcal{L}^{-1}\\{1 s^5 \\}$ = t^4 24e^{2t}.",
     "steps": [
       {
-        "text": "By Inverse First Shifting: e^{2t}\\mathcal{L}^{-1}",
+        "text": "By Inverse First Shifting: e^{2t}$\\mathcal{L}$^{-1}",
         "math": ""
       },
       {
@@ -9026,15 +9018,15 @@
     ],
     "correctOption": "A",
     "answer": "\\frac{1}{2}",
-    "solution": "By definition of the unilateral Laplace transform \\(\\mathcal{L}\\{f(t)\\} = \\int_0^\\infty e^{-st} f(t) dt\\):\n$$\\int_0^\\infty e^{-t}\\sin t\\,dt = \\left.\\mathcal{L}\\{\\sin t\\}\\right|_{s=1}$$\nSince \\(\\mathcal{L}\\{\\sin t\\} = \\frac{1}{s^2 + 1}\\), substitute \\(s = 1\\):\n$$\\left.\\frac{1}{s^2 + 1}\\right|_{s=1} = \\frac{1}{1^2 + 1} = \\frac{1}{2}$$",
+    "solution": "By definition of the unilateral Laplace transform \\(\\mathcal{L}\\{f(t)\\} = \\int_0^\\infty e^{-st} f(t) dt\\):\n$$\\int_0^\\infty e^{-t}\\sin t\\,dt = \\left.\\mathcal{L}\\{\\\\sin t\\}\\right|_{s=1}$$\nSince \\(\\mathcal{L}\\{\\\\sin t\\} = \\frac{1}{s^2 + 1}\\), substitute \\(s = 1\\):\n$$\\left.\\frac{1}{s^2 + 1}\\right|_{s=1} = \\frac{1}{1^2 + 1} = \\frac{1}{2}$$",
     "steps": [
       {
         "text": "Recognize the integral as Laplace transform evaluated at s = 1:",
-        "math": "\\int_0^\\infty e^{-t}\\sin t\\,dt = \\left.\\mathcal{L}\\{\\sin t\\}\\right|_{s=1}"
+        "math": "\\int_0^\\infty e^{-t}\\sin t\\,dt = \\left.\\mathcal{L}\\{\\\\sin t\\}\\right|_{s=1}"
       },
       {
         "text": "Substitute standard sine transform formula:",
-        "math": "\\mathcal{L}\\{\\sin t\\} = \\frac{1}{s^2 + 1}"
+        "math": "\\mathcal{L}\\{\\\\sin t\\} = \\frac{1}{s^2 + 1}"
       },
       {
         "text": "Evaluate at s = 1:",
@@ -9042,7 +9034,7 @@
       }
     ],
     "hint": "Express discontinuous piecewise forcing using unit step $u(t - a)$ and apply $\\mathcal{L}\\{g(t)u(t - a)\\} = e^{-as}\\mathcal{L}\\{g(t+a)\\}$.",
-    "sillyTrap": "Integral by Parts Time Sink: Do not integrate by parts twice. Recognize immediately as \\mathcal{L}\\{sin t} at parameter s = 1.",
+    "sillyTrap": "Integral by Parts Time Sink: Do not integrate by parts twice. Recognize immediately as $\\mathcal{L}\\{\\sin t\\}$ at parameter s = 1.",
     "tag": "1M"
   },
   {
@@ -9112,49 +9104,45 @@
     "marksLabel": "1M",
     "level": "Rapid",
     "topic": "Laplace Transforms & Discontinuous Systems Problem",
-    "prompt": "Evaluate \\mathcal{L}\\{t sin 3t} using differentiation of Laplace transforms.",
+    "prompt": "Evaluate $\\mathcal{L}\\{t \\\\sin 3t\\}$ using differentiation of Laplace transforms.",
     "promptMath": "",
     "options": [
       {
         "id": "A",
-        "text": "6s (s^2 + 9)^2",
+        "text": "\\frac{6s}{(s^2 + 9)^2}",
         "isCorrect": true
       },
       {
         "id": "B",
-        "text": "6s (s^2 - 9)^2",
+        "text": "\\frac{6s}{(s^2 - 9)^2}",
         "isCorrect": false
       },
       {
         "id": "C",
-        "text": "6s (s^4 + 9)^2",
+        "text": "\\frac{3s}{(s^2 + 9)^2}",
         "isCorrect": false
       },
       {
         "id": "D",
-        "text": "-6s (s^4 + 9)^2",
+        "text": "-\\frac{6s}{(s^2 + 9)^2}",
         "isCorrect": false
       }
     ],
     "correctOption": "A",
-    "answer": "6s (s^2 + 9)^2",
-    "solution": "\\mathcal{L}\\{t sin 3t} =- d ds ( 3 s^2 + 9 ) = 6s (s^2 + 9)^2 .",
+    "answer": "\\frac{6s}{(s^2 + 9)^2}",
+    "solution": "1. Base transform: $\\mathcal{L}\\{\\\\sin 3t\\} = \\frac{3}{s^2 + 9}$.\\n2. Multiplication by $t$ rule: $\\mathcal{L}\\{t f(t)\\} = -\\frac{d}{ds}F(s)$.\\n$$\\mathcal{L}\\{t \\\\sin 3t\\} = -\\frac{d}{ds}\\left(\\frac{3}{s^2 + 9}\\right) = -3 \\cdot \\frac{-2s}{(s^2 + 9)^2} = \\frac{6s}{(s^2 + 9)^2}$$",
     "steps": [
       {
-        "text": "\\mathcal{L}\\{t sin 3t} =- d",
-        "math": ""
+        "text": "Base transform of sine:",
+        "math": "\\mathcal{L}\\{\\\\sin 3t\\} = \\frac{3}{s^2 + 9}"
       },
       {
-        "text": "ds",
-        "math": ""
+        "text": "Apply multiplication by t rule:",
+        "math": "\\mathcal{L}\\{t \\\\sin 3t\\} = -\\frac{d}{ds}\\left(\\frac{3}{s^2 + 9}\\right)"
       },
       {
-        "text": "( 3",
-        "math": ""
-      },
-      {
-        "text": "s^2 + 9",
-        "math": ""
+        "text": "Differentiate with respect to s:",
+        "math": "\\frac{6s}{(s^2 + 9)^2}"
       }
     ],
     "hint": "Express discontinuous piecewise forcing using unit step $u(t - a)$ and apply $\\mathcal{L}\\{g(t)u(t - a)\\} = e^{-as}\\mathcal{L}\\{g(t+a)\\}$.",
@@ -9170,7 +9158,7 @@
     "marksLabel": "1M",
     "level": "Rapid",
     "topic": "Laplace Transforms & Discontinuous Systems Problem",
-    "prompt": "State the Laplace transform formula for \\mathcal{L}\\{y′′(t)} in terms of Y (s) =\\mathcal{L}\\{y(t)}, y(0), and y′(0).",
+    "prompt": "State the Laplace transform formula for $\\mathcal{L}\\{y′′(t)\\}$ in terms of Y (s) =$\\mathcal{L}\\{y(t)\\}$, y(0), and y′(0).",
     "promptMath": "",
     "options": [
       {
@@ -9196,7 +9184,7 @@
     ],
     "correctOption": "A",
     "answer": "s2Y (s)-sy (0)-y′(0)",
-    "solution": "\\mathcal{L}\\{y′′(t)} =s2Y (s)-sy (0)-y′(0).",
+    "solution": "\\mathcal{L}\\{y′′(t)\\} =s2Y (s)-sy (0)-y′(0).",
     "steps": [
       {
         "text": "Identify the governing structure of the problem:",
@@ -9304,10 +9292,10 @@
     ],
     "correctOption": "A",
     "answer": "(s + 2)^2- 9",
-    "solution": "First \\mathcal{L}\\{t cos 3t} =- d ds ( s s^2 + 9 ) = s^2- 9 (s^2 + 9)^2 . Applying First Shifting ( s \\to s + 2) gives (s + 2)^2- 9 [(s + 2)^2 + 9]2 .",
+    "solution": "First \\mathcal{L}\\{t \\cos 3t\\} =- d ds ( s s^2 + 9 ) = s^2- 9 (s^2 + 9)^2 . Applying First Shifting ( s \\to s + 2) gives (s + 2)^2- 9 [(s + 2)^2 + 9]2 .",
     "steps": [
       {
-        "text": "First \\mathcal{L}\\{t cos 3t} =- d",
+        "text": "First \\mathcal{L}\\{t \\cos 3t\\} =- d",
         "math": ""
       },
       {
@@ -9365,20 +9353,16 @@
     "solution": "1. By Integration of Transforms: $\\mathcal{L}\\left\\{\\frac{f(t)}{t}\\right\\} = \\int_s^\\infty F(u)\\,du$.\n2. For $f(t) = \\sin t$, $F(u) = \\frac{1}{u^2 + 1}$.\n3. $\\mathcal{L}\\left\\{\\frac{\\sin t}{t}\\right\\} = \\int_s^\\infty \\frac{du}{u^2 + 1} = \\left[\\arctan u \\right]_s^\\infty = \\frac{\\pi}{2} - \\arctan s = \\operatorname{arccot} s$.\n4. Value of improper integral: by definition $\\int_0^\\infty e^{-st}\\frac{\\sin t}{t}\\,dt = F(s)$. Letting $s \\to 0^+$:\n5. $\\int_0^\\infty \\frac{\\sin t}{t}\\,dt = \\lim_{s \\to 0^+} \\operatorname{arccot} s = \\frac{\\pi}{2}$.",
     "steps": [
       {
-        "text": "L",
-        "math": ""
+        "text": "Apply integration of transforms formula:",
+        "math": "\\mathcal{L}\\left\\{\\frac{\\sin t}{t}\\right\\} = \\int_s^\\infty \\frac{du}{u^2 + 1}"
       },
       {
-        "text": "{\\sin t",
-        "math": ""
+        "text": "Evaluate definite integral:",
+        "math": "[\\arctan u]_s^\\infty = \\frac{\\pi}{2} - \\arctan s = \\operatorname{arccot} s"
       },
       {
-        "text": "t",
-        "math": ""
-      },
-      {
-        "text": "}",
-        "math": ""
+        "text": "Take limit as s -> 0 to evaluate improper integral:",
+        "math": "\\int_0^\\infty \\frac{\\sin t}{t} dt = \\frac{\\pi}{2}"
       }
     ],
     "hint": "Express discontinuous piecewise forcing using unit step $u(t - a)$ and apply $\\mathcal{L}\\{g(t)u(t - a)\\} = e^{-as}\\mathcal{L}\\{g(t+a)\\}$.",
@@ -9394,7 +9378,7 @@
     "marksLabel": "1M",
     "level": "Rapid",
     "topic": "Laplace Transforms & Discontinuous Systems Problem",
-    "prompt": "Evaluate \\mathcal{L}^{-1}\\{ 2s + 6 (s^2 + 6s + 10)^2 } .",
+    "prompt": "Evaluate $\\mathcal{L}^{-1}\\{ 2s + 6 (s^2 + 6s + 10)^2 \\}$ .",
     "promptMath": "",
     "options": [
       {
@@ -9416,14 +9400,14 @@
     ],
     "correctOption": "A",
     "answer": "t \\sin t yieldste^{-3t} \\sin t",
-    "solution": "Complete the square: 2(s + 3) [(s + 3)^2 + 1]2 . Using First Shifting ( e^{-3t}) and \\mathcal{L}^{-1}\\{ 2s (s^2 + 1)^2 } = t \\sin t yieldste^{-3t} \\sin t.",
+    "solution": "Complete the square: 2(s + 3) [(s + 3)^2 + 1]2 . Using First Shifting ( e^{-3t}) and $\\mathcal{L}^{-1}\\{ 2s (s^2 + 1)^2 \\}$ = t $\\sin$ t yieldste^{-3t} $\\sin$ t.",
     "steps": [
       {
         "text": "Complete the square: 2(s + 3)",
         "math": ""
       },
       {
-        "text": "[(s + 3)^2 + 1]2 . Using First Shifting ( e^{-3t}) and \\mathcal{L}^{-1}",
+        "text": "[(s + 3)^2 + 1]2 . Using First Shifting ( e^{-3t}) and $\\mathcal{L}$^{-1}",
         "math": ""
       },
       {
@@ -9448,45 +9432,45 @@
     "marksLabel": "1M",
     "level": "Rapid",
     "topic": "Laplace Transforms & Discontinuous Systems Problem",
-    "prompt": "State the formula forL {\\int_0^t f(\\tau )d \\tau } and find \\mathcal{L}^{-1}\\{ 1 s(s^2 + 9) } .",
+    "prompt": "State the formula for $\\mathcal{L}\\left\\{\\int_0^t f(\\tau)\\,d\\tau\\right\\}$ and find $\\mathcal{L}^{-1}\\left\\{\\frac{1}{s(s^2 + 9)}\\right\\}$.",
     "promptMath": "",
     "options": [
       {
         "id": "A",
-        "text": "1- \\cos 3t"
+        "text": "\\frac{1 - \\cos 3t}{9}",
+        "isCorrect": true
       },
       {
         "id": "B",
-        "text": "-1- \\cos 3t"
+        "text": "\\frac{1 + \\cos 3t}{9}",
+        "isCorrect": false
       },
       {
         "id": "C",
-        "text": "1- \\cos 6t"
+        "text": "\\frac{1 - \\cos 3t}{3}",
+        "isCorrect": false
       },
       {
         "id": "D",
-        "text": "1- \\cos 32t"
+        "text": "\\frac{1 - \\sin 3t}{9}",
+        "isCorrect": false
       }
     ],
     "correctOption": "A",
-    "answer": "1- \\cos 3t",
-    "solution": "L {\\int_0^t f(\\tau )d \\tau } = 1 sF (s). Dividing 1 s^2+9 bys: \\int_0^t sin 3\\tau 3 d \\tau = 1- cos 3t 9 .",
+    "answer": "\\frac{1 - \\cos 3t}{9}",
+    "solution": "1. Formula: $\\mathcal{L}\\left\\{\\int_0^t f(\\tau)\\,d\\tau\\right\\} = \\frac{1}{s}F(s)$.\\n2. Inverse Laplace: $\\mathcal{L}^{-1}\\left\\{\\frac{1}{s(s^2 + 9)}\\right\\} = \\int_0^t \\frac{\\sin 3\\tau}{3}\\,d\\tau = \\left[-\\frac{\\cos 3\\tau}{9}\\right]_0^t = \\frac{1 - \\cos 3t}{9}$.",
     "steps": [
       {
-        "text": "L",
-        "math": ""
+        "text": "Formula for integration in t-domain:",
+        "math": "\\mathcal{L}\\left\\{\\int_0^t f(\\tau)\\,d\\tau\\right\\} = \\frac{1}{s}F(s)"
       },
       {
-        "text": "{\\int t",
-        "math": ""
+        "text": "Base inverse:",
+        "math": "\\mathcal{L}^{-1}\\left\\{\\frac{1}{s^2 + 9}\\right\\} = \\frac{\\sin 3t}{3}"
       },
       {
-        "text": "0f(\\tau )d \\tau",
-        "math": ""
-      },
-      {
-        "text": "}",
-        "math": ""
+        "text": "Integrate from 0 to t:",
+        "math": "\\int_0^t \\frac{\\sin 3\\tau}{3}\\,d\\tau = \\frac{1 - \\cos 3t}{9}"
       }
     ],
     "hint": "Express discontinuous piecewise forcing using unit step $u(t - a)$ and apply $\\mathcal{L}\\{g(t)u(t - a)\\} = e^{-as}\\mathcal{L}\\{g(t+a)\\}$.",
@@ -9552,7 +9536,7 @@
     "marksLabel": "1M",
     "level": "Rapid",
     "topic": "Laplace Transforms & Discontinuous Systems Problem",
-    "prompt": "Evaluate \\mathcal{L}\\{t^2 sin 2t} using differentiation of transforms.",
+    "prompt": "Evaluate $\\mathcal{L}\\{t^2 \\sin 2t\\}$ using differentiation of transforms.",
     "promptMath": "",
     "options": [
       {
@@ -9578,10 +9562,10 @@
     ],
     "correctOption": "A",
     "answer": "12s2- 16",
-    "solution": "\\mathcal{L}\\{t^2 sin 2t} = (-1)^2 d2 ds2 ( 2 s^2 + 4 ) =- d ds ( 4s (s^2 + 4)^2 ) = 12s2- 16 (s^2 + 4)^3 .",
+    "solution": "\\mathcal{L}\\{t^2 \\sin 2t\\} = (-1)^2 d2 ds2 ( 2 s^2 + 4 ) =- d ds ( 4s (s^2 + 4)^2 ) = 12s2- 16 (s^2 + 4)^3 .",
     "steps": [
       {
-        "text": "\\mathcal{L}\\{t^2 sin 2t} = (-1)^2 d2",
+        "text": "\\mathcal{L}\\{t^2 \\sin 2t\\} = (-1)^2 d2",
         "math": ""
       },
       {
@@ -9610,7 +9594,7 @@
     "marksLabel": "1M",
     "level": "Rapid",
     "topic": "Laplace Transforms & Discontinuous Systems Problem",
-    "prompt": "Find \\mathcal{L}^{-1}\\{ 1 s^2(s + 3) } .",
+    "prompt": "Find $\\mathcal{L}^{-1}\\{ 1 s^2(s + 3) \\}$ .",
     "promptMath": "",
     "options": [
       {
@@ -9664,7 +9648,7 @@
     "marksLabel": "1M",
     "level": "Rapid",
     "topic": "Laplace Transforms & Discontinuous Systems Problem",
-    "prompt": "Find \\mathcal{L}\\{t cos \\omega t}.",
+    "prompt": "Find $\\mathcal{L}\\{t \\cos \\omega t\\}$.",
     "promptMath": "",
     "options": [
       {
@@ -9690,10 +9674,10 @@
     ],
     "correctOption": "A",
     "answer": "s^2-\\omega 2",
-    "solution": "\\mathcal{L}\\{t cos \\omega t} =- d ds ( s s^2 +\\omega 2 ) = s^2-\\omega 2 (s^2 +\\omega 2)^2 .",
+    "solution": "\\mathcal{L}\\{t \\cos \\omega t\\} =- d ds ( s s^2 +\\omega 2 ) = s^2-\\omega 2 (s^2 +\\omega 2)^2 .",
     "steps": [
       {
-        "text": "\\mathcal{L}\\{t cos \\omega t} =- d",
+        "text": "\\mathcal{L}\\{t \\cos \\omega t\\} =- d",
         "math": ""
       },
       {
@@ -9744,10 +9728,10 @@
     ],
     "correctOption": "A",
     "answer": "\\frac{4(s - 3)}{[(s - 3)^2 + 4]^2}",
-    "solution": "1. Base transform: \\(\\mathcal{L}\\{\\sin 2t\\} = \\frac{2}{s^2 + 4}\\). 2. Differentiate for multiplication by \\(t\\): $$\\mathcal{L}\\{t \\sin 2t\\} = -\\frac{d}{ds}\\left(\\frac{2}{s^2 + 4}\\right) = \\frac{4s}{(s^2 + 4)^2}$$ 3. Apply the First Shifting Theorem \\(s \\to s - 3\\) for \\(e^{3t}\\): $$\\mathcal{L}\\{t e^{3t} \\sin 2t\\} = \\frac{4(s - 3)}{[(s - 3)^2 + 4]^2} = \\frac{4(s - 3)}{(s^2 - 6s + 13)^2}$$",
+    "solution": "1. Base transform: \\(\\mathcal{L}\\{\\\\sin 2t\\} = \\frac{2}{s^2 + 4}\\). 2. Differentiate for multiplication by \\(t\\): $$\\mathcal{L}\\{t \\\\sin 2t\\} = -\\frac{d}{ds}\\left(\\frac{2}{s^2 + 4}\\right) = \\frac{4s}{(s^2 + 4)^2}$$ 3. Apply the First Shifting Theorem \\(s \\to s - 3\\) for \\(e^{3t}\\): $$\\mathcal{L}\\{t e^{3t} \\sin 2t\\} = \\frac{4(s - 3)}{[(s - 3)^2 + 4]^2} = \\frac{4(s - 3)}{(s^2 - 6s + 13)^2}$$",
     "steps": [
       {
-        "text": "Since \\mathcal{L}\\{t sin 2t} = 4s",
+        "text": "Since \\mathcal{L}\\{t \\sin 2t\\} = 4s",
         "math": ""
       },
       {
@@ -9759,7 +9743,7 @@
         "math": ""
       }
     ],
-    "hint": "First compute \\mathcal{L}\\{t sin 2t} via -d/ds[2/(s^2+4)], then replace s with s - 3.",
+    "hint": "First compute $\\mathcal{L}\\{t \\sin 2t\\}$ via -d/ds[2/(s^2+4)], then replace s with s - 3.",
     "sillyTrap": "Sign Trap: e^{3t} shifts s to (s - 3), NOT (s + 3). Power Trap: Denominator is squared after differentiation.",
     "tag": "1M"
   },
@@ -10072,7 +10056,7 @@
     ],
     "correctOption": "A",
     "answer": "\\frac{1}{2}\\ln \\left(\\frac{s^2 + b^2}{s^2 + a^2}\\right)",
-    "solution": "1. $\\mathcal{L}\\{\\cos at - \\cos bt\\} = \\frac{s}{s^2 + a^2} - \\frac{s}{s^2 + b^2}$.\n2. Apply frequency integration: $\\int_s^\\infty \\left(\\frac{u}{u^2 + a^2} - \\frac{u}{u^2 + b^2}\\right)du$.\n3. Integrate: $\\left[\\frac{1}{2}\\ln \\left(\\frac{u^2 + a^2}{u^2 + b^2}\\right)\\right]_s^\\infty = 0 - \\frac{1}{2}\\ln \\left(\\frac{s^2 + a^2}{s^2 + b^2}\\right) = \\frac{1}{2}\\ln \\left(\\frac{s^2 + b^2}{s^2 + a^2}\\right)$.",
+    "solution": "1. $\\mathcal{L}\\{\\\\cos at - \\cos bt\\} = \\frac{s}{s^2 + a^2} - \\frac{s}{s^2 + b^2}$.\n2. Apply frequency integration: $\\int_s^\\infty \\left(\\frac{u}{u^2 + a^2} - \\frac{u}{u^2 + b^2}\\right)du$.\n3. Integrate: $\\left[\\frac{1}{2}\\ln \\left(\\frac{u^2 + a^2}{u^2 + b^2}\\right)\\right]_s^\\infty = 0 - \\frac{1}{2}\\ln \\left(\\frac{s^2 + a^2}{s^2 + b^2}\\right) = \\frac{1}{2}\\ln \\left(\\frac{s^2 + b^2}{s^2 + a^2}\\right)$.",
     "steps": [
       {
         "text": "Base transform of numerator:",
@@ -10100,32 +10084,32 @@
     "marksLabel": "1M",
     "level": "Rapid",
     "topic": "Laplace Transforms & Discontinuous Systems Problem",
-    "prompt": "Express f(t) = { 0, 0≤t<\\pi sin(t-\\pi ), t ≥\\pi in terms of the unit step function u(t-\\pi ) and find \\mathcal{L}\\{f(t)}. [Set 1, Q.1(h) · 1M]",
+    "prompt": "Express f(t) = { 0, 0≤t<$\\pi$ sin(t-$\\pi$ ), t ≥$\\pi$ in terms of the unit step function u(t-$\\pi$ ) and find $\\mathcal{L}\\{f(t)\\}$. [Set 1, Q.1(h) · 1M]",
     "promptMath": "",
     "options": [
       {
         "id": "A",
-        "text": "e-\\pi s \\mathcal{L}\\{\\sin t} = e-\\pi s"
+        "text": "e-\\pi s \\mathcal{L}\\{\\\\sin t\\} = e-\\pi s"
       },
       {
         "id": "B",
-        "text": "-e-\\pi s \\mathcal{L}\\{\\sin t} = e-\\pi s"
+        "text": "-e-\\pi s \\mathcal{L}\\{\\\\sin t\\} = e-\\pi s"
       },
       {
         "id": "C",
-        "text": "2e-\\pi s \\mathcal{L}\\{\\sin t} = e-\\pi s"
+        "text": "2e-\\pi s \\mathcal{L}\\{\\\\sin t\\} = e-\\pi s"
       },
       {
         "id": "D",
-        "text": "e-\\pi s \\ma2thcal{L}\\{\\sin 2t} = e-\\pi s"
+        "text": "e-\\pi s \\ma2thcal{L}\\{\\sin 2t\\} = e-\\pi s"
       }
     ],
     "correctOption": "A",
-    "answer": "e-\\pi s \\mathcal{L}\\{\\sin t} = e-\\pi s",
-    "solution": "f(t) = sin(t-\\pi )u(t-\\pi ). By the Second Shifting Theorem,\\mathcal{L}\\{f(t)} =e-\\pi s \\mathcal{L}\\{\\sin t} = e-\\pi s s^2 + 1.",
+    "answer": "e-\\pi s \\mathcal{L}\\{\\\\sin t\\} = e-\\pi s",
+    "solution": "f(t) = sin(t-$\\pi$ )u(t-$\\pi$ ). By the Second Shifting Theorem,$\\mathcal{L}\\{f(t)\\}$ =e-$\\pi$ s $\\mathcal{L}\\{\\\\sin t\\}$ = e-$\\pi$ s s^2 + 1.",
     "steps": [
       {
-        "text": "f(t) = sin(t-\\pi )u(t-\\pi ). By the Second Shifting Theorem,\\mathcal{L}\\{f(t)} =e-\\pi s \\mathcal{L}\\{\\sin t} = e-\\pi s",
+        "text": "f(t) = sin(t-$\\pi$ )u(t-$\\pi$ ). By the Second Shifting Theorem,$\\mathcal{L}\\{f(t)\\}$ =e-$\\pi$ s $\\mathcal{L}\\{\\\\sin t\\}$ = e-$\\pi$ s",
         "math": ""
       },
       {
@@ -10172,14 +10156,14 @@
     ],
     "correctOption": "A",
     "answer": "s(e^{-s}-e^{-4s})",
-    "solution": "Using \\mathcal{L}\\{u(t-a)} = e^{-as} s :\\mathcal{L}\\{f(t)} = 5 s(e^{-s}-e^{-4s}).",
+    "solution": "Using $\\mathcal{L}\\{u(t-a)\\}$ = e^{-as} s :$\\mathcal{L}\\{f(t)\\}$ = 5 s(e^{-s}-e^{-4s}).",
     "steps": [
       {
-        "text": "Using \\mathcal{L}\\{u(t-a)} = e^{-as}",
+        "text": "Using $\\mathcal{L}\\{u(t-a)\\}$ = e^{-as}",
         "math": ""
       },
       {
-        "text": "s :\\mathcal{L}\\{f(t)} = 5",
+        "text": "s :\\mathcal{L}\\{f(t)\\} = 5",
         "math": ""
       },
       {
@@ -10200,7 +10184,7 @@
     "marksLabel": "1M",
     "level": "Rapid",
     "topic": "Laplace Transforms & Discontinuous Systems Problem",
-    "prompt": "Express f(t) =t2u(t- 1) in terms of (t- 1) and find \\mathcal{L}\\{t2u(t- 1)}.",
+    "prompt": "Express f(t) =t2u(t- 1) in terms of (t- 1) and find $\\mathcal{L}\\{t2u(t- 1)\\}$.",
     "promptMath": "",
     "options": [
       {
@@ -10226,10 +10210,10 @@
     ],
     "correctOption": "A",
     "answer": "e^{-s} ( 2 s^3 + 2 s^2 + 1 s )",
-    "solution": "Writing t^2 = [(t-1)+1] 2 = (t-1)^2 +2(t-1)+1 (or using e^{-s}\\mathcal{L}\\{(t+1) 2}):\\mathcal{L}\\{t2u(t-1)} = e^{-s} ( 2 s^3 + 2 s^2 + 1 s ) .",
+    "solution": "Writing t^2 = [(t-1)+1] 2 = (t-1)^2 +2(t-1)+1 (or using e^{-s}$\\mathcal{L}\\{(t+1) 2\\}$):$\\mathcal{L}\\{t2u(t-1)\\}$ = e^{-s} ( 2 s^3 + 2 s^2 + 1 s ) .",
     "steps": [
       {
-        "text": "Writing t^2 = [(t-1)+1] 2 = (t-1)^2 +2(t-1)+1 (or using e^{-s}\\mathcal{L}\\{(t+1) 2}):\\mathcal{L}\\{t2u(t-1)} =",
+        "text": "Writing t^2 = [(t-1)+1] 2 = (t-1)^2 +2(t-1)+1 (or using e^{-s}$\\mathcal{L}\\{(t+1) 2\\}$):$\\mathcal{L}\\{t2u(t-1)\\}$ =",
         "math": ""
       },
       {
@@ -10304,7 +10288,7 @@
     "marksLabel": "1M",
     "level": "Rapid",
     "topic": "Laplace Transforms & Discontinuous Systems Problem",
-    "prompt": "Evaluate \\mathcal{L}^{-1}\\{1 +e-\\pi s s^2 + 1 } .",
+    "prompt": "Evaluate $\\mathcal{L}^{-1}\\{1 +e-\\pi s s^2 + 1 \\}$ .",
     "promptMath": "",
     "options": [
       {
@@ -10416,7 +10400,7 @@
     "marksLabel": "1M",
     "level": "Rapid",
     "topic": "Laplace Transforms & Discontinuous Systems Problem",
-    "prompt": "Evaluate \\mathcal{L}^{-1}\\{e^{-2s} s(s + 1) } .",
+    "prompt": "Evaluate $\\mathcal{L}$^{-1}\\{e^{-2s} s(s + 1) } .",
     "promptMath": "",
     "options": [
       {
@@ -10470,32 +10454,32 @@
     "marksLabel": "1M",
     "level": "Rapid",
     "topic": "Laplace Transforms & Discontinuous Systems Problem",
-    "prompt": "Find \\mathcal{L}\\{(t- 2)u(t- 2)}.",
+    "prompt": "Find $\\mathcal{L}\\{(t- 2)u(t- 2)\\}$.",
     "promptMath": "",
     "options": [
       {
         "id": "A",
-        "text": "t and a = 2: e^{-2s}\\mathcal{L}\\{t} = e^{-2s}"
+        "text": "t and a = 2: e^{-2s}\\mathcal{L}\\{t\\} = e^{-2s}"
       },
       {
         "id": "B",
-        "text": "-t and a = 2: e^{-2s}\\mathcal{L}\\{t} = e^{-2s}"
+        "text": "-t and a = 2: e^{-2s}\\mathcal{L}\\{t\\} = e^{-2s}"
       },
       {
         "id": "C",
-        "text": "t and a = 4: e^{-2s}\\mathcal{L}\\{t} = e^{-2s}"
+        "text": "t and a = 4: e^{-2s}\\mathcal{L}\\{t\\} = e^{-2s}"
       },
       {
         "id": "D",
-        "text": "2t and a = 2: e^{-2s}\\ma2thcal{L}\\{2t} = e^{-2s}"
+        "text": "2t and a = 2: e^{-2s}\\ma2thcal{L}\\{2t\\} = e^{-2s}"
       }
     ],
     "correctOption": "A",
-    "answer": "t and a = 2: e^{-2s}\\mathcal{L}\\{t} = e^{-2s}",
-    "solution": "By Second Shifting with f(t) =t and a = 2: e^{-2s}\\mathcal{L}\\{t} = e^{-2s} s^2 .",
+    "answer": "t and a = 2: e^{-2s}\\mathcal{L}\\{t\\} = e^{-2s}",
+    "solution": "By Second Shifting with f(t) =t and a = 2: e^{-2s}$\\mathcal{L}\\{t\\}$ = e^{-2s} s^2 .",
     "steps": [
       {
-        "text": "By Second Shifting with f(t) =t and a = 2: e^{-2s}\\mathcal{L}\\{t} = e^{-2s}",
+        "text": "By Second Shifting with f(t) =t and a = 2: e^{-2s}$\\mathcal{L}\\{t\\}$ = e^{-2s}",
         "math": ""
       },
       {
@@ -10600,15 +10584,15 @@
     ],
     "correctOption": "A",
     "answer": "\\frac{1}{4}t \\sin 2t",
-    "solution": "1. Base transform: $\\mathcal{L}\\{\\sin 2t\\} = \\frac{2}{s^2 + 4}$.\n2. Differentiate with respect to $s$: $\\frac{d}{ds}\\left(\\frac{2}{s^2 + 4}\\right) = -\\frac{4s}{(s^2 + 4)^2}$.\n3. By frequency differentiation $\\mathcal{L}\\{t \\sin 2t\\} = \\frac{4s}{(s^2 + 4)^2}$.\n4. Conclude: $\\mathcal{L}^{-1}\\left\\{\\frac{s}{(s^2 + 4)^2}\\right\\} = \\frac{1}{4}t \\sin 2t$.",
+    "solution": "1. Base transform: $\\mathcal{L}\\{\\\\sin 2t\\} = \\frac{2}{s^2 + 4}$.\n2. Differentiate with respect to $s$: $\\frac{d}{ds}\\left(\\frac{2}{s^2 + 4}\\right) = -\\frac{4s}{(s^2 + 4)^2}$.\n3. By frequency differentiation $\\mathcal{L}\\{t \\\\sin 2t\\} = \\frac{4s}{(s^2 + 4)^2}$.\n4. Conclude: $\\mathcal{L}^{-1}\\left\\{\\frac{s}{(s^2 + 4)^2}\\right\\} = \\frac{1}{4}t \\sin 2t$.",
     "steps": [
       {
         "text": "Base transform:",
-        "math": "\\mathcal{L}\\{\\sin 2t\\} = \\frac{2}{s^2 + 4}"
+        "math": "\\mathcal{L}\\{\\\\sin 2t\\} = \\frac{2}{s^2 + 4}"
       },
       {
         "text": "Apply frequency derivative -d/ds:",
-        "math": "\\mathcal{L}\\{t\\sin 2t\\} = \\frac{4s}{(s^2 + 4)^2}"
+        "math": "\\mathcal{L}\\{t\\\\sin 2t\\} = \\frac{4s}{(s^2 + 4)^2}"
       },
       {
         "text": "Divide by 4 to solve for target inverse:",
@@ -10628,7 +10612,7 @@
     "marksLabel": "1M",
     "level": "Rapid",
     "topic": "Laplace Transforms & Discontinuous Systems Problem",
-    "prompt": "Evaluate \\int_{0}^{1} x-1/2(1-x)-1/2dx (or \\mathcal{L}\\{t-1/2}∗\\mathcal{L}\\{ t-1/2} at t = 1).",
+    "prompt": "Evaluate $\\int$_{0}^{1} x-1/2(1-x)-1/2dx (or $\\mathcal{L}\\{t-1/2\\}$∗$\\mathcal{L}\\{ t-1/2\\}$ at t = 1).",
     "promptMath": "",
     "options": [
       {
@@ -10736,7 +10720,7 @@
     "marksLabel": "6M",
     "level": "Standard",
     "topic": "Laplace Transforms & Discontinuous Systems Problem",
-    "prompt": "State the Convolution Theorem and use it to evaluate \\mathcal{L}^{-1}\\{ 1 (s^2 +a2)^2 } .",
+    "prompt": "State the Convolution Theorem and use it to evaluate $\\mathcal{L}^{-1}\\{ 1 (s^2 +a2)^2 \\}$ .",
     "promptMath": "",
     "options": [
       {
@@ -10758,7 +10742,7 @@
     ],
     "correctOption": "A",
     "answer": "\\sin at- at \\cos at",
-    "solution": "With f(t) =g(t) = sinat a : \\mathcal{L}^{-1}\\{ 1 (s^2 +a2)^2 } = 1 a2 \\int_0^t sin(a \\tau ) sina(t-\\tau )d \\tau = 1 2a2 \\int_0^t [cosa(2\\tau -t)- cosat]d \\tau = sin at- at cos at 2a3 .",
+    "solution": "With f(t) =g(t) = sinat a : $\\mathcal{L}^{-1}\\{ 1 (s^2 +a2)^2 \\}$ = 1 a2 $\\int$_0^t sin(a $\\tau$ ) sina(t-$\\tau$ )d $\\tau$ = 1 2a2 $\\int$_0^t [cosa(2$\\tau$ -t)- cosat]d $\\tau$ = sin at- at cos at 2a3 .",
     "steps": [
       {
         "text": "With f(t) =g(t) = sinat",
@@ -10844,7 +10828,7 @@
     "marksLabel": "6M",
     "level": "Standard",
     "topic": "Laplace Transforms & Discontinuous Systems Problem",
-    "prompt": "Solve the Volterra integral equation y(t)- \\int_0^t y(\\tau ) sin(t-\\tau )d \\tau =t using the Laplace transform method. [Set 2, Q.6(b) · 4M]",
+    "prompt": "Solve the Volterra integral equation y(t)- $\\int$_0^t y($\\tau$ ) sin(t-$\\tau$ )d $\\tau$ =t using the Laplace transform method. [Set 2, Q.6(b) · 4M]",
     "promptMath": "",
     "options": [
       {
@@ -11010,7 +10994,7 @@
     "marksLabel": "6M",
     "level": "Standard",
     "topic": "Laplace Transforms & Discontinuous Systems Problem",
-    "prompt": "Using the Laplace transform method, solve the integral equation y(t) + 2 \\int_0^t y(\\tau ) cos(t-\\tau )d \\tau = \\sin t. [Set 4, Q.6(b) · 4M]",
+    "prompt": "Using the Laplace transform method, solve the integral equation y(t) + 2 $\\int$_0^t y($\\tau$ ) cos(t-$\\tau$ )d $\\tau$ = $\\sin$ t. [Set 4, Q.6(b) · 4M]",
     "promptMath": "",
     "options": [
       {
@@ -11176,7 +11160,7 @@
     "marksLabel": "6M",
     "level": "Standard",
     "topic": "Laplace Transforms & Discontinuous Systems Problem",
-    "prompt": "Using the Laplace transform method, solve the integral-differential equation y′(t) + 5 \\int_0^t y(\\tau )d \\tau + 4y(t) = 8e^{-t}, y(0) = 0.",
+    "prompt": "Using the Laplace transform method, solve the integral-differential equation y′(t) + 5 $\\int$_0^t y($\\tau$ )d $\\tau$ + 4y(t) = 8e^{-t}, y(0) = 0.",
     "promptMath": "",
     "options": [
       {
@@ -11758,10 +11742,10 @@
     ],
     "correctOption": "A",
     "answer": "ty(t) = \\sin t \\implies y(t) = \\sin t",
-    "solution": "Using \\mathcal{L}\\{ty′′} =-s2Y′(s)-2sY (s)+y(0) and \\mathcal{L}\\{ty} =-Y′(s): [-s2Y′-2sY +y(0)]+2[sY- y(0)]-Y′ = 0 \\implies -(s^2 + 1)Y′(s) =y(0) = 1 \\implies -Y′(s) = 1 s^2 + 1. Inverting gives ty(t) = \\sin t \\implies y(t) = sin t t .",
+    "solution": "Using $\\mathcal{L}\\{ty′′\\}$ =-s2Y′(s)-2sY (s)+y(0) and $\\mathcal{L}\\{ty\\}$ =-Y′(s): [-s2Y′-2sY +y(0)]+2[sY- y(0)]-Y′ = 0 $\\implies$ -(s^2 + 1)Y′(s) =y(0) = 1 $\\implies$ -Y′(s) = 1 s^2 + 1. Inverting gives ty(t) = $\\sin$ t $\\implies$ y(t) = sin t t .",
     "steps": [
       {
-        "text": "Using \\mathcal{L}\\{ty′′} =-s2Y′(s)-2sY (s)+y(0) and \\mathcal{L}\\{ty} =-Y′(s): [-s2Y′-2sY +y(0)]+2[sY-",
+        "text": "Using $\\mathcal{L}\\{ty′′\\}$ =-s2Y′(s)-2sY (s)+y(0) and $\\mathcal{L}\\{ty\\}$ =-Y′(s): [-s2Y′-2sY +y(0)]+2[sY-",
         "math": ""
       },
       {
@@ -11936,7 +11920,7 @@
       }
     ],
     "hint": "Express discontinuous piecewise forcing using unit step $u(t - a)$ and apply $\\mathcal{L}\\{g(t)u(t - a)\\} = e^{-as}\\mathcal{L}\\{g(t+a)\\}$.",
-    "sillyTrap": "Sine Coefficient Factor: Remember that \\mathcal{L}^{-1}\\{omega / ((s+1)^2 + omega^2)} = e^{-t} sin(omega t). For omega = 2, divide by 2.",
+    "sillyTrap": "Sine Coefficient Factor: Remember that $\\mathcal{L}^{-1}\\{omega / ((s+1)^2 + omega^2)\\}$ = e^{-t} sin(omega t). For omega = 2, divide by 2.",
     "tag": "6M"
   },
   {
@@ -12329,7 +12313,7 @@
         "math": ""
       }
     ],
-    "hint": "Transform into Y(s) = 1/(s+2) + 2/(s+2)^2 + 2/(s+2)^5. Recall \\mathcal{L}^{-1}\\{1/(s+2)^5} = (t^4/4!)e^{-2t}.",
+    "hint": "Transform into Y(s) = 1/(s+2) + 2/(s+2)^2 + 2/(s+2)^5. Recall \\mathcal{L}^{-1}\\{1/(s+2)^5\\} = (t^4/4!)e^{-2t}.",
     "sillyTrap": "Factorial Trap: 4! = 24. Therefore 2 / 24 = 1 / 12, not 1/4.",
     "tag": "6M"
   },
@@ -12620,45 +12604,45 @@
     "marksLabel": "6M",
     "level": "Standard",
     "topic": "Laplace Transforms & Discontinuous Systems Problem",
-    "prompt": "Using the Laplace transform method, solve y′′ +y′- 2y = { 3 \\sin t- \\cos t, 0<t< 2\\pi 3 sin 2t- cos 2t, t> 2\\pi , given y(0) = 1 and y′(0) = 0.",
+    "prompt": "Using the Laplace transform method, solve $y'' + y' - 2y = g(t)$ where $g(t) = 3\\sin t - \\cos t$ for $0 < t < 2\\pi$ and $g(t) = 3\\sin 2t - \\cos 2t$ for $t > 2\\pi$, given $y(0) = 1, y'(0) = 0$.",
     "promptMath": "",
     "options": [
       {
         "id": "A",
-        "text": "for t> 2\\pi"
+        "text": "y(t) = \\frac{1}{3}(e^t + 2e^{-2t}) - \\sin t\\quad (0 < t < 2\\pi)",
+        "isCorrect": true
       },
       {
         "id": "B",
-        "text": "-for t> 2\\pi"
+        "text": "y(t) = \\frac{1}{3}(e^t - 2e^{-2t}) - \\sin t\\quad (0 < t < 2\\pi)",
+        "isCorrect": false
       },
       {
         "id": "C",
-        "text": "for t> 4\\pi"
+        "text": "y(t) = e^t - \\sin t\\quad (0 < t < 2\\pi)",
+        "isCorrect": false
       },
       {
         "id": "D",
-        "text": "for 2t> 2\\pi"
+        "text": "y(t) = e^{-2t} - \\cos t\\quad (0 < t < 2\\pi)",
+        "isCorrect": false
       }
     ],
     "correctOption": "A",
-    "answer": "for t> 2\\pi",
-    "solution": "(s- 1)(s + 2)Y = s + 1 + 3-s s^2 + 1(1-e-2\\pi s) + 6-s s^2 + 4e-2\\pi s. Inverting via partial fractions givesy(t) = 1 3(et + 2e^{-2t})- \\sin t for 0<t< 2\\pi , andy(t) = 1 3(et + 2e^{-2t})- 1 3(et-2\\pi -e-2(t-2\\pi ))- 1 2 sin 2t for t> 2\\pi .",
+    "answer": "y(t) = \\frac{1}{3}(e^t + 2e^{-2t}) - \\sin t\\quad (0 < t < 2\\pi)",
+    "solution": "1. Transform equation: $(s-1)(s+2)Y(s) = s + 1 + \\mathcal{L}\\{g(t)\\}$.\\n2. For $0 < t < 2\\pi$, $y(t) = \\frac{1}{3}(e^t + 2e^{-2t}) - \\sin t$.\\n3. For $t > 2\\pi$, shift terms apply via the second shifting theorem.",
     "steps": [
       {
-        "text": "(s- 1)(s + 2)Y = s + 1 + 3-s",
-        "math": ""
+        "text": "Apply Laplace transform to differential equation:",
+        "math": "(s^2 + s - 2)Y(s) - sy(0) - y'(0) - y(0) = G(s)"
       },
       {
-        "text": "s^2 + 1(1-e-2\\pi s) + 6-s",
-        "math": ""
+        "text": "Solve for Y(s):",
+        "math": "Y(s) = \\frac{s + 1}{(s-1)(s+2)} + \\frac{G(s)}{(s-1)(s+2)}"
       },
       {
-        "text": "s^2 + 4e-2\\pi s. Inverting via partial fractions",
-        "math": ""
-      },
-      {
-        "text": "givesy(t) = 1",
-        "math": ""
+        "text": "Invert for 0 < t < 2π:",
+        "math": "y(t) = \\frac{1}{3}(e^t + 2e^{-2t}) - \\sin t"
       }
     ],
     "hint": "Express discontinuous piecewise forcing using unit step $u(t - a)$ and apply $\\mathcal{L}\\{g(t)u(t - a)\\} = e^{-as}\\mathcal{L}\\{g(t+a)\\}$.",
@@ -12924,10 +12908,10 @@
     ],
     "correctOption": "A",
     "answer": "Y (s) = 5 s + 1 \\implies y(t) = 5e^{-t}",
-    "solution": "Using \\mathcal{L}\\{ty′′} =-s2Y′- 2sY +y(0) and \\mathcal{L}\\{ty′} =-sY′-Y , the ODE transforms to -s(s + 1)Y′- (3s + 2)Y + 10 = 0. Solving this linear first-order ODE with the boundedness condition y(\\infty ) = 0 yields Y (s) = 5 s + 1 \\implies y(t) = 5e^{-t}.",
+    "solution": "Using $\\mathcal{L}\\{ty′′\\}$ =-s2Y′- 2sY +y(0) and $\\mathcal{L}\\{ty′\\}$ =-sY′-Y , the ODE transforms to -s(s + 1)Y′- (3s + 2)Y + 10 = 0. Solving this linear first-order ODE with the boundedness condition y($\\infty$ ) = 0 yields Y (s) = 5 s + 1 $\\implies$ y(t) = 5e^{-t}.",
     "steps": [
       {
-        "text": "Using \\mathcal{L}\\{ty′′} =-s2Y′- 2sY +y(0) and \\mathcal{L}\\{ty′} =-sY′-Y , the ODE transforms to",
+        "text": "Using $\\mathcal{L}\\{ty′′\\}$ =-s2Y′- 2sY +y(0) and $\\mathcal{L}\\{ty′\\}$ =-sY′-Y , the ODE transforms to",
         "math": ""
       },
       {
@@ -13086,10 +13070,10 @@
     ],
     "correctOption": "A",
     "answer": "(s + 3)^3",
-    "solution": "Base transform: \\mathcal{L}\\{t^2} = 2! s^3 = 2 s^3 . Multiplying by e^{-3t} shifts s \\to (s + 3): \\mathcal{L}\\{t2e^{-3t}} = [2 s^3 ] s \\to s+3 = 2 (s + 3)^3",
+    "solution": "Base transform: $\\mathcal{L}\\{t^2\\}$ = 2! s^3 = 2 s^3 . Multiplying by e^{-3t} shifts s $\\to$ (s + 3): $\\mathcal{L}$\\{t2e^{-3t}} = [2 s^3 ] s $\\to$ s+3 = 2 (s + 3)^3",
     "steps": [
       {
-        "text": "Base transform: \\mathcal{L}\\{t^2} = 2!",
+        "text": "Base transform: \\mathcal{L}\\{t^2\\} = 2!",
         "math": ""
       },
       {
@@ -13101,7 +13085,7 @@
         "math": ""
       },
       {
-        "text": "\\mathcal{L}\\{t2e-3t} =",
+        "text": "\\mathcal{L}\\{t2e-3t\\} =",
         "math": ""
       }
     ],
@@ -13144,23 +13128,19 @@
     ],
     "correctOption": "A",
     "answer": "s^2 + 2s- 15",
-    "solution": "Base transform: \\mathcal{L}\\{sinh 4t} = 4 s^2- 16. Multiplying by e^{-t} shifts s \\to (s + 1): \\mathcal{L}\\{e^{-t} sinh 4t} = 4 (s + 1)^2- 16 = 4 s^2 + 2s- 15",
+    "solution": "Base transform: $\\mathcal{L}\\{\\sinh 4t\\}$ = 4 s^2- 16. Multiplying by e^{-t} shifts s $\\to$ (s + 1): $\\mathcal{L}$\\{e^{-t} sinh 4t} = 4 (s + 1)^2- 16 = 4 s^2 + 2s- 15",
     "steps": [
       {
-        "text": "Base transform: \\mathcal{L}\\{sinh 4t} = 4",
-        "math": ""
+        "text": "Base transform:",
+        "math": "\\mathcal{L}\\{\\sinh 4t\\} = \\frac{4}{s^2 - 16}"
       },
       {
-        "text": "s^2- 16. Multiplying by e^{-t} shifts s \\to (s + 1):",
-        "math": ""
+        "text": "Apply first shifting theorem with a = -1:",
+        "math": "\\mathcal{L}\\{e^{-t}\\sinh 4t\\} = \\frac{4}{(s + 1)^2 - 16}"
       },
       {
-        "text": "\\mathcal{L}\\{e^{-t} sinh 4t} = 4",
-        "math": ""
-      },
-      {
-        "text": "(s + 1)^2- 16 = 4",
-        "math": ""
+        "text": "Simplify denominator:",
+        "math": "\\frac{4}{s^2 + 2s - 15}"
       }
     ],
     "hint": "Express discontinuous piecewise forcing using unit step $u(t - a)$ and apply $\\mathcal{L}\\{g(t)u(t - a)\\} = e^{-as}\\mathcal{L}\\{g(t+a)\\}$.",
@@ -13202,7 +13182,7 @@
     ],
     "correctOption": "A",
     "answer": "\\frac{1}{2}\\left[\\frac{1}{s + 0.5} + \\frac{s + 0.5}{(s + 0.5)^2 + 4}\\right]",
-    "solution": "1. Half-angle identity: $\\cos^2 t = \\frac{1 + \\cos 2t}{2}$.\n2. Base transform: $\\mathcal{L}\\{\\cos^2 t\\} = \\frac{1}{2}\\left(\\frac{1}{s} + \\frac{s}{s^2 + 4}\\right)$.\n3. Apply First Shifting ($s \\to s + 0.5$):\n$$\\mathcal{L}\\{e^{-0.5t}\\cos^2 t\\} = \\frac{1}{2}\\left[\\frac{1}{s + 0.5} + \\frac{s + 0.5}{(s + 0.5)^2 + 4}\\right]$$",
+    "solution": "1. Half-angle identity: $\\cos^2 t = \\frac{1 + \\cos 2t}{2}$.\n2. Base transform: $\\mathcal{L}\\{\\\\cos^2 t\\} = \\frac{1}{2}\\left(\\frac{1}{s} + \\frac{s}{s^2 + 4}\\right)$.\n3. Apply First Shifting ($s \\to s + 0.5$):\n$$\\mathcal{L}\\{e^{-0.5t}\\cos^2 t\\} = \\frac{1}{2}\\left[\\frac{1}{s + 0.5} + \\frac{s + 0.5}{(s + 0.5)^2 + 4}\\right]$$",
     "steps": [
       {
         "text": "Express in linear trigonometric form:",
@@ -13210,7 +13190,7 @@
       },
       {
         "text": "Compute base transform:",
-        "math": "\\mathcal{L}\\{\\cos^2 t\\} = \\frac{1}{2}\\left(\\frac{1}{s} + \\frac{s}{s^2 + 4}\\right)"
+        "math": "\\mathcal{L}\\{\\\\cos^2 t\\} = \\frac{1}{2}\\left(\\frac{1}{s} + \\frac{s}{s^2 + 4}\\right)"
       },
       {
         "text": "Apply First Shifting s -> s + 0.5:",
@@ -13256,7 +13236,7 @@
     ],
     "correctOption": "A",
     "answer": "\\frac{s^3}{s^4 + 64}",
-    "solution": "1. Expand hyperbolic cosine: $\\cosh 2t \\cos 2t = \\frac{1}{2}(e^{2t}\\cos 2t + e^{-2t}\\cos 2t)$.\n2. Base transform: $\\mathcal{L}\\{\\cos 2t\\} = \\frac{s}{s^2 + 4}$.\n3. Apply First Shifting to each term:\n$$\\frac{1}{2}\\left[\\frac{s - 2}{(s - 2)^2 + 4} + \\frac{s + 2}{(s + 2)^2 + 4}\\right] = \\frac{s^3}{s^4 + 64}$$",
+    "solution": "1. Expand hyperbolic cosine: $\\cosh 2t \\cos 2t = \\frac{1}{2}(e^{2t}\\cos 2t + e^{-2t}\\cos 2t)$.\n2. Base transform: $\\mathcal{L}\\{\\\\cos 2t\\} = \\frac{s}{s^2 + 4}$.\n3. Apply First Shifting to each term:\n$$\\frac{1}{2}\\left[\\frac{s - 2}{(s - 2)^2 + 4} + \\frac{s + 2}{(s + 2)^2 + 4}\\right] = \\frac{s^3}{s^4 + 64}$$",
     "steps": [
       {
         "text": "Expand hyperbolic definition:",
@@ -13284,49 +13264,41 @@
     "marksLabel": "1M",
     "level": "Rapid",
     "topic": "Laplace Transforms & Discontinuous Systems Problem",
-    "prompt": "f(t) =e^{3t}(2t2- sin 5t) Find the inverse Laplace transform \\mathcal{L}^{-1}\\{F (s)} using First Shifting (Q6 – Q10):",
+    "prompt": "Find $\\mathcal{L}\\{e^{3t}(2t^2 - \\sin 5t)\\}$.",
     "promptMath": "",
     "options": [
       {
         "id": "A",
-        "text": "(s- 3)^2 + 25",
+        "text": "\\frac{4}{(s - 3)^3} - \\frac{5}{(s - 3)^2 + 25}",
         "isCorrect": true
       },
       {
         "id": "B",
-        "text": "(s- 3)^2 - 25",
+        "text": "\\frac{4}{(s + 3)^3} - \\frac{5}{(s + 3)^2 + 25}",
         "isCorrect": false
       },
       {
         "id": "C",
-        "text": "(s- 3)^4 + 25",
+        "text": "\\frac{2}{(s - 3)^3} - \\frac{5}{(s - 3)^2 + 25}",
         "isCorrect": false
       },
       {
         "id": "D",
-        "text": "(s- 5)^2 + 25",
+        "text": "\\frac{4}{(s - 3)^3} + \\frac{5}{(s - 3)^2 + 25}",
         "isCorrect": false
       }
     ],
     "correctOption": "A",
-    "answer": "(s- 3)^2 + 25",
-    "solution": "Base transform: \\mathcal{L}\\{2t2- sin 5t} = 2 (2! s^3 ) - 5 s^2 + 25 = 4 s^3- 5 s^2 + 25. Apply e^{3t} (s \\to s- 3): \\mathcal{L}\\{e^{3t}(2t2- sin 5t)} = 4 (s- 3)^3- 5 (s- 3)^2 + 25",
+    "answer": "\\frac{4}{(s - 3)^3} - \\frac{5}{(s - 3)^2 + 25}",
+    "solution": "1. Base transform: $\\mathcal{L}\\{2t^2 - \\sin 5t\\} = \\frac{4}{s^3} - \\frac{5}{s^2 + 25}$.\\n2. Apply first shifting ($s \\to s - 3$):\\n$$\\mathcal{L}\\{e^{3t}(2t^2 - \\sin 5t)\\} = \\frac{4}{(s - 3)^3} - \\frac{5}{(s - 3)^2 + 25}$$",
     "steps": [
       {
-        "text": "Base transform: \\mathcal{L}\\{2t2- sin 5t} = 2",
-        "math": ""
+        "text": "Base transform:",
+        "math": "\\mathcal{L}\\{2t^2 - \\sin 5t\\} = \\frac{4}{s^3} - \\frac{5}{s^2 + 25}"
       },
       {
-        "text": "(2!",
-        "math": ""
-      },
-      {
-        "text": "s^3",
-        "math": ""
-      },
-      {
-        "text": ")",
-        "math": ""
+        "text": "First shifting theorem s -> s - 3:",
+        "math": "\\mathcal{L}\\{e^{3t}(2t^2 - \\sin 5t)\\} = \\frac{4}{(s - 3)^3} - \\frac{5}{(s - 3)^2 + 25}"
       }
     ],
     "hint": "Find base transform $F(s) = \\mathcal{L}\\{f(t)\\}$, then apply First Shifting Theorem $\\mathcal{L}\\{e^{at}f(t)\\} = F(s - a)$.",
@@ -13426,7 +13398,7 @@
     ],
     "correctOption": "A",
     "answer": "e^{2t} ( \\cos 3t + 2 3 \\sin 3t )",
-    "solution": "Complete the square: s^2- 4s + 13 = (s- 2)^2 + 32. Match (s- 2) in the numerator: s = (s- 2) + 2. Pull out e^{2t}: \\mathcal{L}^{-1}\\{(s- 2) + 2 (s- 2)^2 + 32 } =e^{2t}\\mathcal{L}^{-1}\\{ s s^2 + 32 + 2 s^2 + 32 } =e^{2t} ( cos 3t + 2 3 sin 3t )",
+    "solution": "Complete the square: s^2- 4s + 13 = (s- 2)^2 + 32. Match (s- 2) in the numerator: s = (s- 2) + 2. Pull out e^{2t}: \\mathcal{L}^{-1}\\{(s- 2) + 2 (s- 2)^2 + 32 \\} =e^{2t}\\mathcal{L}^{-1}\\{ s s^2 + 32 + 2 s^2 + 32 \\} =e^{2t} ( cos 3t + 2 3 sin 3t )",
     "steps": [
       {
         "text": "Complete the square: s^2- 4s + 13 = (s- 2)^2 + 32. Match (s- 2) in the numerator: s = (s- 2) + 2. Pull out",
@@ -13480,7 +13452,7 @@
     ],
     "correctOption": "A",
     "answer": "e^{-t} (3 \\cos 20t- 7 \\sin 20t)",
-    "solution": "Complete the square: s^2 +2s+401 = (s+1) 2 +20 2. Match (s+1) in the numerator: 3s-137 = 3(s+1)-140. Pull out e^{-t}: \\mathcal{L}^{-1}\\{3(s + 1)- 140 (s + 1)^2 + 202 } =e^{-t}\\mathcal{L}^{-1}\\{3s- 140 s^2 + 202 } =e^{-t} (3 cos 20t- 7 sin 20t)",
+    "solution": "Complete the square: s^2 +2s+401 = (s+1) 2 +20 2. Match (s+1) in the numerator: 3s-137 = 3(s+1)-140. Pull out e^{-t}: \\mathcal{L}^{-1}\\{3(s + 1)- 140 (s + 1)^2 + 202 \\} =e^{-t}\\mathcal{L}^{-1}\\{3s- 140 s^2 + 202 \\} =e^{-t} (3 cos 20t- 7 sin 20t)",
     "steps": [
       {
         "text": "Complete the square: s^2 +2s+401 = (s+1) 2 +20 2. Match (s+1) in the numerator: 3s-137 = 3(s+1)-140.",
@@ -13607,7 +13579,7 @@
         "math": "f(t) = e^{3t}\\left(t^2 + \\frac{11}{3}t^3\\right)"
       }
     ],
-    "hint": "Write the numerator as 2(s - 3) + 22 to match the denominator power, then use e^{3t}\\mathcal{L}^{-1}\\{...}.",
+    "hint": "Write the numerator as 2(s - 3) + 22 to match the denominator power, then use e^{3t}\\mathcal{L}^{-1}\\{...\\}.",
     "sillyTrap": "Sign Trap: Inverting (s - 3) gives e^{3t}, not e^{-3t}. Factorial Trap: Denominator s^4 requires dividing by 3! = 6, yielding 22/6 = 11/3.",
     "tag": "Laplace Master · 1M"
   },
@@ -13646,14 +13618,14 @@
     ],
     "correctOption": "A",
     "answer": "f(t) = sin2\\omega t \\implies f(0) = 0 and f′(t) = 2\\omega \\sin \\omega t \\cos \\omega t =\\omega \\sin 2\\omega t",
-    "solution": "Let f(t) = sin2\\omega t \\implies f(0) = 0 and f′(t) = 2\\omega sin \\omega t cos \\omega t =\\omega sin 2\\omega t. By \\mathcal{L}\\{f′} =s \\mathcal{L}\\{f}- f(0): s \\mathcal{L}\\{f}- 0 =\\omega ( 2\\omega s^2 + 4\\omega 2 ) \\implies \\mathcal{L}\\{sin2\\omega t} = 2\\omega 2 s(s^2 + 4\\omega 2)",
+    "solution": "Let f(t) = sin2$\\omega$ t $\\implies$ f(0) = 0 and f′(t) = 2$\\omega$ sin $\\omega$ t cos $\\omega$ t =$\\omega$ sin 2$\\omega$ t. By $\\mathcal{L}\\{f′\\}$ =s $\\mathcal{L}\\{f\\}$- f(0): s $\\mathcal{L}\\{f\\}$- 0 =$\\omega$ ( 2$\\omega$ s^2 + 4$\\omega$ 2 ) $\\implies$ $\\mathcal{L}\\{sin2\\omega t\\}$ = 2$\\omega$ 2 s(s^2 + 4$\\omega$ 2)",
     "steps": [
       {
-        "text": "Let f(t) = sin2\\omega t \\implies f(0) = 0 and f′(t) = 2\\omega sin \\omega t cos \\omega t =\\omega sin 2\\omega t. By \\mathcal{L}\\{f′} =s \\mathcal{L}\\{f}- f(0):",
+        "text": "Let f(t) = sin2$\\omega$ t $\\implies$ f(0) = 0 and f′(t) = 2$\\omega$ sin $\\omega$ t cos $\\omega$ t =$\\omega$ sin 2$\\omega$ t. By $\\mathcal{L}\\{f′\\}$ =s $\\mathcal{L}\\{f\\}$- f(0):",
         "math": ""
       },
       {
-        "text": "s \\mathcal{L}\\{f}- 0 =\\omega",
+        "text": "s \\mathcal{L}\\{f\\}- 0 =\\omega",
         "math": ""
       },
       {
@@ -13683,28 +13655,28 @@
     "options": [
       {
         "id": "A",
-        "text": "\\mathcal{L}\\{\\cos^2 2t\\} = \\frac{s^2 + 8}{s(s^2 + 16)}",
+        "text": "\\mathcal{L}\\{\\\\cos^2 2t\\} = \\frac{s^2 + 8}{s(s^2 + 16)}",
         "isCorrect": true
       },
       {
         "id": "B",
-        "text": "\\mathcal{L}\\{\\cos^2 2t\\} = \\frac{s^2 - 8}{s(s^2 + 16)}",
+        "text": "\\mathcal{L}\\{\\\\cos^2 2t\\} = \\frac{s^2 - 8}{s(s^2 + 16)}",
         "isCorrect": false
       },
       {
         "id": "C",
-        "text": "\\mathcal{L}\\{\\cos^2 2t\\} = \\frac{s^2 + 8}{s(s^2 + 4)}",
+        "text": "\\mathcal{L}\\{\\\\cos^2 2t\\} = \\frac{s^2 + 8}{s(s^2 + 4)}",
         "isCorrect": false
       },
       {
         "id": "D",
-        "text": "\\mathcal{L}\\{\\cos^2 2t\\} = \\frac{8}{s(s^2 + 16)}",
+        "text": "\\mathcal{L}\\{\\\\cos^2 2t\\} = \\frac{8}{s(s^2 + 16)}",
         "isCorrect": false
       }
     ],
     "correctOption": "A",
-    "answer": "\\mathcal{L}\\{\\cos^2 2t\\} = \\frac{s^2 + 8}{s(s^2 + 16)}",
-    "solution": "1. Half-angle identity: $\\cos^2 2t = \\frac{1 + \\cos 4t}{2}$.\n2. Transform individual terms: $\\mathcal{L}\\{\\cos^2 2t\\} = \\frac{1}{2}\\left(\\frac{1}{s} + \\frac{s}{s^2 + 16}\\right)$.\n3. Combine over common denominator: $\\frac{1}{2}\\left(\\frac{s^2 + 16 + s^2}{s(s^2 + 16)}\\right) = \\frac{2s^2 + 16}{2s(s^2 + 16)} = \\frac{s^2 + 8}{s(s^2 + 16)}$.",
+    "answer": "\\mathcal{L}\\{\\\\cos^2 2t\\} = \\frac{s^2 + 8}{s(s^2 + 16)}",
+    "solution": "1. Half-angle identity: $\\cos^2 2t = \\frac{1 + \\cos 4t}{2}$.\n2. Transform individual terms: $\\mathcal{L}\\{\\\\cos^2 2t\\} = \\frac{1}{2}\\left(\\frac{1}{s} + \\frac{s}{s^2 + 16}\\right)$.\n3. Combine over common denominator: $\\frac{1}{2}\\left(\\frac{s^2 + 16 + s^2}{s(s^2 + 16)}\\right) = \\frac{2s^2 + 16}{2s(s^2 + 16)} = \\frac{s^2 + 8}{s(s^2 + 16)}$.",
     "steps": [
       {
         "text": "Use trig identity:",
@@ -13737,28 +13709,28 @@
     "options": [
       {
         "id": "A",
-        "text": "\\mathcal{L}\\{\\cosh^2 t\\} = \\frac{s^2 - 2}{s(s^2 - 4)}",
+        "text": "\\mathcal{L}\\{\\\\cosh^2 t\\} = \\frac{s^2 - 2}{s(s^2 - 4)}",
         "isCorrect": true
       },
       {
         "id": "B",
-        "text": "\\mathcal{L}\\{\\cosh^2 t\\} = \\frac{s^2 + 2}{s(s^2 - 4)}",
+        "text": "\\mathcal{L}\\{\\\\cosh^2 t\\} = \\frac{s^2 + 2}{s(s^2 - 4)}",
         "isCorrect": false
       },
       {
         "id": "C",
-        "text": "\\mathcal{L}\\{\\cosh^2 t\\} = \\frac{s^2 - 2}{s(s^2 + 4)}",
+        "text": "\\mathcal{L}\\{\\\\cosh^2 t\\} = \\frac{s^2 - 2}{s(s^2 + 4)}",
         "isCorrect": false
       },
       {
         "id": "D",
-        "text": "\\mathcal{L}\\{\\cosh^2 t\\} = \\frac{2}{s(s^2 - 4)}",
+        "text": "\\mathcal{L}\\{\\\\cosh^2 t\\} = \\frac{2}{s(s^2 - 4)}",
         "isCorrect": false
       }
     ],
     "correctOption": "A",
-    "answer": "\\mathcal{L}\\{\\cosh^2 t\\} = \\frac{s^2 - 2}{s(s^2 - 4)}",
-    "solution": "1. Hyperbolic identity: $\\cosh^2 t = \\frac{1 + \\cosh 2t}{2}$.\n2. Transform: $\\mathcal{L}\\{\\cosh^2 t\\} = \\frac{1}{2}\\left(\\frac{1}{s} + \\frac{s}{s^2 - 4}\\right)$.\n3. Combine terms: $\\frac{1}{2}\\left(\\frac{s^2 - 4 + s^2}{s(s^2 - 4)}\\right) = \\frac{2s^2 - 4}{2s(s^2 - 4)} = \\frac{s^2 - 2}{s(s^2 - 4)}$.",
+    "answer": "\\mathcal{L}\\{\\\\cosh^2 t\\} = \\frac{s^2 - 2}{s(s^2 - 4)}",
+    "solution": "1. Hyperbolic identity: $\\cosh^2 t = \\frac{1 + \\cosh 2t}{2}$.\n2. Transform: $\\mathcal{L}\\{\\\\cosh^2 t\\} = \\frac{1}{2}\\left(\\frac{1}{s} + \\frac{s}{s^2 - 4}\\right)$.\n3. Combine terms: $\\frac{1}{2}\\left(\\frac{s^2 - 4 + s^2}{s(s^2 - 4)}\\right) = \\frac{2s^2 - 4}{2s(s^2 - 4)} = \\frac{s^2 - 2}{s(s^2 - 4)}$.",
     "steps": [
       {
         "text": "Hyperbolic half-angle identity:",
@@ -13773,7 +13745,7 @@
         "math": "\\frac{s^2 - 2}{s(s^2 - 4)}"
       }
     ],
-    "hint": "Use $\\cosh^2 t = \\frac{1 + \\cosh 2t}{2}$ and apply $\\mathcal{L}\\{\\cosh 2t\\} = \\frac{s}{s^2 - 4}$.",
+    "hint": "Use $\\cosh^2 t = \\frac{1 + \\cosh 2t}{2}$ and apply $\\mathcal{L}\\{\\\\cosh 2t\\} = \\frac{s}{s^2 - 4}$.",
     "sillyTrap": "Common Pitfall: Watch for algebraic sign flips (+/-) and constant multipliers when executing the inverse operation.",
     "tag": "Laplace Master · 1M"
   },
@@ -14028,18 +14000,18 @@
     ],
     "correctOption": "A",
     "answer": "f(t) =t [1-u(t- 2)] =t-tu (t- 2)",
-    "solution": "Writef(t) =t [1-u(t- 2)] =t-tu (t- 2). Apply \\mathcal{L}\\{g(t)u(t-a)} =e^{-as}\\mathcal{L}\\{g(t +a)}: \\mathcal{L}\\{f(t)} = 1 s^2-e^{-2s}\\mathcal{L}\\{t + 2} = 1 s^2-e^{-2s} ( 1 s^2 + 2 s )",
+    "solution": "Writef(t) =t [1-u(t- 2)] =t-tu (t- 2). Apply \\mathcal{L}\\{g(t)u(t-a)\\} =e^{-as}\\mathcal{L}\\{g(t +a)\\}: \\mathcal{L}\\{f(t)\\} = 1 s^2-e^{-2s}\\mathcal{L}\\{t + 2\\} = 1 s^2-e^{-2s} ( 1 s^2 + 2 s )",
     "steps": [
       {
-        "text": "Writef(t) =t [1-u(t- 2)] =t-tu (t- 2). Apply \\mathcal{L}\\{g(t)u(t-a)} =e^{-as}\\mathcal{L}\\{g(t +a)}:",
+        "text": "Writef(t) =t [1-u(t- 2)] =t-tu (t- 2). Apply \\mathcal{L}\\{g(t)u(t-a)\\} =e^{-as}\\mathcal{L}\\{g(t +a)\\}:",
         "math": ""
       },
       {
-        "text": "\\mathcal{L}\\{f(t)} = 1",
+        "text": "\\mathcal{L}\\{f(t)\\} = 1",
         "math": ""
       },
       {
-        "text": "s^2-e^{-2s}\\mathcal{L}\\{t + 2} = 1",
+        "text": "s^2-e^{-2s}\\mathcal{L}\\{t + 2\\} = 1",
         "math": ""
       },
       {
@@ -14060,49 +14032,45 @@
     "marksLabel": "4M",
     "level": "Standard",
     "topic": "Laplace Transforms & Discontinuous Systems Problem",
-    "prompt": "f(t) = { cos 4t, 0<t<\\pi 0, t>\\pi",
+    "prompt": "Find $\\mathcal{L}\\{f(t)\\}$ where $f(t) = \\cos 4t$ for $0 < t < \\pi$ and $0$ for $t > \\pi$.",
     "promptMath": "",
     "options": [
       {
         "id": "A",
-        "text": "s(1-e-\\pi s)",
+        "text": "\\frac{s(1 - e^{-\\pi s})}{s^2 + 16}",
         "isCorrect": true
       },
       {
         "id": "B",
-        "text": "s(1+e-\\pi s)",
+        "text": "\\frac{s(1 + e^{-\\pi s})}{s^2 + 16}",
         "isCorrect": false
       },
       {
         "id": "C",
-        "text": "2s(1-e-\\pi s)",
+        "text": "\\frac{4(1 - e^{-\\pi s})}{s^2 + 16}",
         "isCorrect": false
       },
       {
         "id": "D",
-        "text": "2s(1+e-\\pi s)",
+        "text": "\\frac{s(1 - e^{-2\\pi s})}{s^2 + 16}",
         "isCorrect": false
       }
     ],
     "correctOption": "A",
-    "answer": "s(1-e-\\pi s)",
-    "solution": "Writef(t) = cos 4t- cos 4t·u(t-\\pi ). Since cos 4(t +\\pi ) = cos(4t + 4\\pi ) = cos 4t: \\mathcal{L}\\{f(t)} = s s^2 + 16-e-\\pi s \\mathcal{L}\\{cos 4t} = s(1-e-\\pi s) s^2 + 16",
+    "answer": "\\frac{s(1 - e^{-\\pi s})}{s^2 + 16}",
+    "solution": "1. Express via unit step: $f(t) = \\cos 4t - \\cos 4t \\cdot u(t - \\pi)$.\\n2. Since $\\cos 4(t - \\pi + \\pi) = \\cos(4(t - \\pi) + 4\\pi) = \\cos 4(t - \\pi)$:\\n$$\\mathcal{L}\\{f(t)\\} = \\frac{s}{s^2 + 16} - e^{-\\pi s}\\frac{s}{s^2 + 16} = \\frac{s(1 - e^{-\\pi s})}{s^2 + 16}$$",
     "steps": [
       {
-        "text": "Writef(t) = cos 4t- cos 4t·u(t-\\pi ). Since cos 4(t +\\pi ) = cos(4t + 4\\pi ) = cos 4t:",
-        "math": ""
+        "text": "Express with Heaviside step:",
+        "math": "f(t) = \\cos 4t[1 - u(t - \\pi)]"
       },
       {
-        "text": "\\mathcal{L}\\{f(t)} = s",
-        "math": ""
+        "text": "Apply second shifting theorem:",
+        "math": "\\mathcal{L}\\{\\cos 4(t - \\pi)u(t - \\pi)\\} = e^{-\\pi s}\\frac{s}{s^2 + 16}"
       },
       {
-        "text": "s^2 + 16-e-\\pi s \\mathcal{L}\\{cos 4t} = s(1-e-\\pi s)",
-        "math": ""
-      },
-      {
-        "text": "s^2 + 16",
-        "math": ""
+        "text": "Combine transforms:",
+        "math": "\\frac{s(1 - e^{-\\pi s})}{s^2 + 16}"
       }
     ],
     "hint": "Express discontinuous piecewise forcing using unit step $u(t - a)$ and apply $\\mathcal{L}\\{g(t)u(t - a)\\} = e^{-as}\\mathcal{L}\\{g(t+a)\\}$.",
@@ -14118,49 +14086,45 @@
     "marksLabel": "4M",
     "level": "Standard",
     "topic": "Laplace Transforms & Discontinuous Systems Problem",
-    "prompt": "f(t) = { t^2, 1<t< 2 0, otherwise",
+    "prompt": "Find $\\mathcal{L}\\{f(t)\\}$ where $f(t) = t^2$ for $1 < t < 2$ and $0$ otherwise.",
     "promptMath": "",
     "options": [
       {
         "id": "A",
-        "text": "e^{-s}\\mathcal{L}\\{(t + 1)^2}- e^{-2s}\\mathcal{L}\\{(t + 2)^2} =e^{-s}",
+        "text": "e^{-s}\\left(\\frac{2}{s^3} + \\frac{2}{s^2} + \\frac{1}{s}\\right) - e^{-2s}\\left(\\frac{2}{s^3} + \\frac{4}{s^2} + \\frac{4}{s}\\right)",
         "isCorrect": true
       },
       {
         "id": "B",
-        "text": "e^{-s}\\mathcal{L}\\{(t + 1)^2}- e^{-2s}\\mathcal{L}\\{(t + 2)^2} = e^{+s}",
+        "text": "e^{-s}\\left(\\frac{2}{s^3} + \\frac{1}{s}\\right) - e^{-2s}\\left(\\frac{2}{s^3} + \\frac{4}{s}\\right)",
         "isCorrect": false
       },
       {
         "id": "C",
-        "text": "e^{-s}\\mathcal{L}\\{(t + 1)^2}- e^{-2s}\\mathcal{L}\\{(t + 2)^2} = e^{s}",
+        "text": "e^{-s}\\frac{2}{s^3} - e^{-2s}\\frac{2}{s^3}",
         "isCorrect": false
       },
       {
         "id": "D",
-        "text": "e^{-s}\\mathcal{L}\\{(t + 1)^2}- e^{-2s}\\mathcal{L}\\{(t + 2)^2} = e^{2-s}",
+        "text": "e^{-s}\\left(\\frac{1}{s^2} + \\frac{1}{s}\\right) - e^{-2s}\\left(\\frac{2}{s^2} + \\frac{4}{s}\\right)",
         "isCorrect": false
       }
     ],
     "correctOption": "A",
-    "answer": "e^{-s}\\mathcal{L}\\{(t + 1)^2}- e^{-2s}\\mathcal{L}\\{(t + 2)^2} =e^{-s}",
-    "solution": "Writef(t) =t^2 [u(t- 1)-u(t- 2)] =t2u(t- 1)-t2u(t- 2): \\mathcal{L}\\{f(t)} =e^{-s}\\mathcal{L}\\{(t + 1)^2}- e^{-2s}\\mathcal{L}\\{(t + 2)^2} =e^{-s} ( 2 s^3 + 2 s^2 + 1 s ) -e^{-2s} ( 2 s^3 + 4 s^2 + 4 s )",
+    "answer": "e^{-s}\\left(\\frac{2}{s^3} + \\frac{2}{s^2} + \\frac{1}{s}\\right) - e^{-2s}\\left(\\frac{2}{s^3} + \\frac{4}{s^2} + \\frac{4}{s}\\right)",
+    "solution": "1. Express $f(t) = t^2 u(t - 1) - t^2 u(t - 2)$.\\n2. Shift $t = (t - 1) + 1$: $t^2 = (t - 1)^2 + 2(t - 1) + 1$.\\n3. Shift $t = (t - 2) + 2$: $t^2 = (t - 2)^2 + 4(t - 2) + 4$.\\n4. Apply Second Shifting Theorem to obtain the result.",
     "steps": [
       {
-        "text": "Writef(t) =t^2 [u(t- 1)-u(t- 2)] =t2u(t- 1)-t2u(t- 2):",
-        "math": ""
+        "text": "Express with Heaviside step:",
+        "math": "f(t) = t^2[u(t - 1) - u(t - 2)]"
       },
       {
-        "text": "\\mathcal{L}\\{f(t)} =e^{-s}\\mathcal{L}\\{(t + 1)^2}- e^{-2s}\\mathcal{L}\\{(t + 2)^2} =e^{-s}",
-        "math": ""
+        "text": "Shift about t = 1:",
+        "math": "\\mathcal{L}\\{(t^2)u(t - 1)\\} = e^{-s}\\left(\\frac{2}{s^3} + \\frac{2}{s^2} + \\frac{1}{s}\\right)"
       },
       {
-        "text": "( 2",
-        "math": ""
-      },
-      {
-        "text": "s^3 + 2",
-        "math": ""
+        "text": "Shift about t = 2:",
+        "math": "\\mathcal{L}\\{(t^2)u(t - 2)\\} = e^{-2s}\\left(\\frac{2}{s^3} + \\frac{4}{s^2} + \\frac{4}{s}\\right)"
       }
     ],
     "hint": "Express discontinuous piecewise forcing using unit step $u(t - a)$ and apply $\\mathcal{L}\\{g(t)u(t - a)\\} = e^{-as}\\mathcal{L}\\{g(t+a)\\}$.",
@@ -14176,41 +14140,45 @@
     "marksLabel": "4M",
     "level": "Standard",
     "topic": "Laplace Transforms & Discontinuous Systems Problem",
-    "prompt": "f(t) = { \\sin t, \\pi / 2<t<\\pi 0, otherwise",
+    "prompt": "Find $\\mathcal{L}\\{f(t)\\}$ where $f(t) = \\sin t$ for $\\pi/2 < t < \\pi$ and $0$ otherwise.",
     "promptMath": "",
     "options": [
       {
         "id": "A",
-        "text": "e-\\pi s/2\\mathcal{L}\\{\\cos t}- e-\\pi s \\mathcal{L}\\{- \\sin t} = se-\\pi s/2 +e-\\pi s"
+        "text": "\\frac{s e^{-\\pi s/2} + e^{-\\pi s}}{s^2 + 1}",
+        "isCorrect": true
       },
       {
         "id": "B",
-        "text": "e-\\pi s/2\\mathcal{L}\\{\\cos t}- e-\\pi s \\mathcal{L}\\{- \\sin t} = se-\\pi s/2 -e-\\pi s"
+        "text": "\\frac{s e^{-\\pi s/2} - e^{-\\pi s}}{s^2 + 1}",
+        "isCorrect": false
       },
       {
         "id": "C",
-        "text": "e-\\pi s/4\\mathcal{L}\\{\\cos t}- e-\\pi s \\mathcal{L}\\{- \\sin t} = se-\\pi s/2 +e-\\pi s"
+        "text": "\\frac{e^{-\\pi s/2} + s e^{-\\pi s}}{s^2 + 1}",
+        "isCorrect": false
       },
       {
         "id": "D",
-        "text": "e-\\pi s/2\\ma2thcal{L}\\{\\cos 2t}- e-\\pi s \\ma2thcal{L}\\{- \\sin 2t} = se-\\pi s/2 +e-\\pi s"
+        "text": "\\frac{s e^{-\\pi s} + e^{-\\pi s/2}}{s^2 + 1}",
+        "isCorrect": false
       }
     ],
     "correctOption": "A",
-    "answer": "e-\\pi s/2\\mathcal{L}\\{\\cos t}- e-\\pi s \\mathcal{L}\\{- \\sin t} = se-\\pi s/2 +e-\\pi s",
-    "solution": "Writef(t) = \\sin t·u(t-\\pi /2)- \\sin t·u(t-\\pi ). Since sin(t +\\pi /2) = \\cos t and sin(t +\\pi ) =- \\sin t: \\mathcal{L}\\{f(t)} =e-\\pi s/2\\mathcal{L}\\{\\cos t}- e-\\pi s \\mathcal{L}\\{- \\sin t} = se-\\pi s/2 +e-\\pi s s^2 + 1",
+    "answer": "\\frac{s e^{-\\pi s/2} + e^{-\\pi s}}{s^2 + 1}",
+    "solution": "1. $f(t) = \\sin t \\cdot u(t - \\pi/2) - \\sin t \\cdot u(t - \\pi)$.\\n2. Since $\\sin(t + \\pi/2) = \\cos t$ and $\\sin(t + \\pi) = -\\sin t$:\\n$$\\mathcal{L}\\{f(t)\\} = e^{-\\pi s/2}\\frac{s}{s^2 + 1} - e^{-\\pi s}\\left(-\\frac{1}{s^2 + 1}\\right) = \\frac{s e^{-\\pi s/2} + e^{-\\pi s}}{s^2 + 1}$$",
     "steps": [
       {
-        "text": "Writef(t) = \\sin t·u(t-\\pi /2)- \\sin t·u(t-\\pi ). Since sin(t +\\pi /2) = \\cos t and sin(t +\\pi ) =- \\sin t:",
-        "math": ""
+        "text": "Express with Heaviside step:",
+        "math": "f(t) = \\sin t[u(t - \\pi/2) - u(t - \\pi)]"
       },
       {
-        "text": "\\mathcal{L}\\{f(t)} =e-\\pi s/2\\mathcal{L}\\{\\cos t}- e-\\pi s \\mathcal{L}\\{- \\sin t} = se-\\pi s/2 +e-\\pi s",
-        "math": ""
+        "text": "Shifted trigonometric identities:",
+        "math": "\\sin(t + \\pi/2) = \\cos t,\\quad \\sin(t + \\pi) = -\\sin t"
       },
       {
-        "text": "s^2 + 1",
-        "math": ""
+        "text": "Combine transforms:",
+        "math": "\\frac{s e^{-\\pi s/2} + e^{-\\pi s}}{s^2 + 1}"
       }
     ],
     "hint": "Express discontinuous piecewise forcing using unit step $u(t - a)$ and apply $\\mathcal{L}\\{g(t)u(t - a)\\} = e^{-as}\\mathcal{L}\\{g(t+a)\\}$.",
@@ -14226,45 +14194,45 @@
     "marksLabel": "4M",
     "level": "Standard",
     "topic": "Laplace Transforms & Discontinuous Systems Problem",
-    "prompt": "f(t) =e3tu(t- 1) Find the inverse Laplace transform \\mathcal{L}^{-1}\\{F (s)} using Second Shifting (Q23 – Q26):",
+    "prompt": "Find the Laplace transform of $f(t) = e^{3t}u(t - 1)$.",
     "promptMath": "",
     "options": [
       {
         "id": "A",
-        "text": "e-se3\\mathcal{L}\\{e^{3t}} = e-(s-3)"
+        "text": "\\frac{e^{-(s - 3)}}{s - 3}",
+        "isCorrect": true
       },
       {
         "id": "B",
-        "text": "-e-se3\\mathcal{L}\\{e^{3t}} = e-(s-3)"
+        "text": "\\frac{e^{-(s + 3)}}{s - 3}",
+        "isCorrect": false
       },
       {
         "id": "C",
-        "text": "e-se6\\mathcal{L}\\{e^{3t}} = e-(s-3)"
+        "text": "\\frac{e^{-s}}{s - 3}",
+        "isCorrect": false
       },
       {
         "id": "D",
-        "text": "e-se3\\ma2thcal{L}\\{e32t} = e-(s-3)"
+        "text": "\\frac{e^{-(s - 3)}}{s + 3}",
+        "isCorrect": false
       }
     ],
     "correctOption": "A",
-    "answer": "e-se3\\mathcal{L}\\{e^{3t}} = e-(s-3)",
-    "solution": "Apply \\mathcal{L}\\{g(t)u(t- 1)} =e^{-s}\\mathcal{L}\\{g(t + 1)} with g(t) =e^{3t}: \\mathcal{L}\\{e3tu(t- 1)} =e-sL { e3(t+1) } =e-se3\\mathcal{L}\\{e^{3t}} = e-(s-3) s- 3",
+    "answer": "\\frac{e^{-(s - 3)}}{s - 3}",
+    "solution": "1. Using $\\mathcal{L}\\{g(t)u(t - a)\\} = e^{-as}\\mathcal{L}\\{g(t + a)\\}$ with $g(t) = e^{3t}, a = 1$:\\n$$\\mathcal{L}\\{e^{3t}u(t - 1)\\} = e^{-s}\\mathcal{L}\\{e^{3(t+1)}\\} = e^{-s}e^3\\mathcal{L}\\{e^{3t}\\} = e^{-(s-3)}\\frac{1}{s - 3} = \\frac{e^{-(s-3)}}{s - 3}$$",
     "steps": [
       {
-        "text": "Apply \\mathcal{L}\\{g(t)u(t- 1)} =e^{-s}\\mathcal{L}\\{g(t + 1)} with g(t) =e^{3t}:",
-        "math": ""
+        "text": "Apply second shifting theorem:",
+        "math": "\\mathcal{L}\\{e^{3t}u(t - 1)\\} = e^{-s}\\mathcal{L}\\{e^{3(t + 1)}\\}"
       },
       {
-        "text": "\\mathcal{L}\\{e3tu(t- 1)} =e-sL",
-        "math": ""
+        "text": "Factor out constant factor e^3:",
+        "math": "e^{-s} e^3 \\mathcal{L}\\{e^{3t}\\} = e^{-(s - 3)}\\frac{1}{s - 3}"
       },
       {
-        "text": "{",
-        "math": ""
-      },
-      {
-        "text": "e3(t+1)",
-        "math": ""
+        "text": "Final result:",
+        "math": "\\frac{e^{-(s - 3)}}{s - 3}"
       }
     ],
     "hint": "Find base transform $F(s) = \\mathcal{L}\\{f(t)\\}$, then apply First Shifting Theorem $\\mathcal{L}\\{e^{at}f(t)\\} = F(s - a)$.",
@@ -14302,7 +14270,7 @@
     ],
     "correctOption": "A",
     "answer": "2(t- 3)2et-3u(t- 3)",
-    "solution": "Ignore e^{-3s} first and apply Inverse First Shifting: fbase(t) =\\mathcal{L}^{-1}\\{ 1 (s- 1)^3 } =ett2 2!. Now shift t \\to (t- 3): f(t) = 1 2(t- 3)2et-3u(t- 3)",
+    "solution": "Ignore e^{-3s} first and apply Inverse First Shifting: fbase(t) =\\mathcal{L}^{-1}\\{ 1 (s- 1)^3 \\} =ett2 2!. Now shift t \\to (t- 3): f(t) = 1 2(t- 3)2et-3u(t- 3)",
     "steps": [
       {
         "text": "Ignore e^{-3s} first and apply Inverse First Shifting: fbase(t) =\\mathcal{L}^{-1}",
@@ -14360,7 +14328,7 @@
     ],
     "correctOption": "A",
     "answer": "f(t) = 2 \\sin 3t- 2 \\sin 3(t-\\pi )u(t-\\pi ) = 2 \\sin 3t [1 +u(t-\\pi )]",
-    "solution": "Base inverse:\\mathcal{L}^{-1}\\{ 6 s^2 + 9 } = 2 sin 3t. Applying Second Shifting ( t \\to t-\\pi ) to the e-\\pi s term: f(t) = 2 sin 3t- 2 sin 3(t-\\pi )u(t-\\pi ) = 2 sin 3t [1 +u(t-\\pi )]",
+    "solution": "Base inverse:\\mathcal{L}^{-1}\\{ 6 s^2 + 9 \\} = 2 sin 3t. Applying Second Shifting ( t \\to t-\\pi ) to the e-\\pi s term: f(t) = 2 sin 3t- 2 sin 3(t-\\pi )u(t-\\pi ) = 2 sin 3t [1 +u(t-\\pi )]",
     "steps": [
       {
         "text": "Base inverse:\\mathcal{L}^{-1}",
@@ -14464,7 +14432,7 @@
     ],
     "correctOption": "A",
     "answer": "f(t) =e^{-t} \\cos t +e-2\\pi e-(t-2\\pi ) \\cos(t- 2\\pi )u(t- 2\\pi ) =e^{-t} \\cos t [1 +u(t- 2\\pi )]",
-    "solution": "Base inverse without e-2\\pi (s+1): \\mathcal{L}^{-1}\\{ s + 1 (s + 1)^2 + 1 } = e^{-t} \\cos t. Rewrite the second term as e-2\\pi · e-2\\pi s s + 1 (s + 1)^2 + 1 and shift t \\to (t- 2\\pi ): f(t) =e^{-t} \\cos t +e-2\\pi e-(t-2\\pi ) cos(t- 2\\pi )u(t- 2\\pi ) =e^{-t} \\cos t [1 +u(t- 2\\pi )]",
+    "solution": "Base inverse without e-2\\pi (s+1): \\mathcal{L}^{-1}\\{ s + 1 (s + 1)^2 + 1 \\} = e^{-t} \\cos t. Rewrite the second term as e-2\\pi · e-2\\pi s s + 1 (s + 1)^2 + 1 and shift t \\to (t- 2\\pi ): f(t) =e^{-t} \\cos t +e-2\\pi e-(t-2\\pi ) cos(t- 2\\pi )u(t- 2\\pi ) =e^{-t} \\cos t [1 +u(t- 2\\pi )]",
     "steps": [
       {
         "text": "Base inverse without e-2\\pi (s+1): \\mathcal{L}^{-1}",
@@ -14522,7 +14490,7 @@
     ],
     "correctOption": "A",
     "answer": "\\frac{s^2 + 2s}{(s^2 + 2s + 2)^2}",
-    "solution": "1. Find \\(\\mathcal{L}\\{t \\cos t\\}\\) using multiplication by \\(t\\) theorem:\n$$\\mathcal{L}\\{t \\cos t\\} = -\\frac{d}{ds}\\left(\\frac{s}{s^2 + 1}\\right) = -\\frac{(s^2 + 1) - s(2s)}{(s^2 + 1)^2} = \\frac{s^2 - 1}{(s^2 + 1)^2}$$\n2. Apply the First Shifting Theorem \\(e^{-t} \\implies s \\to s + 1\\):\n$$\\mathcal{L}\\{t e^{-t} \\cos t\\} = \\frac{(s + 1)^2 - 1}{((s + 1)^2 + 1)^2} = \\frac{s^2 + 2s}{(s^2 + 2s + 2)^2}$$",
+    "solution": "1. Find \\(\\mathcal{L}\\{t \\\\cos t\\}\\) using multiplication by \\(t\\) theorem:\n$$\\mathcal{L}\\{t \\\\cos t\\} = -\\frac{d}{ds}\\left(\\frac{s}{s^2 + 1}\\right) = -\\frac{(s^2 + 1) - s(2s)}{(s^2 + 1)^2} = \\frac{s^2 - 1}{(s^2 + 1)^2}$$\n2. Apply the First Shifting Theorem \\(e^{-t} \\implies s \\to s + 1\\):\n$$\\mathcal{L}\\{t e^{-t} \\cos t\\} = \\frac{(s + 1)^2 - 1}{((s + 1)^2 + 1)^2} = \\frac{s^2 + 2s}{(s^2 + 2s + 2)^2}$$",
     "steps": [
       {
         "text": "Compute derivative of cosine transform w.r.t s:",
@@ -14546,49 +14514,45 @@
     "marksLabel": "4M",
     "level": "Standard",
     "topic": "Laplace Transforms & Discontinuous Systems Problem",
-    "prompt": "f(t) =t^2 sin 3t",
-    "promptMath": "",
+    "prompt": "Find the Laplace transform of $f(t) = t^2 \\sin 3t$.",
+    "promptMath": "\\mathcal{L}\\{t^2 \\sin 3t\\}",
     "options": [
       {
         "id": "A",
-        "text": "18s2- 54",
+        "text": "\\frac{18s^2 - 54}{(s^2 + 9)^3}",
         "isCorrect": true
       },
       {
         "id": "B",
-        "text": "18s2+ 54",
+        "text": "\\frac{18s^2 + 54}{(s^2 + 9)^3}",
         "isCorrect": false
       },
       {
         "id": "C",
-        "text": "218s2- 54",
+        "text": "\\frac{6s^2 - 18}{(s^2 + 9)^3}",
         "isCorrect": false
       },
       {
         "id": "D",
-        "text": "218s2+ 54",
+        "text": "\\frac{54 - 18s^2}{(s^2 + 9)^3}",
         "isCorrect": false
       }
     ],
     "correctOption": "A",
-    "answer": "18s2- 54",
-    "solution": "First derivative (×t):\\mathcal{L}\\{t sin 3t} =- d ds ( 3 s^2 + 9 ) = 6s (s^2 + 9)^2 . Second derivative (×t^2): \\mathcal{L}\\{t^2 sin 3t} =- d ds [ 6s (s^2 + 9)^2 ] =-6(s^2 + 9)^2- 6s· 4s(s^2 + 9) (s^2 + 9)^4 = 18s2- 54 (s^2 + 9)^3",
+    "answer": "\\frac{18s^2 - 54}{(s^2 + 9)^3}",
+    "solution": "1. Base transform: $\\mathcal{L}\\{\\\\sin 3t\\} = \\frac{3}{s^2 + 9}$.\\n2. First derivative ($\\times t$):\\n$$\\mathcal{L}\\{t \\\\sin 3t\\} = -\\frac{d}{ds}\\left(\\frac{3}{s^2 + 9}\\right) = \\frac{6s}{(s^2 + 9)^2}$$\\n3. Second derivative ($\\times t^2$):\\n$$\\mathcal{L}\\{t^2 \\\\sin 3t\\} = -\\frac{d}{ds}\\left(\\frac{6s}{(s^2 + 9)^2}\\right) = \\frac{18s^2 - 54}{(s^2 + 9)^3}$$",
     "steps": [
       {
-        "text": "First derivative (×t):\\mathcal{L}\\{t sin 3t} =- d",
-        "math": ""
+        "text": "First derivative for t sin 3t:",
+        "math": "\\mathcal{L}\\{t \\\\sin 3t\\} = \\frac{6s}{(s^2 + 9)^2}"
       },
       {
-        "text": "ds",
-        "math": ""
+        "text": "Second derivative for t^2 sin 3t:",
+        "math": "\\mathcal{L}\\{t^2 \\\\sin 3t\\} = -\\frac{d}{ds}\\left(\\frac{6s}{(s^2 + 9)^2}\\right)"
       },
       {
-        "text": "( 3",
-        "math": ""
-      },
-      {
-        "text": "s^2 + 9",
-        "math": ""
+        "text": "Simplify resulting quotient:",
+        "math": "\\frac{18s^2 - 54}{(s^2 + 9)^3}"
       }
     ],
     "hint": "Express discontinuous piecewise forcing using unit step $u(t - a)$ and apply $\\mathcal{L}\\{g(t)u(t - a)\\} = e^{-as}\\mathcal{L}\\{g(t+a)\\}$.",
@@ -14630,10 +14594,10 @@
     ],
     "correctOption": "A",
     "answer": "2(s +k)",
-    "solution": "First find \\mathcal{L}\\{t \\sin t} =- d ds ( 1 s^2 + 1 ) = 2s (s^2 + 1)^2 . Apply First Shifting ( e-kt \\implies s \\to s +k): \\mathcal{L}\\{te-kt \\sin t} = 2(s +k) [(s +k)^2 + 1]2",
+    "solution": "First find $\\mathcal{L}\\{t \\\\sin t\\}$ =- d ds ( 1 s^2 + 1 ) = 2s (s^2 + 1)^2 . Apply First Shifting ( e-kt $\\implies$ s $\\to$ s +k): $\\mathcal{L}\\{te-kt \\\\sin t\\}$ = 2(s +k) [(s +k)^2 + 1]2",
     "steps": [
       {
-        "text": "First find \\mathcal{L}\\{t \\sin t} =- d",
+        "text": "First find $\\mathcal{L}\\{t \\\\sin t\\}$ =- d",
         "math": ""
       },
       {
@@ -14662,7 +14626,7 @@
     "marksLabel": "4M",
     "level": "Standard",
     "topic": "Laplace Transforms & Discontinuous Systems Problem",
-    "prompt": "f(t) = 1- cos 2t t , and hence evaluate \\int_0^\\infty e^{-5t} (1- cos 2t t ) dt",
+    "prompt": "f(t) = 1- cos 2t t , and hence evaluate $\\int$_0^$\\infty$ e^{-5t} (1- cos 2t t ) dt",
     "promptMath": "",
     "options": [
       {
@@ -14688,10 +14652,10 @@
     ],
     "correctOption": "A",
     "answer": "1 2 \\ln (29 25 )",
-    "solution": "Base transform: \\mathcal{L}\\{1- cos 2t} = 1 s- s s^2 + 4. Divide by t (integrates \\to \\infty ): L {1- cos 2t t } = \\int \\infty s (1 u- u u2 + 4 ) du = [1 2 ln ( u2 u2 + 4 )]\\infty s = 0- 1 2 ln ( s^2 s^2 + 4 ) = 1 2 ln (s^2 + 4 s^2 ) By definition of Laplace transform, setting s = 5 evaluates the definite integral: \\int_0^\\infty e^{-5t} (1- cos 2t t ) dt = 1 2 ln (25 + 4 25 ) = 1 2 ln (29 25 )",
+    "solution": "Base transform: $\\mathcal{L}\\{1- \\cos 2t\\}$ = 1 s- s s^2 + 4. Divide by t (integrates $\\to$ $\\infty$ ): L {1- cos 2t t } = $\\int$ $\\infty$ s (1 u- u u2 + 4 ) du = [1 2 ln ( u2 u2 + 4 )]$\\infty$ s = 0- 1 2 ln ( s^2 s^2 + 4 ) = 1 2 ln (s^2 + 4 s^2 ) By definition of Laplace transform, setting s = 5 evaluates the definite integral: $\\int$_0^$\\infty$ e^{-5t} (1- cos 2t t ) dt = 1 2 ln (25 + 4 25 ) = 1 2 ln (29 25 )",
     "steps": [
       {
-        "text": "Base transform: \\mathcal{L}\\{1- cos 2t} = 1",
+        "text": "Base transform: \\mathcal{L}\\{1- \\cos 2t\\} = 1",
         "math": ""
       },
       {
@@ -14792,7 +14756,7 @@
     ],
     "correctOption": "A",
     "answer": "te^{-3t} \\sin t",
-    "solution": "Complete the square: s^2 + 6s + 10 = (s + 3)^2 + 1, and 2s + 6 = 2(s + 3). Pull out e^{-3t} via First Shifting: f(t) =e^{-3t}\\mathcal{L}^{-1}\\{ 2s (s^2 + 1)^2 } =e^{-3t}\\mathcal{L}^{-1}\\{ - d ds ( 1 s^2 + 1 )} =te^{-3t} \\sin t",
+    "solution": "Complete the square: s^2 + 6s + 10 = (s + 3)^2 + 1, and 2s + 6 = 2(s + 3). Pull out e^{-3t} via First Shifting: f(t) =e^{-3t}\\mathcal{L}^{-1}\\{ 2s (s^2 + 1)^2 \\} =e^{-3t}\\mathcal{L}^{-1}\\{ - d ds ( 1 s^2 + 1 )\\} =te^{-3t} \\sin t",
     "steps": [
       {
         "text": "Complete the square: s^2 + 6s + 10 = (s + 3)^2 + 1, and 2s + 6 = 2(s + 3). Pull out e^{-3t} via First Shifting:",
@@ -14846,7 +14810,7 @@
     ],
     "correctOption": "A",
     "answer": "-tf (t) =- \\sin \\pi t \\implies f(t) = \\sin \\pi t",
-    "solution": "Let F (s) = arccot(s/\\pi ). Differentiate w.r.t. s: F′(s) =- 1/\\pi 1 + (s/\\pi )^2 =- \\pi s^2 +\\pi 2 \\implies \\mathcal{L}^{-1}\\{F′(s)} =-tf (t) =- sin \\pi t \\implies f(t) = sin \\pi t t",
+    "solution": "Let F (s) = arccot(s/\\pi ). Differentiate w.r.t. s: F′(s) =- 1/\\pi 1 + (s/\\pi )^2 =- \\pi s^2 +\\pi 2 \\implies \\mathcal{L}^{-1}\\{F′(s)\\} =-tf (t) =- sin \\pi t \\implies f(t) = sin \\pi t t",
     "steps": [
       {
         "text": "Let F (s) = arccot(s/\\pi ). Differentiate w.r.t. s:",
@@ -14861,7 +14825,7 @@
         "math": ""
       },
       {
-        "text": "s^2 +\\pi 2 \\implies \\mathcal{L}^{-1}\\{F′(s)} =-tf (t) =- sin \\pi t \\implies f(t) = sin \\pi t",
+        "text": "s^2 +\\pi 2 \\implies \\mathcal{L}^{-1}\\{F′(s)\\} =-tf (t) =- sin \\pi t \\implies f(t) = sin \\pi t",
         "math": ""
       }
     ],
@@ -15722,7 +15686,7 @@
     ],
     "correctOption": "A",
     "answer": "(t- \\sin t)- [(t- 1)- \\sin(t- 1) + 1- \\cos(t- 1)]u(t- 1)",
-    "solution": "Writer(t) =t [1-u(t- 1)] =t- (t- 1)u(t- 1)-u(t- 1). Taking Laplace: (s^2 + 1)Y (s) = 1 s^2-e^{-s} ( 1 s^2 + 1 s ) \\implies Y (s) = 1 s^2(s^2 + 1)-e^{-s} [ 1 s^2(s^2 + 1) + 1 s(s^2 + 1) ] Using \\mathcal{L}^{-1}\\{ 1 s(s^2 + 1) } = 1- \\cos t and \\mathcal{L}^{-1}\\{ 1 s^2(s^2 + 1) } =t- \\sin t: y(t) = (t- \\sin t)- [(t- 1)- sin(t- 1) + 1- cos(t- 1)]u(t- 1)",
+    "solution": "Writer(t) =t [1-u(t- 1)] =t- (t- 1)u(t- 1)-u(t- 1). Taking Laplace: (s^2 + 1)Y (s) = 1 s^2-e^{-s} ( 1 s^2 + 1 s ) $\\implies$ Y (s) = 1 s^2(s^2 + 1)-e^{-s} [ 1 s^2(s^2 + 1) + 1 s(s^2 + 1) ] Using $\\mathcal{L}^{-1}\\{ 1 s(s^2 + 1) \\}$ = 1- $\\cos$ t and $\\mathcal{L}^{-1}\\{ 1 s^2(s^2 + 1) \\}$ =t- $\\sin$ t: y(t) = (t- $\\sin$ t)- [(t- 1)- sin(t- 1) + 1- cos(t- 1)]u(t- 1)",
     "steps": [
       {
         "text": "Writer(t) =t [1-u(t- 1)] =t- (t- 1)u(t- 1)-u(t- 1). Taking Laplace:",
@@ -16318,7 +16282,7 @@
     ],
     "correctOption": "A",
     "answer": "\\frac{24s}{(s^2 - 16)^2}",
-    "solution": "1. Base transform: \\(\\mathcal{L}\\{3\\sinh 4t\\} = 3\\cdot \\frac{4}{s^2 - 16} = \\frac{12}{s^2 - 16}\\). 2. Multiply by \\(t\\) using \\(\\mathcal{L}\\{t f(t)\\} = -\\frac{d}{ds}F(s)\\): $$\\mathcal{L}\\{3t \\sinh 4t\\} = -\\frac{d}{ds}\\left(\\frac{12}{s^2 - 16}\\right) = -\\left(-\\frac{12\\cdot 2s}{(s^2 - 16)^2}\\right) = \\frac{24s}{(s^2 - 16)^2}$$",
+    "solution": "1. Base transform: \\(\\mathcal{L}\\{3\\\\sinh 4t\\} = 3\\cdot \\frac{4}{s^2 - 16} = \\frac{12}{s^2 - 16}\\). 2. Multiply by \\(t\\) using \\(\\mathcal{L}\\{t f(t)\\} = -\\frac{d}{ds}F(s)\\): $$\\mathcal{L}\\{3t \\\\sinh 4t\\} = -\\frac{d}{ds}\\left(\\frac{12}{s^2 - 16}\\right) = -\\left(-\\frac{12\\cdot 2s}{(s^2 - 16)^2}\\right) = \\frac{24s}{(s^2 - 16)^2}$$",
     "steps": [
       {
         "text": "Apply unit step / shifting definition:",
@@ -16329,7 +16293,7 @@
         "math": "24s"
       }
     ],
-    "hint": "\\mathcal{L}\\{3 sinh 4t} = 12/(s^2 - 16). Differentiate w.r.t s and negate.",
+    "hint": "\\mathcal{L}\\{3 \\sinh 4t\\} = 12/(s^2 - 16). Differentiate w.r.t s and negate.",
     "sillyTrap": "Sign Trap: Note \\(\\sinh\\) has a MINUS sign in denominator \\(s^2 - 16\\), unlike \\(\\sin\\) which has \\(s^2 + 16\\).",
     "tag": "Kreyszig 6.3/6.6 · 4M"
   },
@@ -16418,7 +16382,7 @@
     ],
     "correctOption": "A",
     "answer": "\\frac{s^2 + 2s}{(s^2 + 2s + 2)^2}",
-    "solution": "1. First find \\(\\mathcal{L}\\{t \\cos t\\} = -\\frac{d}{ds}\\left(\\frac{s}{s^2 + 1}\\right) = \\frac{s^2 - 1}{(s^2 + 1)^2}\\).\n2. Now apply the First Shifting Theorem \\(e^{-t} \\implies s \\to s + 1\\):\n \\mathcal{L}\\{te^{-t}\\cos t\\} = \\frac{(s+1)^2 - 1}{((s+1)^2 + 1)^2} = \\frac{s^2 + 2s}{(s^2 + 2s + 2)^2}",
+    "solution": "1. First find \\(\\mathcal{L}\\{t \\\\cos t\\} = -\\frac{d}{ds}\\left(\\frac{s}{s^2 + 1}\\right) = \\frac{s^2 - 1}{(s^2 + 1)^2}\\).\n2. Now apply the First Shifting Theorem \\(e^{-t} \\implies s \\to s + 1\\):\n \\mathcal{L}\\{te^{-t}\\cos t\\} = \\frac{(s+1)^2 - 1}{((s+1)^2 + 1)^2} = \\frac{s^2 + 2s}{(s^2 + 2s + 2)^2}",
     "steps": [
       {
         "text": "Differentiate cosine transform w.r.t s:",
@@ -16464,7 +16428,7 @@
     ],
     "correctOption": "A",
     "answer": "\\frac{2\\omega s}{(s^2 - \\omega^2)^2}",
-    "solution": "$$\\mathcal{L}\\{t \\sinh \\omega t\\} = -\\frac{d}{ds}\\left(\\frac{\\omega}{s^2 - \\omega^2}\\right) = \\frac{2\\omega s}{(s^2 - \\omega^2)^2}$$",
+    "solution": "$$\\mathcal{L}\\{t \\\\sinh \\omega t\\} = -\\frac{d}{ds}\\left(\\frac{\\omega}{s^2 - \\omega^2}\\right) = \\frac{2\\omega s}{(s^2 - \\omega^2)^2}$$",
     "steps": [
       {
         "text": "State base hyperbolic sine transform:",
@@ -16510,7 +16474,7 @@
     ],
     "correctOption": "A",
     "answer": "\\frac{1}{2s^2} + \\frac{s^2 - 36}{2(s^2 + 36)^2}",
-    "solution": "Using $\\cos^2 3t = \\frac{1 + \\cos 6t}{2}$: $$\\mathcal{L}\\{t \\cos^2 3t\\} = \\frac{1}{2s^2} - \\frac{1}{2}\\frac{d}{ds}\\left(\\frac{s}{s^2 + 36}\\right) = \\frac{1}{2s^2} + \\frac{s^2 - 36}{2(s^2 + 36)^2}$$",
+    "solution": "Using $\\cos^2 3t = \\frac{1 + \\cos 6t}{2}$: $$\\mathcal{L}\\{t \\\\cos^2 3t\\} = \\frac{1}{2s^2} - \\frac{1}{2}\\frac{d}{ds}\\left(\\frac{s}{s^2 + 36}\\right) = \\frac{1}{2s^2} + \\frac{s^2 - 36}{2(s^2 + 36)^2}$$",
     "steps": [
       {
         "text": "Use half-angle identity:",
@@ -16602,11 +16566,11 @@
     ],
     "correctOption": "A",
     "answer": "\\frac{2k(s + k)}{((s + k)^2 + k^2)^2}",
-    "solution": "$$\\mathcal{L}\\{t \\sin kt\\} = \\frac{2ks}{(s^2 + k^2)^2} \\implies \\mathcal{L}\\{t e^{-kt}\\sin kt\\} = \\frac{2k(s + k)}{((s + k)^2 + k^2)^2}$$",
+    "solution": "$$\\mathcal{L}\\{t \\\\sin kt\\} = \\frac{2ks}{(s^2 + k^2)^2} \\implies \\mathcal{L}\\{t e^{-kt}\\sin kt\\} = \\frac{2k(s + k)}{((s + k)^2 + k^2)^2}$$",
     "steps": [
       {
         "text": "Multiply by t transform:",
-        "math": "\\mathcal{L}\\{t\\sin kt\\} = -\\frac{d}{ds}\\left(\\frac{k}{s^2+k^2}\\right) = \\frac{2ks}{(s^2+k^2)^2}"
+        "math": "\\mathcal{L}\\{t\\\\sin kt\\} = -\\frac{d}{ds}\\left(\\frac{k}{s^2+k^2}\\right) = \\frac{2ks}{(s^2+k^2)^2}"
       },
       {
         "text": "Shift s -> s + k for e^{-kt}:",
@@ -16705,7 +16669,7 @@
         "math": "n!"
       }
     ],
-    "hint": "Apply the First Shifting Theorem to \\mathcal{L}\\{t^n} = n!/s^{n+1}.",
+    "hint": "Apply the First Shifting Theorem to \\mathcal{L}\\{t^n\\} = n!/s^{n+1}.",
     "sillyTrap": "Index Trap: Denominator power is n + 1, not n.",
     "tag": "Kreyszig 6.3/6.6 · 4M"
   },
@@ -16740,7 +16704,7 @@
     ],
     "correctOption": "A",
     "answer": "\\frac{1}{2s^2} - \\frac{s^2 - 4\\pi^2}{2(s^2 + 4\\pi^2)^2}",
-    "solution": "Using $\\sin^2 \\pi t = \\frac{1 - \\cos 2\\pi t}{2}$: $$\\mathcal{L}\\{t \\sin^2 \\pi t\\} = \\frac{1}{2s^2} - \\frac{s^2 - 4\\pi^2}{2(s^2 + 4\\pi^2)^2}$$",
+    "solution": "Using $\\sin^2 \\pi t = \\frac{1 - \\cos 2\\pi t}{2}$: $$\\mathcal{L}\\{t \\\\sin^2 \\pi t\\} = \\frac{1}{2s^2} - \\frac{s^2 - 4\\pi^2}{2(s^2 + 4\\pi^2)^2}$$",
     "steps": [
       {
         "text": "Apply half-angle identity:",

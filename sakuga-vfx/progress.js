@@ -37,7 +37,7 @@ class SakugaProgress extends fx.Base {
   clear() { this.doneAt = 0; this.said = false; }
   setup() {
     this.box = this.$('.prog'); this.bar = this.$('.bar'); this.pct = this.$('.pct'); this.back = this.backLayer();
-    this.p = 0; this.goal = clamp(+this.getAttribute('value') || 0); this.doneAt = 0; this.said = false; this.t = 0; this.acc = 0; this.spd = 0; this.lastPct = ''; this.vis = false;
+    this.p = 0; this.goal = clamp(+this.getAttribute('value') || 0); this.doneAt = 0; this.said = false; this.t = 0; this.acc = 0; this.spd = 0; this.lastPct = ''; this.vis = false; this._settledCleaned = false;
     this.lobes = LOBES.map(([x, y, r], i) => ({ x, y, r, ph: rnd(6.28), w: rnd(1.4, 2.6), i }));
     this.peb = [0.14, 0.31, 0.5, 0.69, 0.87].map((u) => ({ u, s: rnd(3.4, 5.6), ph: rnd(6.28), rot: rnd(-0.5, 0.5), lift: new Spring(0, 70, 7), pts: [[-1, 0.4], [-0.5, -0.8], [0.5, -1], [1, 0.1], [0.3, 0.9]].map(([x, y]) => [x * rnd(0.8, 1.2), y * rnd(0.8, 1.2)]) }));
     this.size = new Spring(0, 90, 13); this.lag = new Spring(0, 120, 16); this.ck = new Spring(0, 260, 13); this.tag = new Spring(1, 500, 13); this.rest = new Spring(0, 160, 14);
@@ -47,7 +47,13 @@ class SakugaProgress extends fx.Base {
   disconnectedCallback() { super.disconnectedCallback(); if (this.layer) { this.layer.dead = true; this.layer = null; } }
   // the ground, the pebbles, the cloud and the check: drawn every frame on the effects layer
   paint(tt, dt) {
-    if (!this.vis) return; const g = fx.g, P = fx.P, b = at(this.bar), L = b.x - b.w / 2, R = b.x + b.w / 2, p = this.p, done = this.doneAt, lead = L + 4 + (b.w - 8) * p, cy = b.y, gy = cy + b.h / 2 + 16;
+    if (!this.vis) return;
+    const demo = this.hasAttribute('demo');
+    const settled = !demo && Math.abs(this.p - this.goal) < 0.002;
+    const done = this.doneAt;
+    if (settled && !done) return;
+    if (done && !demo && (this.t - done > 2.0)) return;
+    const g = fx.g, P = fx.P, b = at(this.bar), L = b.x - b.w / 2, R = b.x + b.w / 2, p = this.p, lead = L + 4 + (b.w - 8) * p, cy = b.y, gy = cy + b.h / 2 + 16;
     const reach = clamp(p * 1.25 + (done ? 1 : 0)), gx1 = lerp(L + 10, R - 10, reach);   // the ground draws itself out under the fill
     if (reach > 0.02) { g.strokeStyle = P.line; g.lineWidth = 1.4; g.beginPath(); g.moveTo(L + 10, gy); g.lineTo(gx1, gy); for (let x = L + 26; x < gx1 - 6; x += 37) { g.moveTo(x, gy); g.lineTo(x + 3, gy - 4); g.moveTo(x + 5, gy); g.lineTo(x + 6.5, gy - 2.5); } g.stroke(); }
     for (const q of this.peb) {   // a pebble lifts when the edge goes over it and drops when the load is done
@@ -58,7 +64,6 @@ class SakugaProgress extends fx.Base {
     }
     this.rest.to = done ? 1 : 0; const rs = Math.max(0, this.rest.step(dt));   // the two small clouds left on the ground when it is over
     if (rs > 0.02) for (const [x, d] of [[L + 34, -1], [R - 40, 1]]) { blob([[x, gy - 9 * rs, 8 * rs], [x + 8 * d, gy - 6 * rs, 6 * rs], [x - 6 * d, gy - 5 * rs, 5.5 * rs], [x + 2 * d, gy - 15 * rs, 5.5 * rs]].map(([cx, cyy, r], n) => [cx, cyy, r * (1 + Math.sin(tt * 3 + n) * 0.06)]), 1.3, true, { lx: 1, arcs: true }); g.strokeStyle = P.line; g.lineWidth = 1.4; g.beginPath(); g.moveTo(x + d * 18, gy - 6); g.lineTo(x + d * 25, gy - 6); g.moveTo(x + d * 19, gy - 1.5); g.lineTo(x + d * 23, gy - 1.5); g.stroke(); }
-    const demo = this.hasAttribute('demo'), settled = !demo && Math.abs(this.p - this.goal) < 0.002;
     this.size.to = done || p < 0.015 || settled ? 0 : 10 + 25 * Math.sqrt(p); this.lag.to = this.spd; const S = Math.max(0, this.size.step(dt)), drag = this.lag.step(dt);   // the cloud
     if (S > 0.6) blob(this.lobes.map((l) => { const boil = 1 + 0.16 * Math.sin(tt * l.w + l.ph), roll = 0.82 + 0.22 * Math.sin(tt * 2.6 - l.i * 0.9);   // lobes swell in turn, so it reads as rolling forward
       return [lead + 3 + (l.x + Math.cos(tt * l.w * 0.7 + l.ph) * 0.1 - drag * 1.6 * Math.max(0, -l.y) * 0.5) * S, cy - 3 + (l.y + Math.sin(tt * l.w * 0.7 + l.ph) * 0.1) * S, l.r * S * boil * roll]; }), 1.6, true, { lx: 1, arcs: true, deep: 1.7 });
@@ -76,6 +81,12 @@ class SakugaProgress extends fx.Base {
     this.spd = lerp(this.spd, dt > 0 ? (this.p - was) / dt : 0, Math.min(1, dt * 8));
     const b = at(this.bar), L = b.x - b.w / 2, lead = L + 4 + (b.w - 8) * this.p, top = b.y - b.h / 2, p = this.p, spd = this.spd;
     const settled = !demo && Math.abs(this.p - this.goal) < 0.002;
+    if (settled && !this._settledCleaned) {
+      this._settledCleaned = true;
+      if (fx.clearTransient) fx.clearTransient();
+    } else if (!settled) {
+      this._settledCleaned = false;
+    }
     if (!this.doneAt && this.vis && !settled) {
       if (p > 0.06 && spd > 0.02) { this.acc += dt * (4 + spd * 60);   // wisps torn off the back of the cloud, and the lines of its speed
         while (this.acc > 1) { this.acc -= 1; const S = 10 + 25 * Math.sqrt(p);
