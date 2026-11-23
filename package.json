@@ -8,6 +8,9 @@
     "test": "node scripts/build.mjs",
     "start": "node scripts/server.mjs"
   },
+  "dependencies": {
+    "katex": "^0.19.1"
+  },
   "keywords": [
     "mathematics",
     "calculus",
